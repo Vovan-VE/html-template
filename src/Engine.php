@@ -3,6 +3,7 @@ namespace VovanVE\HtmlTemplate;
 
 use VovanVE\HtmlTemplate\caching\CacheInterface;
 use VovanVE\HtmlTemplate\compile\CompilerInterface;
+use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 use VovanVE\HtmlTemplate\source\TemplateProviderInterface;
 
 class Engine implements EngineInterface
@@ -109,7 +110,7 @@ class Engine implements EngineInterface
             $cached = $cache->setEntry($key, $compiled->getContent(), $meta);
         }
 
-        $cached->run($params);
+        $cached->run(new RuntimeHelper($params));
     }
 
     /**
@@ -156,6 +157,7 @@ class Engine implements EngineInterface
      */
     private function getMeta(): string
     {
-        return "compiler: " . self::VERSION . "\n";
+        return "compiler: " . self::VERSION . "\n"
+            . "PHP: " . \PHP_VERSION . "\n";
     }
 }

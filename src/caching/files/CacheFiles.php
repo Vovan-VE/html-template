@@ -5,6 +5,7 @@ use VovanVE\HtmlTemplate\caching\CachedEntryInterface;
 use VovanVE\HtmlTemplate\caching\CacheInterface;
 use VovanVE\HtmlTemplate\caching\CacheWriteException;
 use VovanVE\HtmlTemplate\ConfigException;
+use VovanVE\HtmlTemplate\runtime\RuntimeEntryDummyInterface;
 
 class CacheFiles implements CacheInterface
 {
@@ -221,8 +222,9 @@ _REGEXP;
             $code .= "namespace {$this->classNamespace};\n\n";
         }
 
+        /** @uses RuntimeEntryDummyInterface::run() */
         $code .= "class $className {\n"
-            . "    public static function run(\$params = []): void\n"
+            . "    public static function run(\$runtime): void\n"
             . "    {\n"
             . "$content\n"
             . "    }\n"

@@ -2,6 +2,7 @@
 namespace VovanVE\HtmlTemplate\caching;
 
 use VovanVE\HtmlTemplate\base\CodeFragmentInterface;
+use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 
 interface CachedEntryInterface extends CodeFragmentInterface
 {
@@ -11,8 +12,8 @@ interface CachedEntryInterface extends CodeFragmentInterface
     public function getMeta(): ?string;
 
     /**
-     * @param array $params
+     * @param RuntimeHelperInterface $runtime
      * @return void
      */
-    public function run($params = []): void;
+    public function run($runtime): void;
 }

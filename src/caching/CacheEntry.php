@@ -2,7 +2,8 @@
 namespace VovanVE\HtmlTemplate\caching;
 
 use VovanVE\HtmlTemplate\base\CodeFragment;
-use VovanVE\HtmlTemplate\base\RuntimeEntryDummyInterface;
+use VovanVE\HtmlTemplate\runtime\RuntimeEntryDummyInterface;
+use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 
 abstract class CacheEntry extends CodeFragment implements CachedEntryInterface
 {
@@ -28,11 +29,11 @@ abstract class CacheEntry extends CodeFragment implements CachedEntryInterface
     }
 
     /**
-     * @param array $params
+     * @param RuntimeHelperInterface $runtime
      * @return void
      * @throws CacheConsistencyException
      */
-    public function run($params = []): void
+    public function run($runtime): void
     {
         $class = $this->getClassName();
         if (!class_exists($class, false)) {
@@ -47,7 +48,7 @@ abstract class CacheEntry extends CodeFragment implements CachedEntryInterface
 
         /** @var RuntimeEntryDummyInterface|string $dummy */
         $dummy = $class;
-        $dummy::run($params);
+        $dummy::run($runtime);
     }
 
     /**
