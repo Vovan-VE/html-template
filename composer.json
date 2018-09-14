@@ -9,6 +9,15 @@
       "email": "vovan-ve@yandex.ru"
     }
   ],
+  "scripts": {
+    "test": "vendor/bin/phpunit --verbose"
+  },
+  "archive": {
+    "exclude": [
+      "/tests/",
+      "/phpunit.xml.dist"
+    ]
+  },
   "minimum-stability": "stable",
   "require": {
     "php": "^7.1",

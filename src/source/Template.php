@@ -16,20 +16,19 @@ abstract class Template extends CodeFragment implements TemplateInterface
      */
     protected static function makeKey($name): string
     {
-        $result = strtr($name, '\\', '/');
-        $result = trim($result, '/');
-        return preg_replace('~/+~', '~', $result);
+        return $name;
     }
 
     /**
      * @param string $name
+     * @param $key
      */
-    public function __construct($name)
+    public function __construct($name, $key = null)
     {
         parent::__construct();
 
         $this->name = $name;
-        $this->key = static::makeKey($name);
+        $this->key = $key ?? $name;
     }
 
     /**

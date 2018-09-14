@@ -4,6 +4,11 @@ namespace VovanVE\HtmlTemplate\report;
 interface ReportInterface
 {
     /**
+     * @return string
+     */
+    public function getFile(): string;
+
+    /**
      * @return bool
      */
     public function isSuccess(): bool;

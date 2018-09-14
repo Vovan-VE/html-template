@@ -12,11 +12,12 @@ class TemplateFile extends Template
 
     /**
      * @param string $name
+     * @param string $key
      * @param string $filename
      */
-    public function __construct($name, $filename)
+    public function __construct($name, $key, $filename)
     {
-        parent::__construct($name);
+        parent::__construct($name, $key);
 
         $this->filename = $filename;
     }

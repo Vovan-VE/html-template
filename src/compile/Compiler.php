@@ -64,7 +64,6 @@ class Compiler implements CompilerInterface
             $report->addMessage(new Message(
                 MessageInterface::L_ERROR,
                 $e->getMessage(),
-                '',
                 CompilerHelper::calcLineNumber($source, $e->getOffset())
             ));
         }

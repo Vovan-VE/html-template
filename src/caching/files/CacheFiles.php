@@ -64,9 +64,12 @@ _REGEXP;
      */
     public function getEntry($key): ?CachedEntryInterface
     {
-        return $this->loadedEntries[$key]
-            ?? ($this->loadedEntries[$key] = $this->loadEntry($key) ?? false)
-            ?: null;
+        return
+            (
+                $this->loadedEntries[$key]
+                ?? ($this->loadedEntries[$key] = $this->loadEntry($key) ?? false)
+            )
+                ?: null;
     }
 
     /**
@@ -144,7 +147,11 @@ _REGEXP;
     public function entryExists($key): bool
     {
         $entry = $this->loadedEntries[$key] ?? null;
-        if ($entry) {
+        if (false === $entry) {
+            return false;
+        }
+
+        if (null !== $entry) {
             $file = $entry->getFilename();
         } else {
             $hash = $this->makeHash($key);
@@ -218,12 +225,17 @@ _REGEXP;
             . " * Time: " . gmdate('Y-m-d H:i:s') . " GMT\n"
             . " */\n\n";
 
-        if ($this->classNamespace) {
-            $code .= "namespace {$this->classNamespace};\n\n";
+        $pos = strrpos($className, '\\');
+        if (false !== $pos) {
+            $ns = substr($className, 0, $pos);
+            $code .= "namespace $ns;\n\n";
+            $name = substr($className, $pos + 1);
+        } else {
+            $name = $className;
         }
 
         /** @uses RuntimeEntryDummyInterface::run() */
-        $code .= "class $className {\n"
+        $code .= "class $name {\n"
             . "    public static function run(\$runtime): void\n"
             . "    {\n"
             . "$content\n"

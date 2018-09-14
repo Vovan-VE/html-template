@@ -22,11 +22,6 @@ interface MessageInterface
     public function getMessage(): string;
 
     /**
-     * @return string
-     */
-    public function getFile(): string;
-
-    /**
      * @return int
      */
     public function getLine(): int;

@@ -3,8 +3,26 @@ namespace VovanVE\HtmlTemplate\report;
 
 class Report implements ReportInterface
 {
+    /** @var string */
+    private $file;
     /** @var array MessageInterface[][] */
     private $messages = [];
+
+    /**
+     * @param string $file
+     */
+    public function __construct($file = '')
+    {
+        $this->file = $file;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFile(): string
+    {
+        return $this->file;
+    }
 
     /**
      * @return bool
@@ -15,13 +33,13 @@ class Report implements ReportInterface
     }
 
     /**
-     * @param int $minLevel
+     * @param int|null $minLevel
      * @return iterable|MessageInterface[]
      */
-    public function getMessages($minLevel): iterable
+    public function getMessages($minLevel = null): iterable
     {
         foreach ($this->messages as $level => $messages) {
-            if ($level <= $minLevel) {
+            if (null === $minLevel || $level <= $minLevel) {
                 foreach ($messages as $message) {
                     yield $message;
                 }

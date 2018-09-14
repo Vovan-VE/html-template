@@ -3,8 +3,8 @@ namespace VovanVE\HtmlTemplate\source;
 
 abstract class TemplateProvider implements TemplateProviderInterface
 {
-    /** @var TemplateInterface[]  */
-    private $templates = [];
+    /** @var TemplateInterface[]|bool[]  */
+    protected $templates = [];
 
     /**
      */
@@ -19,7 +19,11 @@ abstract class TemplateProvider implements TemplateProviderInterface
      */
     public function getTemplate($name): TemplateInterface
     {
-        return $this->templates[$name] ?? ($this->templates[$name] = $this->fetchTemplate($name));
+        $template = $this->templates[$name] ?? ($this->templates[$name] = $this->fetchTemplate($name) ?? false);
+        if (false === $template) {
+            throw new TemplateNotFoundException('Template file was not found');
+        }
+        return $template;
     }
 
     /**
@@ -32,8 +36,7 @@ abstract class TemplateProvider implements TemplateProviderInterface
 
     /**
      * @param string $name
-     * @return TemplateInterface
-     * @throws TemplateNotFoundException
+     * @return TemplateInterface|null
      */
-    abstract protected function fetchTemplate($name): TemplateInterface;
+    abstract protected function fetchTemplate($name): ?TemplateInterface;
 }
