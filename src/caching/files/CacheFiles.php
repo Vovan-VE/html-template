@@ -238,7 +238,7 @@ _REGEXP;
         $code .= "class $name {\n"
             . "    public static function run(\$runtime): void\n"
             . "    {\n"
-            . "$content\n"
+            . "?" . ">$content<" . "?php\n"
             . "    }\n"
             . "}\n";
 

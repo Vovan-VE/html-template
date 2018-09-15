@@ -244,7 +244,7 @@ class Compiler implements CompilerInterface
                 /** @uses RuntimeHelperInterface::param() */
                 return '($runtime->param(' . var_export($name, true) . '))';
             },
-            'name' => self::A_BUBBLE,
+            'name' => $contentAsIs,
         ]);
     }
 }

@@ -56,10 +56,12 @@ class CacheFilesTest extends BaseTestCase
 
         foreach (self::KEYS as $key) {
             $code =
+                "<?php\n" .
                 "        if (" . var_export($key, true) . " !== \$runtime->param('key')) {\n".
                 "            throw new \\RuntimeException('Wrong code executed');\n".
                 "        }\n".
-                "        \$runtime->didRun();";
+                "        \$runtime->didRun();\n" .
+                "?>";
 
             /** @noinspection PhpUnhandledExceptionInspection */
             $copy->setEntry($key, $code, "Meta of: $key\n");

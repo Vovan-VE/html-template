@@ -6,36 +6,34 @@ Node    : Element
 Node    : Tag
 Node    : Text
 
-Element                     : LT ElementCode
+Element                     : .LT ElementCode
 ElementCode(begin)          : ElementBeginContent ElementEndMark
-ElementCode(end)            : SLASH ElementNameWS GT
-ElementEndMark(slash)       : SLASH GT
-ElementEndMark              : GT
+ElementCode(end)            : .SLASH ElementNameWS .GT
+ElementEndMark(slash)       : .SLASH .GT
+ElementEndMark              : .GT
 ElementBeginContent(attr)   : HtmlName HtmlAttributes
 ElementBeginContent         : HtmlName
-ElementNameWS               : HtmlName ws
+ElementNameWS               : HtmlName .ws
 ElementNameWS               : HtmlName
 HtmlAttributes(list)        : HtmlAttributes HtmlAttributeWS
-HtmlAttributes(init)        : ws
-HtmlAttributes(first)       : HtmlAttributeWS
-HtmlAttributeWS             : HtmlAttribute ws
+HtmlAttributes(init)        : .ws
+HtmlAttributeWS             : HtmlAttribute .ws
 HtmlAttributeWS             : HtmlAttribute
 HtmlAttribute(Value)        : HtmlName HtmlAttributeEqValue
 HtmlAttribute(Bool)         : HtmlName
-HtmlAttributeEqValue        : EQ HtmlAttributeValue
+HtmlAttributeEqValue        : .EQ HtmlAttributeValue
 HtmlAttributeValue(Expr)    : TagExpression
 HtmlAttributeValue          : HtmlQQString
 HtmlAttributeValue          : HtmlQString
 HtmlAttributeValue(Plain)   : HtmlPlainValue
 
-HtmlName(ns)        : HtmlSimpleName COLON HtmlSimpleName
+HtmlName(ns)        : HtmlSimpleName .COLON HtmlSimpleName
 HtmlName            : HtmlSimpleName
-HtmlSimpleName(d)   : HtmlSimpleName DASH HtmlNameWord
+HtmlSimpleName(d)   : HtmlSimpleName .DASH HtmlNameWord
 HtmlSimpleName      : HtmlNameWord
-HtmlNameWord        : /(?i)[a-z][a-z0-9]*+/
 
-HtmlQQString        : QQ HtmlQQContent QQ
-HtmlQQString(empty) : QQ QQ
+HtmlQQString        : .QQ HtmlQQContent .QQ
+HtmlQQString(empty) : .QQ .QQ
 HtmlQQContent(loop) : HtmlQQContent HtmlQQContentPart
 HtmlQQContent(first): HtmlQQContentPart
 HtmlQQContentPart   : HtmlQQText
@@ -44,10 +42,9 @@ HtmlQQText(loop)    : HtmlQQText HtmlQQTextPart
 HtmlQQText(first)   : HtmlQQTextPart
 HtmlQQTextPart      : HtmlFlowText
 HtmlQQTextPart      : HtmlQQTextPartSpec
-HtmlQQTextPartSpec  : /[<>']++/
 
-HtmlQString         : Q HtmlQContent Q
-HtmlQString(empty)  : Q Q
+HtmlQString         : .Q HtmlQContent .Q
+HtmlQString(empty)  : .Q .Q
 HtmlQContent(loop)  : HtmlQContent HtmlQContentPart
 HtmlQContent(first) : HtmlQContentPart
 HtmlQContentPart    : HtmlQText
@@ -56,18 +53,13 @@ HtmlQText(loop)     : HtmlQText HtmlQTextPart
 HtmlQText(first)    : HtmlQTextPart
 HtmlQTextPart       : HtmlFlowText
 HtmlQTextPart       : HtmlQTextPartSpec
-HtmlQTextPartSpec   : /[<>"]++/
 
-HtmlPlainValue  : /[^<>'"={}\s]++/
 
-HtmlFlowText    : /[^<>'"{}]++/
 
-Text                : EolWithWs InlineTextWithEolWs
+Text                : .EolWithWs InlineTextWithEolWs
 Text                : InlineTextWithEolWs
-InlineTextWithEolWs : InlineText EolWithWs
+InlineTextWithEolWs : InlineText .EolWithWs
 InlineTextWithEolWs : InlineText
-.EolWithWs          : /\h*+(?:\R\h*+)++/
-InlineText          : /(?:[^\s<>{}]++|\h++(?!\z|\R)|\{(?!\{)|\}(?!\}))++/
 
 Tag                     : .TagStart TagContinue
 TagExpression           : .TagStart WsTagExpressionContinue
@@ -75,23 +67,22 @@ TagContinue(comment)    : .CommentTagContinue
 TagContinue             : WsTagContinue
 CommentTagContinue      : CommentTagSharp .CommentTagContent CommentTagEnd
 CommentTagContinue      : CommentTagSharp CommentTagEnd
-CommentTagContent       : /(?:[^#]++|#(?!\}\}))++/
-WsTagContinue           : ws TagNormalContinue
+WsTagContinue           : .ws TagNormalContinue
 WsTagContinue           : TagNormalContinue
 TagNormalContinue(Expr) : TagExpressionContinue
-TagNormalContinue(St)   : StatementMark StatementContinue
-WsTagExpressionContinue : ws TagExpressionContinue
+TagNormalContinue(St)   : .StatementMark StatementContinue
+WsTagExpressionContinue : .ws TagExpressionContinue
 WsTagExpressionContinue : TagExpressionContinue
 TagExpressionContinue   : Expression .WsTagEnd
 StatementContinue(I)    : InlineStatementContinue
 InlineStatementContinue : InlineStatement .WsTagEnd
-WsTagEnd                : ws TagEnd
+WsTagEnd                : .ws TagEnd
 WsTagEnd                : TagEnd
 TagStart        : "{{"
 TagEnd          : "}}"
 CommentTagSharp : "#"
 CommentTagEnd   : "#}}"
-.StatementMark  : "%"
+StatementMark   : "%"
 
 InlineStatement : name
 
@@ -99,14 +90,22 @@ Expression  : Variable
 
 Variable    : "$" name
 
-name    : /(?i)[a-z_][a-z_0-9]*+/
+LT      : "<"
+GT      : ">"
+SLASH   : "/"
+EQ      : "="
+COLON   : ":"
+DASH    : "-"
+QQ      : <">
+Q       : <'>
+ws      : /\s++/
 
-.LT     : "<"
-.GT     : ">"
-.SLASH  : "/"
-.EQ     : "="
-.COLON  : ":"
-.DASH   : "-"
-.QQ     : <">
-.Q      : <'>
-.ws     : /\s++/
+HtmlNameWord        : /(?i)[a-z][a-z0-9]*+/
+name                : /(?i)[a-z_][a-z_0-9]*+/
+InlineText          : /(?:[^\s<>{}]++|\h++(?!\z|\R)|\{(?!\{)|\}(?!\}))++/
+CommentTagContent   : /(?:[^#]++|#(?!\}\}))++/
+HtmlQQTextPartSpec  : /[<>']++/
+HtmlQTextPartSpec   : /[<>"]++/
+EolWithWs           : /\h*+(?:\R\h*+)++/
+HtmlPlainValue      : /[^<>'"={}\s]++/
+HtmlFlowText        : /[^<>'"{}]++/
