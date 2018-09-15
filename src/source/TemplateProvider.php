@@ -27,11 +27,12 @@ abstract class TemplateProvider implements TemplateProviderInterface
     }
 
     /**
-     * @return void
+     * @return $this
      */
-    public function clear(): void
+    public function clear(): self
     {
         $this->templates = [];
+        return $this;
     }
 
     /**

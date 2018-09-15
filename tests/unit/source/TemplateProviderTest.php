@@ -91,7 +91,7 @@ class TemplateProviderTest extends BaseTestCase
      */
     public function testClear($provider)
     {
-        $provider->clear();
+        $this->assertSame($provider, $provider->clear());
         $this->assertCount(0, $provider);
     }
 
