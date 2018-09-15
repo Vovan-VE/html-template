@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Vovan-VE/parser.git",
-                "reference": "01864431873b5e1388cb1d7362ae15afb9ffd9fc"
+                "reference": "cf5ab82e538217ad6813787fe487ce07ef1eae88"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Vovan-VE/parser/zipball/01864431873b5e1388cb1d7362ae15afb9ffd9fc",
-                "reference": "01864431873b5e1388cb1d7362ae15afb9ffd9fc",
+                "url": "https://api.github.com/repos/Vovan-VE/parser/zipball/cf5ab82e538217ad6813787fe487ce07ef1eae88",
+                "reference": "cf5ab82e538217ad6813787fe487ce07ef1eae88",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "LR(0) parser with state table generator for any LR(0) grammar",
-            "time": "2018-09-14T17:08:25+00:00"
+            "time": "2018-09-15T15:14:18+00:00"
         }
     ],
     "packages-dev": [

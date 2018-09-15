@@ -142,7 +142,8 @@ class Compiler implements CompilerInterface
         $emptyCode = function () {
             return '';
         };
-        return new ActionsMadeMap([
+
+        $map = new ActionsMadeMap([
             'Content(next)' => $concatTwoFragments,
             'Content(first)' => self::A_BUBBLE,
 
@@ -246,5 +247,9 @@ class Compiler implements CompilerInterface
             },
             'name' => $contentAsIs,
         ]);
+
+        $map->prune = true;
+
+        return $map;
     }
 }
