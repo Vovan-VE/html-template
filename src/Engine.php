@@ -1,10 +1,15 @@
 <?php
 namespace VovanVE\HtmlTemplate;
 
+use VovanVE\HtmlTemplate\caching\CachedEntryInterface;
 use VovanVE\HtmlTemplate\caching\CacheInterface;
+use VovanVE\HtmlTemplate\caching\CacheWriteException;
+use VovanVE\HtmlTemplate\compile\CompileException;
 use VovanVE\HtmlTemplate\compile\CompilerInterface;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
+use VovanVE\HtmlTemplate\source\TemplateNotFoundException;
 use VovanVE\HtmlTemplate\source\TemplateProviderInterface;
+use VovanVE\HtmlTemplate\source\TemplateReadException;
 
 class Engine implements EngineInterface
 {
@@ -87,14 +92,14 @@ class Engine implements EngineInterface
 
     /**
      * @param string $name
-     * @param array $params
+     * @return CachedEntryInterface
      * @throws ConfigException
-     * @throws caching\CacheWriteException
-     * @throws compile\CompileException
-     * @throws source\TemplateNotFoundException
-     * @throws source\TemplateReadException
+     * @throws CacheWriteException
+     * @throws CompileException
+     * @throws TemplateNotFoundException
+     * @throws TemplateReadException
      */
-    public function runTemplate($name, $params = []): void
+    public function compileTemplate($name): CachedEntryInterface
     {
         $templateProvider = $this->requireTemplateProvider();
         $cache = $this->requireCache();
@@ -109,8 +114,23 @@ class Engine implements EngineInterface
             $compiled = $compiler->compile($template);
             $cached = $cache->setEntry($key, $compiled->getContent(), $meta);
         }
+        return $cached;
+    }
 
-        $cached->run(new RuntimeHelper($params));
+    /**
+     * @param string $name
+     * @param array $params
+     * @throws ConfigException
+     * @throws CacheWriteException
+     * @throws CompileException
+     * @throws TemplateNotFoundException
+     * @throws TemplateReadException
+     */
+    public function runTemplate($name, $params = []): void
+    {
+        $this
+            ->compileTemplate($name)
+            ->run(new RuntimeHelper($params));
     }
 
     /**

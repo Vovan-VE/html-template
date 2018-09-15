@@ -1,9 +1,13 @@
 <?php
 namespace VovanVE\HtmlTemplate;
 
+use VovanVE\HtmlTemplate\caching\CachedEntryInterface;
 use VovanVE\HtmlTemplate\caching\CacheInterface;
+use VovanVE\HtmlTemplate\compile\CompileException;
 use VovanVE\HtmlTemplate\compile\CompilerInterface;
+use VovanVE\HtmlTemplate\source\TemplateNotFoundException;
 use VovanVE\HtmlTemplate\source\TemplateProviderInterface;
+use VovanVE\HtmlTemplate\source\TemplateReadException;
 
 interface EngineInterface
 {
@@ -42,6 +46,16 @@ interface EngineInterface
      * @throws ConfigException
      */
     public function setCompiler($compiler): self;
+
+    /**
+     * @param string $name
+     * @return CachedEntryInterface
+     * @throws ConfigException
+     * @throws CompileException
+     * @throws TemplateNotFoundException
+     * @throws TemplateReadException
+     */
+    public function compileTemplate($name): CachedEntryInterface;
 
     /**
      * @param string $name
