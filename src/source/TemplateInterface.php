@@ -8,6 +8,11 @@ interface TemplateInterface extends CodeFragmentInterface
     /**
      * @return string
      */
+    public function getName(): string;
+
+    /**
+     * @return string
+     */
     public function getUniqueKey(): string;
 
     /**

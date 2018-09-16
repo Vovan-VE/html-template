@@ -41,7 +41,7 @@ class Compiler implements CompilerInterface
         try {
             $result = $parser->parse($source, $actions)->made();
         } catch (\VovanVE\parser\SyntaxException $e) {
-            throw CompilerHelper::buildSyntaxException($source, $e);
+            throw CompilerHelper::buildSyntaxException($template, $e);
         }
         return new CompiledEntry($result);
     }
@@ -217,18 +217,20 @@ class Compiler implements CompilerInterface
             'HtmlFlowText' => $contentAsIs,
 
             'Text' => self::A_BUBBLE,
+            'Text(empty)' => $emptyCode,
             'InlineTextWithEolWs' => self::A_BUBBLE,
             'InlineText' => $contentAsIs,
 
             'Tag' => self::A_BUBBLE,
             'TagExpression' => self::A_BUBBLE,
-            'TagContinue(comment)' => $emptyCode,
-            'TagContinue' => self::A_BUBBLE,
+            'TagContinueAny(comment)' => $emptyCode,
+            'TagContinueAny' => self::A_BUBBLE,
             'WsTagContinue' => self::A_BUBBLE,
-            'TagNormalContinue(Expr)' => function ($expr) {
-                return '<' . '?= ' . $expr . ' ?' . '>';
+            'TagContinue(Empty)' => $emptyCode,
+            'TagContinue(Expr)' => function ($expr) use ($charset_at_runtime) {
+                return '<' . '?= $runtime::htmlEncode(' . $expr . ', ' . $charset_at_runtime . ') ?' . '>';
             },
-            'TagNormalContinue(St)' => function ($st) {
+            'TagContinue(St)' => function ($st) {
                 return '<' . '?php ' . $st . ' ?' . '>';
             },
             'WsTagExpressionContinue' => self::A_BUBBLE,

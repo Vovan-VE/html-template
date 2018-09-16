@@ -56,21 +56,23 @@ HtmlQTextPart       : HtmlQTextPartSpec
 
 
 
+Text(empty)         : .EolWithWs
 Text                : .EolWithWs InlineTextWithEolWs
 Text                : InlineTextWithEolWs
 InlineTextWithEolWs : InlineText .EolWithWs
 InlineTextWithEolWs : InlineText
 
-Tag                     : .TagStart TagContinue
+Tag                     : .TagStart TagContinueAny
 TagExpression           : .TagStart WsTagExpressionContinue
-TagContinue(comment)    : .CommentTagContinue
-TagContinue             : WsTagContinue
+TagContinueAny(comment) : .CommentTagContinue
+TagContinueAny          : WsTagContinue
 CommentTagContinue      : CommentTagSharp .CommentTagContent CommentTagEnd
 CommentTagContinue      : CommentTagSharp CommentTagEnd
-WsTagContinue           : .ws TagNormalContinue
-WsTagContinue           : TagNormalContinue
-TagNormalContinue(Expr) : TagExpressionContinue
-TagNormalContinue(St)   : .StatementMark StatementContinue
+WsTagContinue           : .ws TagContinue
+WsTagContinue           : TagContinue
+TagContinue(Empty)      : .TagEnd
+TagContinue(Expr)       : TagExpressionContinue
+TagContinue(St)         : .StatementMark StatementContinue
 WsTagExpressionContinue : .ws TagExpressionContinue
 WsTagExpressionContinue : TagExpressionContinue
 TagExpressionContinue   : Expression .WsTagEnd

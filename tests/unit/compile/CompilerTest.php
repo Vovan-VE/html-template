@@ -2,12 +2,18 @@
 namespace VovanVE\HtmlTemplate\tests\unit\compile;
 
 use VovanVE\HtmlTemplate\compile\Compiler;
-use VovanVE\HtmlTemplate\report\ReportInterface;
-use VovanVE\HtmlTemplate\source\Template;
+use VovanVE\HtmlTemplate\source\memory\TemplateString;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
+use VovanVE\HtmlTemplate\tests\helpers\conversion\Expect;
+use VovanVE\HtmlTemplate\tests\helpers\StringConversionTestTrait;
 
 class CompilerTest extends BaseTestCase
 {
+    use StringConversionTestTrait;
+
+    private const PATH = __DIR__ . '/cases';
+    private const EXTENSION = '.t';
+
     /**
      * @return Compiler
      */
@@ -18,50 +24,61 @@ class CompilerTest extends BaseTestCase
     }
 
     /**
-     * @param string $source
-     * @param string $expected
+     * @param Expect $expect
+     * @param string $filename
      * @param Compiler $compiler
-     * @dataProvider provideSuccessCompilations
+     * @throws \VovanVE\HtmlTemplate\compile\CompileException
+     * @dataProvider dataProvider
      * @depends testCreate
      */
-    public function testCompile($source, $expected, $compiler)
+    public function testCompile($expect, $filename, $compiler)
     {
-        $template = new class($source) extends Template {
-            public function __construct($content)
-            {
-                $key = strlen($content) < 32
-                    ? $content
-                    : md5($content);
-                parent::__construct($key, $key);
-                $this->content = $content;
-            }
+        $template = new TemplateString($expect->getSource(), $filename);
 
-            protected function fetchContent(): string
-            {
-                throw new \LogicException('Unused');
-            }
-
-            public function getMeta(): string
-            {
-                return $this->content;
-            }
-        };
-
-        $report = $compiler->syntaxCheck($template);
-
-        $this->assertInstanceOf(ReportInterface::class, $report);
-        $this->assertTrue($report->isSuccess(), 'syntax check status');
+        $expect->setExpectations($this);
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $result = $compiler->compile($template);
-        $this->assertEquals($expected, $result->getContent(), 'compiled code');
+
+        $expect->checkResult($this, $result->getContent());
     }
 
-    public function provideSuccessCompilations()
+    /**
+     * @param Compiler $compiler
+     * @depends testCreate
+     */
+    public function testCompileSpaces($compiler)
     {
-        yield [
-            'lorem <div id=foo  title={{ $label }}>ipsum {{ $content }} dolor</div>sit amet',
-            'lorem <div id="foo" title="<' . '?= $runtime::htmlEncode(($runtime->param(\'label\')), \'UTF-8\') ?' . '>">ipsum <' . '?= ($runtime->param(\'content\')) ?' . '> dolor</div>sit amet',
-        ];
+        // this test is separated to prevent stripping trailing whitespaces
+        // on file save
+
+        $template = new TemplateString(join("\n", [
+            '',
+            '  ',
+            'lorem,',
+            'ipsum,  ',
+            '  dolor,',
+            '  sit,  ',
+            '',
+            '  ',
+            '  ',
+            '',
+            '  amet,  ',
+            '',
+            'consectepture.',
+            '',
+            '  ',
+            '',
+        ]), '');
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $result = $compiler->compile($template);
+
+        $this->assertEquals('lorem,ipsum,dolor,sit,amet,consectepture.', $result->getContent());
+    }
+
+    public function dataProvider()
+    {
+        yield from $this->expectationDataProvider(self::PATH, self::EXTENSION);
     }
 }

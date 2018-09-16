@@ -2,18 +2,21 @@
 namespace VovanVE\HtmlTemplate\helpers;
 
 use VovanVE\HtmlTemplate\compile\SyntaxException;
+use VovanVE\HtmlTemplate\source\TemplateInterface;
 
 class CompilerHelper
 {
     const CONTEXT_CHARS = 30;
 
     /**
-     * @param string $code
+     * @param TemplateInterface $template
      * @param \VovanVE\parser\SyntaxException $e
      * @return SyntaxException
      */
-    public static function buildSyntaxException($code, $e): SyntaxException
+    public static function buildSyntaxException($template, $e): SyntaxException
     {
+        $code = $template->getContent();
+        $name = $template->getName();
         $offset = $e->getOffset();
         $length = strlen($code);
 
@@ -27,8 +30,17 @@ class CompilerHelper
             $before = '';
         }
 
+        $near = '' === $after
+            ? ''
+            : " near `$after`";
         $line = static::calcLineNumber($code, $offset);
-        return new SyntaxException($e->getMessage(), $line, $before, $after, $e);
+        return new SyntaxException(
+            $e->getMessage() . $near . " in `$name` at line $line",
+            $line,
+            $before,
+            $after,
+            $e
+        );
     }
 
     /**
