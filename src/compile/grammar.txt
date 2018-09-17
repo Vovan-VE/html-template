@@ -11,10 +11,11 @@ ElementCode(begin)          : ElementBeginContent ElementEndMark
 ElementCode(end)            : .SLASH ElementNameWS .GT
 ElementEndMark(slash)       : .SLASH .GT
 ElementEndMark              : .GT
-ElementBeginContent(attr)   : HtmlName HtmlAttributes
-ElementBeginContent         : HtmlName
-ElementNameWS               : HtmlName .ws
-ElementNameWS               : HtmlName
+ElementBeginContent(attr)   : ElementName HtmlAttributes
+ElementBeginContent         : ElementName
+ElementNameWS               : ElementName .ws
+ElementNameWS               : ElementName
+ElementName                 : HtmlName
 HtmlAttributes(list)        : HtmlAttributes HtmlAttributeWS
 HtmlAttributes(init)        : .ws
 HtmlAttributeWS             : HtmlAttribute .ws

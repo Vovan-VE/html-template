@@ -24,6 +24,10 @@ class Compiler implements CompilerInterface
     private $parser;
     /** @var ActionsMadeMap */
     private $actions;
+    /** @var string[] */
+    private $disabledElements = [];
+    /** @var bool[] */
+    private $disabledElementsHash = [];
 
     /**
      * @param TemplateInterface $template
@@ -69,6 +73,84 @@ class Compiler implements CompilerInterface
         }
 
         return $report;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getDisabledElements(): array
+    {
+        return $this->disabledElements;
+    }
+
+    /**
+     * @param string[] $elements
+     * @return $this
+     */
+    public function setDisabledElements($elements): self
+    {
+        $this->freeActionsMap();
+        $this->disabledElements = $elements;
+        $this->disabledElementsHash = [];
+        foreach ($elements as $name) {
+            $this->disabledElementsHash[strtolower($name)] = true;
+        }
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function hasElementNameRestrictions(): bool
+    {
+        return [] !== $this->disabledElementsHash;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    protected function isElementEnabled($name): bool
+    {
+        if ([] === $this->disabledElementsHash) {
+            return true;
+        }
+
+        if (isset($this->disabledElementsHash['*'])) {
+            return false;
+        }
+
+        $pos = strpos($name, ':');
+
+        if (false !== $pos) {
+            if (isset($this->disabledElementsHash['*:*'])) {
+                return false;
+            }
+            $ns_lc = strtolower(substr($name, 0, $pos));
+            if (isset($this->disabledElementsHash["$ns_lc:*"])) {
+                return false;
+            }
+            $name_lc = strtolower(substr($name, $pos + 1));
+            if (isset($this->disabledElementsHash["*:$name_lc"])) {
+                return false;
+            }
+            if (isset($this->disabledElementsHash["$ns_lc:$name_lc"])) {
+                return false;
+            }
+        } else {
+            if (isset($this->disabledElementsHash[':*'])) {
+                return false;
+            }
+            $name_lc = strtolower($name);
+            if (isset($this->disabledElementsHash[$name_lc])) {
+                return false;
+            }
+            if (isset($this->disabledElementsHash[":$name_lc"])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -165,6 +247,14 @@ class Compiler implements CompilerInterface
             'ElementBeginContent(attr)' => $concatTwoFragments,
             'ElementBeginContent' => self::A_BUBBLE,
             'ElementNameWS' => self::A_BUBBLE,
+            'ElementName' => ($this->hasElementNameRestrictions())
+                ? function ($name) {
+                    if ($this->isElementEnabled($name)) {
+                        return $name;
+                    }
+                    throw new CompileException("HTML Element `<$name>` is not allowed");
+                }
+                : self::A_BUBBLE,
 
             'HtmlAttributes(list)' => $concatTwoFragments,
             'HtmlAttributes(first)' => self::A_BUBBLE,
@@ -253,5 +343,10 @@ class Compiler implements CompilerInterface
         $map->prune = true;
 
         return $map;
+    }
+
+    protected function freeActionsMap(): void
+    {
+        $this->actions = null;
     }
 }
