@@ -28,6 +28,10 @@ class Compiler implements CompilerInterface
     private $disabledElements = [];
     /** @var bool[] */
     private $disabledElementsHash = [];
+    /** @var string[][] */
+    private $disabledAttributes = [];
+    /** @var bool[][] */
+    private $disabledAttributesHash = [];
 
     /**
      * @param TemplateInterface $template
@@ -99,6 +103,32 @@ class Compiler implements CompilerInterface
     }
 
     /**
+     * @return array
+     */
+    public function getDisabledAttributes(): array
+    {
+        return $this->disabledAttributes;
+    }
+
+    /**
+     * @param string[][] $attributesPerElements
+     * @return $this
+     */
+    public function setDisabledAttributes($attributesPerElements): self
+    {
+        $this->disabledAttributes = $attributesPerElements;
+        $this->disabledAttributesHash = [];
+        foreach ($attributesPerElements as $element => $attributes) {
+            $hash = [];
+            foreach ($attributes as $attribute) {
+                $hash[strtolower($attribute)] = true;
+            }
+            $this->disabledAttributesHash[strtolower($element)] = $hash;
+        }
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     protected function hasElementNameRestrictions(): bool
@@ -112,41 +142,74 @@ class Compiler implements CompilerInterface
      */
     protected function isElementEnabled($name): bool
     {
-        if ([] === $this->disabledElementsHash) {
+        return [] === $this->disabledElementsHash
+            || $this->isNameEnabledInHash($name, $this->disabledElementsHash);
+    }
+
+    /**
+     * @param string $element
+     * @param string[] $attributes
+     * @param string $blocked
+     * @return bool
+     */
+    protected function areElementAttributesEnabled($element, $attributes, &$blocked): bool
+    {
+        $elements = $this->disabledAttributesHash;
+        if ([] === $elements) {
             return true;
         }
 
-        if (isset($this->disabledElementsHash['*'])) {
-            return false;
+        if (!empty($elements['*'])) {
+            if (!$this->areNamesEnabledInHash($attributes, $elements['*'], $blocked)) {
+                return false;
+            }
         }
 
-        $pos = strpos($name, ':');
+        $pos = strpos($element, ':');
 
         if (false !== $pos) {
-            if (isset($this->disabledElementsHash['*:*'])) {
-                return false;
+            if (!empty($elements['*:*'])) {
+                if (!$this->areNamesEnabledInHash($attributes, $elements['*:*'], $blocked)) {
+                    return false;
+                }
             }
-            $ns_lc = strtolower(substr($name, 0, $pos));
-            if (isset($this->disabledElementsHash["$ns_lc:*"])) {
-                return false;
+            $ns_lc = strtolower(substr($element, 0, $pos));
+            $ns_any_lc = "$ns_lc:*";
+            if (!empty($elements[$ns_any_lc])) {
+                if (!$this->areNamesEnabledInHash($attributes, $elements[$ns_any_lc], $blocked)) {
+                    return false;
+                }
             }
-            $name_lc = strtolower(substr($name, $pos + 1));
-            if (isset($this->disabledElementsHash["*:$name_lc"])) {
-                return false;
+            $name_lc = strtolower(substr($element, $pos + 1));
+            $any_name_lc = "*:$name_lc";
+            if (!empty($elements[$any_name_lc])) {
+                if (!$this->areNamesEnabledInHash($attributes, $elements[$any_name_lc], $blocked)) {
+                    return false;
+                }
             }
-            if (isset($this->disabledElementsHash["$ns_lc:$name_lc"])) {
-                return false;
+            $ns_name_lc = "$ns_lc:$name_lc";
+            if (!empty($elements[$ns_name_lc])) {
+                if (!$this->areNamesEnabledInHash($attributes, $elements[$ns_name_lc], $blocked)) {
+                    return false;
+                }
             }
         } else {
-            if (isset($this->disabledElementsHash[':*'])) {
-                return false;
+            if (!empty($elements[':*'])) {
+                if (!$this->areNamesEnabledInHash($attributes, $elements[':*'], $blocked)) {
+                    return false;
+                }
             }
-            $name_lc = strtolower($name);
-            if (isset($this->disabledElementsHash[$name_lc])) {
-                return false;
+            $name_lc = strtolower($element);
+            if (!empty($elements[$name_lc])) {
+                if (!$this->areNamesEnabledInHash($attributes, $elements[$name_lc], $blocked)) {
+                    return false;
+                }
             }
-            if (isset($this->disabledElementsHash[":$name_lc"])) {
-                return false;
+            $colon_name_lc = ":$name_lc";
+            if (!empty($elements[$colon_name_lc])) {
+                if (!$this->areNamesEnabledInHash($attributes, $elements[$colon_name_lc], $blocked)) {
+                    return false;
+                }
             }
         }
 
@@ -244,7 +307,18 @@ class Compiler implements CompilerInterface
             'ElementEndMark' => function () {
                 return '>';
             },
-            'ElementBeginContent(attr)' => $concatTwoFragments,
+            'ElementBeginContent(attr)' => function ($element, $attributes) {
+                $result = $element;
+                $names = [];
+                foreach ($attributes as [$attribute, $code]) {
+                    $result .= $code;
+                    $names[$attribute] = $attribute;
+                }
+                if (!$this->areElementAttributesEnabled($element, $names, $blockedAttribute)) {
+                    throw new CompileException("HTML attribute `$blockedAttribute` is not allowed in element `<$element>`");
+                }
+                return $result;
+            },
             'ElementBeginContent' => self::A_BUBBLE,
             'ElementNameWS' => self::A_BUBBLE,
             'ElementName' => ($this->hasElementNameRestrictions())
@@ -256,14 +330,27 @@ class Compiler implements CompilerInterface
                 }
                 : self::A_BUBBLE,
 
-            'HtmlAttributes(list)' => $concatTwoFragments,
-            'HtmlAttributes(first)' => self::A_BUBBLE,
-            'HtmlAttributes(init)' => $emptyCode,
-            'HtmlAttributeWS' => function ($attr) {
-                return " $attr";
+            'HtmlAttributes(list)' => function ($list, $attr) {
+                $new_list = $list;
+                $new_list[] = $attr;
+                return $new_list;
             },
-            'HtmlAttribute(Value)' => $concatTwoFragments,
-            'HtmlAttribute(Bool)' => self::A_BUBBLE,
+            'HtmlAttributes(first)' => function ($attr) {
+                return [$attr];
+            },
+            'HtmlAttributes(init)' => function () {
+                return [];
+            },
+            'HtmlAttributeWS' => function ($attrData) {
+                [$name, $code] = $attrData;
+                return [$name, " $code"];
+            },
+            'HtmlAttribute(Value)' => function ($name, $eqValue) {
+                return [$name, $name . $eqValue];
+            },
+            'HtmlAttribute(Bool)' => function ($name) {
+                return [$name, $name];
+            },
             'HtmlAttributeEqValue' => function ($value) {
                 return "=$value";
             },
@@ -348,5 +435,60 @@ class Compiler implements CompilerInterface
     protected function freeActionsMap(): void
     {
         $this->actions = null;
+    }
+
+    /**
+     * @param string[] $names
+     * @param bool[] $hash
+     * @param string $blocked
+     * @return bool
+     */
+    protected function areNamesEnabledInHash($names, $hash, &$blocked): bool
+    {
+        foreach ($names as $name) {
+            if (!$this->isNameEnabledInHash($name, $hash)) {
+                $blocked = $name;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param string $name
+     * @param bool[] $hash
+     * @return bool
+     */
+    protected function isNameEnabledInHash($name, $hash): bool
+    {
+        if (isset($hash['*'])) {
+            return false;
+        }
+
+        $pos = strpos($name, ':');
+
+        if (false !== $pos) {
+            if (isset($hash['*:*'])) {
+                return false;
+            }
+            $ns_lc = strtolower(substr($name, 0, $pos));
+            if (isset($hash["$ns_lc:*"])) {
+                return false;
+            }
+            $name_lc = strtolower(substr($name, $pos + 1));
+            if (isset($hash["*:$name_lc"]) || isset($hash["$ns_lc:$name_lc"])) {
+                return false;
+            }
+        } else {
+            if (isset($hash[':*'])) {
+                return false;
+            }
+            $name_lc = strtolower($name);
+            if (isset($hash[$name_lc]) || isset($hash[":$name_lc"])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
