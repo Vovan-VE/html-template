@@ -1,20 +1,17 @@
 <?php
 namespace VovanVE\HtmlTemplate\caching\files;
 
+use VovanVE\HtmlTemplate\caching\Cache;
 use VovanVE\HtmlTemplate\caching\CachedEntryInterface;
 use VovanVE\HtmlTemplate\caching\CacheInterface;
 use VovanVE\HtmlTemplate\caching\CacheWriteException;
 use VovanVE\HtmlTemplate\ConfigException;
 use VovanVE\HtmlTemplate\runtime\RuntimeEntryDummyInterface;
 
-class CacheFiles implements CacheInterface
+class CacheFiles extends Cache implements CacheInterface
 {
     /** @var string */
     private $path;
-    /** @var string */
-    private $classNamespace = 'RuntimeTemplate';
-    /** @var string */
-    private $classNameFormat = 'Compiled_' . self::PLACEHOLDER_HASH;
 
     private const RE_BASENAME = <<<'_REGEXP'
 /
@@ -32,7 +29,6 @@ class CacheFiles implements CacheInterface
 _REGEXP;
 
     private const FILE_EXT = '.phpc';
-    private const PLACEHOLDER_HASH = '%{hash}';
 
 
     /** @var CacheFileEntry[]|bool[]  */
@@ -46,15 +42,11 @@ _REGEXP;
      */
     public function __construct($path, $classFormat, $classNS = '')
     {
+        parent::__construct($classFormat, $classNS);
+
         $this->path = rtrim($path, \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR;
         if (!is_dir($this->path)) {
             throw new ConfigException('Directory does not exist');
-        }
-
-        $this->classNamespace = $classNS;
-        $this->classNameFormat = $classFormat;
-        if (false === strpos($classFormat, self::PLACEHOLDER_HASH)) {
-            throw new ConfigException('Class format does not contain placeholder: ' . self::PLACEHOLDER_HASH);
         }
     }
 
@@ -178,15 +170,6 @@ _REGEXP;
 
     /**
      * @param string $key
-     * @return string
-     */
-    protected function makeHash($key): string
-    {
-        return md5($key);
-    }
-
-    /**
-     * @param string $key
      * @param string $hash
      * @return string
      */
@@ -199,22 +182,8 @@ _REGEXP;
     }
 
     /**
-     * @param string $hash
-     * @return string
-     */
-    protected function makeClassName($hash): string
-    {
-        $class = str_replace(self::PLACEHOLDER_HASH, $hash, $this->classNameFormat);
-        if ($this->classNamespace) {
-            return $this->classNamespace . '\\' . $class;
-        }
-        return $class;
-    }
-
-    /**
      * @param string $className
      * @param string $content
-     * @param string $key
      * @return string
      */
     private function makeClassContent($className, $content)
