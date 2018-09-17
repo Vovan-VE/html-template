@@ -1,4 +1,7 @@
 HTML Template Changelog
 =======================
 
-No releases yet.
+0.0.1
+-----
+
+First preview release.

@@ -1,6 +1,10 @@
 HTML Template
 =============
 
+[![Latest Stable Version](https://poser.pugx.org/vovan-ve/html-template/v/stable)](https://packagist.org/packages/vovan-ve/html-template)
+[![Build Status](https://travis-ci.org/Vovan-VE/html-template.svg)](https://travis-ci.org/Vovan-VE/html-template)
+[![License](https://poser.pugx.org/vovan-ve/html-template/license)](https://packagist.org/packages/vovan-ve/html-template)
+
 Simple context sensitive HTML template engine. Yes, yet another.
 
 Synopsis
