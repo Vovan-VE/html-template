@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "96e28f101be2c1fb7e5a774bcd601478",
+    "content-hash": "32c534c597a51faca11ec5dfe28d1ec7",
     "packages": [
         {
             "name": "vovan-ve/lr0-parser",
-            "version": "v1.5.x-dev",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Vovan-VE/parser.git",
-                "reference": "b259c8e086d97f70fc87788e73ce975b65925c36"
+                "reference": "22ff1e12c923c9fefe64de84bc55e833358611b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Vovan-VE/parser/zipball/b259c8e086d97f70fc87788e73ce975b65925c36",
-                "reference": "b259c8e086d97f70fc87788e73ce975b65925c36",
+                "url": "https://api.github.com/repos/Vovan-VE/parser/zipball/22ff1e12c923c9fefe64de84bc55e833358611b2",
+                "reference": "22ff1e12c923c9fefe64de84bc55e833358611b2",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "LR(0) parser with state table generator for any LR(0) grammar",
-            "time": "2018-09-17T04:02:42+00:00"
+            "time": "2018-09-17T08:47:16+00:00"
         }
     ],
     "packages-dev": [
@@ -1459,9 +1459,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "vovan-ve/lr0-parser": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

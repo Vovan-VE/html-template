@@ -1,0 +1,4 @@
+TODO
+====
+
+*   `CacheInterface::deleteAllEntries()`
