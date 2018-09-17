@@ -9,6 +9,7 @@ use VovanVE\HtmlTemplate\report\ReportInterface;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\source\TemplateInterface;
+use VovanVE\parser\actions\ActionAbortException;
 use VovanVE\parser\actions\ActionsMadeMap;
 use VovanVE\parser\grammar\Grammar;
 use VovanVE\parser\lexer\Lexer;
@@ -315,7 +316,7 @@ class Compiler implements CompilerInterface
                     $names[$attribute] = $attribute;
                 }
                 if (!$this->areElementAttributesEnabled($element, $names, $blockedAttribute)) {
-                    throw new CompileException("HTML attribute `$blockedAttribute` is not allowed in element `<$element>`");
+                    throw new ActionAbortException("HTML attribute `$blockedAttribute` is not allowed in element `<$element>`");
                 }
                 return $result;
             },
@@ -326,7 +327,7 @@ class Compiler implements CompilerInterface
                     if ($this->isElementEnabled($name)) {
                         return $name;
                     }
-                    throw new CompileException("HTML Element `<$name>` is not allowed");
+                    throw new ActionAbortException("HTML Element `<$name>` is not allowed");
                 }
                 : self::A_BUBBLE,
 
@@ -416,7 +417,7 @@ class Compiler implements CompilerInterface
             'InlineStatementContinue' => self::A_BUBBLE,
 
             'InlineStatement' => function (/*$name*/) {
-                throw new CompileException('Instructions is not implemented yet');
+                throw new ActionAbortException('Instructions is not implemented yet');
             },
 
             'Expression' => self::A_BUBBLE,

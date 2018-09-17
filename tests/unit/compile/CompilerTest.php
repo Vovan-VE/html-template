@@ -114,7 +114,7 @@ class CompilerTest extends BaseTestCase
                     );
                 } catch (CompileException $e) {
                     $this->assertRegExp(
-                        '/^HTML Element `<(?i:script)>` is not allowed$/D',
+                        '/^HTML Element `<(?i:script)>` is not allowed near `/D',
                         $e->getMessage(),
                         'thrown exception message'
                     );
@@ -138,8 +138,8 @@ class CompilerTest extends BaseTestCase
             $compiler->compile($template);
             $this->fail("Disabled HTML element ($disabled) did compiled from `$source`");
         } catch (CompileException $e) {
-            $this->assertEquals(
-                "HTML Element `<$blocked>` is not allowed",
+            $this->assertStringMatchesFormat(
+                "HTML Element `<$blocked>` is not allowed near `%s` in `` at line %d",
                 $e->getMessage(),
                 "thrown exception message"
             );
@@ -169,10 +169,13 @@ class CompilerTest extends BaseTestCase
 
         try {
             $compiler->compile($template);
-            $this->fail("Disabled HTML attribute ($disabledAttribute in element $disabledElement) did compiled from `$source`");
+            $this->fail(
+                "Disabled HTML attribute ($disabledAttribute in element $disabledElement) did compiled from `$source`"
+            );
         } catch (CompileException $e) {
-            $this->assertEquals(
-                "HTML attribute `$blockedAttribute` is not allowed in element `<$blockedElement>`",
+            $this->assertStringMatchesFormat(
+                "HTML attribute `$blockedAttribute` is not allowed in element `<$blockedElement>`"
+                . " near `%s` in `` at line %d",
                 $e->getMessage(),
                 "thrown exception message"
             );
