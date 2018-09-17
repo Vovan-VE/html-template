@@ -10,6 +10,12 @@ interface RuntimeHelperInterface
     public function param($name);
 
     /**
+     * @param string $name
+     * @return mixed
+     */
+    public function block($name);
+
+    /**
      * @param string $content
      * @param string $charset
      * @return string

@@ -8,7 +8,7 @@ class RuntimeHelperTest extends BaseTestCase
 {
     public function testParamPlain()
     {
-        $params = [
+        $values = [
             'int' => 42,
             'string' => "foo bar",
             'true' => true,
@@ -16,10 +16,31 @@ class RuntimeHelperTest extends BaseTestCase
             'null' => null,
             'array' => [97, "lol", []],
         ];
-        $runtime = new RuntimeHelper($params);
 
-        foreach ($params as $name => $value) {
-            $this->assertSame($value, $runtime->param($name), "param($name)");
+        foreach (
+            [
+                new RuntimeHelper($values),
+                (new RuntimeHelper)->setParams($values),
+            ]
+            as $runtime
+        ) {
+            /** @var RuntimeHelper $runtime */
+            foreach ($values as $name => $value) {
+                $this->assertSame($value, $runtime->param($name), "param($name)");
+            }
+        }
+
+        foreach (
+            [
+                new RuntimeHelper([], $values),
+                (new RuntimeHelper)->setBlocks($values),
+            ]
+            as $runtime
+        ) {
+            /** @var RuntimeHelper $runtime */
+            foreach ($values as $name => $value) {
+                $this->assertSame($value, $runtime->block($name), "block($name)");
+            }
         }
     }
 
@@ -28,7 +49,7 @@ class RuntimeHelperTest extends BaseTestCase
         $foo_calls_count = 0;
         $null_calls_count = 0;
 
-        $runtime = new RuntimeHelper([
+        $getters = [
             'foo' => function () use (&$foo_calls_count) {
                 ++$foo_calls_count;
                 return 42;
@@ -37,7 +58,10 @@ class RuntimeHelperTest extends BaseTestCase
                 ++$null_calls_count;
                 return null;
             },
-        ]);
+        ];
+
+        $runtime = (new RuntimeHelper)
+            ->setParams($getters);
 
         $this->assertSame(42, $runtime->param('foo'), 'get(foo) 1');
         $this->assertSame(42, $runtime->param('foo'), 'get(foo) 2');
@@ -48,12 +72,42 @@ class RuntimeHelperTest extends BaseTestCase
         $this->assertEquals(1, $null_calls_count, 'null calls count');
     }
 
+    public function testBlockClosure()
+    {
+        $foo_calls_count = 0;
+        $null_calls_count = 0;
+
+        $getters = [
+            'foo' => function () use (&$foo_calls_count) {
+                ++$foo_calls_count;
+                return 42;
+            },
+            'null' => function () use (&$null_calls_count) {
+                ++$null_calls_count;
+                return null;
+            },
+        ];
+
+        $runtime = (new RuntimeHelper)
+            ->setBlocks($getters);
+
+        $this->assertSame(42, $runtime->block('foo'), 'get(foo) 1');
+        $this->assertSame(42, $runtime->block('foo'), 'get(foo) 2');
+        $this->assertEquals(1, $foo_calls_count, 'foo calls count');
+
+        $this->assertNull($runtime->block('null'), 'get(null) 1');
+        $this->assertNull($runtime->block('null'), 'get(null) 2');
+        $this->assertEquals(1, $null_calls_count, 'null calls count');
+    }
+
     public function testUndefined()
     {
-        $runtime = new RuntimeHelper([]);
+        $runtime = new RuntimeHelper();
 
         $this->assertNull($runtime->param('foo'));
         $this->assertNull($runtime->param('bar'));
+        $this->assertNull($runtime->block('foo'));
+        $this->assertNull($runtime->block('baz'));
     }
 
     public function testHtmlEncode()

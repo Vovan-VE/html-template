@@ -5,12 +5,38 @@ class RuntimeHelper implements RuntimeHelperInterface
 {
     /** @var array */
     private $params;
-    /** @var array */
-    private $values = [];
 
-    public function __construct($params = [])
+    /** @var array */
+    private $blocks;
+
+    /**
+     * @param array $params
+     * @param array $blocks
+     */
+    public function __construct($params = [], $blocks = [])
     {
         $this->params = $params;
+        $this->blocks = $blocks;
+    }
+
+    /**
+     * @param array $params
+     * @return $this
+     */
+    public function setParams(array $params): self
+    {
+        $this->params = $params;
+        return $this;
+    }
+
+    /**
+     * @param array $blocks
+     * @return $this
+     */
+    public function setBlocks(array $blocks): self
+    {
+        $this->blocks = $blocks;
+        return $this;
     }
 
     /**
@@ -19,17 +45,16 @@ class RuntimeHelper implements RuntimeHelperInterface
      */
     public function param($name)
     {
-        if (isset($this->values[$name]) || array_key_exists($name, $this->values)) {
-            return $this->values[$name];
-        }
-        if (isset($this->params[$name]) || array_key_exists($name, $this->params)) {
-            $value = $this->params[$name];
-            if ($value instanceof \Closure) {
-                $value = $value();
-            }
-            return $this->values[$name] = $value;
-        }
-        return null;
+        return $this->getItemValue($name, $this->params);
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public function block($name)
+    {
+        return $this->getItemValue($name, $this->blocks);
     }
 
     /**
@@ -40,5 +65,23 @@ class RuntimeHelper implements RuntimeHelperInterface
     public static function htmlEncode($content, $charset = 'UTF-8'): string
     {
         return htmlspecialchars((string)$content, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
+    }
+
+    /**
+     * @param string $name
+     * @param array $definitions
+     * @return mixed
+     */
+    protected function getItemValue($name, &$definitions)
+    {
+        if (!isset($definitions[$name]) && !array_key_exists($name, $definitions)) {
+            return null;
+        }
+
+        $value = $definitions[$name];
+        if ($value instanceof \Closure) {
+            $value = $definitions[$name] = $value();
+        }
+        return $value;
     }
 }

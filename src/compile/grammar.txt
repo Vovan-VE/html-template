@@ -87,7 +87,8 @@ CommentTagSharp : "#"
 CommentTagEnd   : "#}}"
 StatementMark   : "%"
 
-InlineStatement : name
+InlineStatement(block)      : "block" .ws name
+InlineStatement(unknown)    : name
 
 Expression  : Variable
 

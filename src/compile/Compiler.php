@@ -416,8 +416,11 @@ class Compiler implements CompilerInterface
             'StatementContinue(I)' => self::A_BUBBLE,
             'InlineStatementContinue' => self::A_BUBBLE,
 
-            'InlineStatement' => function (/*$name*/) {
-                throw new ActionAbortException('Instructions is not implemented yet');
+            'InlineStatement(block)' => function ($name) {
+                return 'echo $runtime->block(' . var_export($name, true) . ')';
+            },
+            'InlineStatement(unknown)' => function ($name) {
+                throw new ActionAbortException("Unknown instructions `$name`");
             },
 
             'Expression' => self::A_BUBBLE,
