@@ -19,7 +19,7 @@ class Compiler implements CompilerInterface
 {
     private const A_BUBBLE = Parser::ACTION_BUBBLE_THE_ONLY;
 
-    private const VERSION = '0.0.1';
+    private const VERSION = '0.0.3-dev.1';
 
     public $charset = 'UTF-8';
 
@@ -428,7 +428,7 @@ class Compiler implements CompilerInterface
             'InlineStatementContinue' => self::A_BUBBLE,
 
             'InlineStatement(block)' => function ($name) {
-                return 'echo $runtime->block(' . var_export($name, true) . ')';
+                return '$runtime->renderBlock(' . var_export($name, true) . ')';
             },
             'InlineStatement(unknown)' => function ($name) {
                 throw new ActionAbortException("Unknown instructions `$name`");

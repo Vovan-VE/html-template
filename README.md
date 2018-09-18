@@ -31,7 +31,7 @@ Compiled code (wrapped manually only here):
 <a href="<?= $runtime::htmlEncode(($runtime->param('link')), 'UTF-8')
 ?>" title="Foo bar: <?= $runtime::htmlEncode(($runtime->param('title')), 'UTF-8')
 ?>"><span id="foobar" class="it parses html"><?= $runtime::htmlEncode(($runtime->param('description')), 'UTF-8')
-?></span><span><?php echo $runtime->block('content') ?></span></a>
+?></span><span><?php $runtime->renderBlock('content') ?></span></a>
 ```
 
 Creating data for the example template above:

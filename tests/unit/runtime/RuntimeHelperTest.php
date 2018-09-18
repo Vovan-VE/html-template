@@ -29,19 +29,6 @@ class RuntimeHelperTest extends BaseTestCase
                 $this->assertSame($value, $runtime->param($name), "param($name)");
             }
         }
-
-        foreach (
-            [
-                new RuntimeHelper([], $values),
-                (new RuntimeHelper)->setBlocks($values),
-            ]
-            as $runtime
-        ) {
-            /** @var RuntimeHelper $runtime */
-            foreach ($values as $name => $value) {
-                $this->assertSame($value, $runtime->block($name), "block($name)");
-            }
-        }
     }
 
     public function testParamClosure()
@@ -72,42 +59,49 @@ class RuntimeHelperTest extends BaseTestCase
         $this->assertEquals(1, $null_calls_count, 'null calls count');
     }
 
-    public function testBlockClosure()
-    {
-        $foo_calls_count = 0;
-        $null_calls_count = 0;
-
-        $getters = [
-            'foo' => function () use (&$foo_calls_count) {
-                ++$foo_calls_count;
-                return 42;
-            },
-            'null' => function () use (&$null_calls_count) {
-                ++$null_calls_count;
-                return null;
-            },
-        ];
-
-        $runtime = (new RuntimeHelper)
-            ->setBlocks($getters);
-
-        $this->assertSame(42, $runtime->block('foo'), 'get(foo) 1');
-        $this->assertSame(42, $runtime->block('foo'), 'get(foo) 2');
-        $this->assertEquals(1, $foo_calls_count, 'foo calls count');
-
-        $this->assertNull($runtime->block('null'), 'get(null) 1');
-        $this->assertNull($runtime->block('null'), 'get(null) 2');
-        $this->assertEquals(1, $null_calls_count, 'null calls count');
-    }
-
-    public function testUndefined()
+    public function testUndefinedParam()
     {
         $runtime = new RuntimeHelper();
 
         $this->assertNull($runtime->param('foo'));
         $this->assertNull($runtime->param('bar'));
-        $this->assertNull($runtime->block('foo'));
-        $this->assertNull($runtime->block('baz'));
+    }
+
+    public function testRenderBlockPlain()
+    {
+        $content = "foo <bar> lol </bar> baz\nqwe.";
+        $runtime = (new RuntimeHelper)->setBlocks([
+            'string' => $content,
+        ]);
+
+        $this->expectOutputString($content);
+        $runtime->renderBlock('string');
+    }
+
+    public function testRenderBlockClosure()
+    {
+        $calls_count = 0;
+
+        $runtime = (new RuntimeHelper)->setBlocks([
+            'foo' => function () use (&$calls_count) {
+                echo ++$calls_count, "\n";
+            },
+        ]);
+
+        $this->expectOutputString("1\n2\n");
+
+        $runtime->renderBlock('foo');
+        $runtime->renderBlock('foo');
+    }
+
+    public function testUndefinedBlock()
+    {
+        $runtime = new RuntimeHelper();
+
+        $this->expectOutputString('');
+
+        $runtime->renderBlock('foo');
+        $runtime->renderBlock('baz');
     }
 
     public function testHtmlEncode()

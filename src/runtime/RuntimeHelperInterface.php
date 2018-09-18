@@ -11,9 +11,9 @@ interface RuntimeHelperInterface
 
     /**
      * @param string $name
-     * @return mixed
+     * @return void
      */
-    public function block($name);
+    public function renderBlock($name): void;
 
     /**
      * @param string $content

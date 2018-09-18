@@ -52,9 +52,9 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @param string $name
      * @return mixed
      */
-    public function block($name)
+    public function renderBlock($name): void
     {
-        return $this->getItemValue($name, $this->blocks);
+        $this->renderItem($name, $this->blocks);
     }
 
     /**
@@ -83,5 +83,26 @@ class RuntimeHelper implements RuntimeHelperInterface
             $value = $definitions[$name] = $value();
         }
         return $value;
+    }
+
+    /**
+     * @param string $name
+     * @param array $definitions
+     * @return void
+     */
+    protected function renderItem($name, &$definitions): void
+    {
+        if (!isset($definitions[$name])) {
+            return;
+        }
+
+        $value = $definitions[$name];
+
+        if ($value instanceof \Closure) {
+            $value();
+            return;
+        }
+
+        echo $value;
     }
 }
