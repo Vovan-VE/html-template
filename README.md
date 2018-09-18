@@ -1,11 +1,11 @@
 HTML Template
 =============
 
-[![Latest Stable Version](https://poser.pugx.org/vovan-ve/html-template/v/stable)](https://packagist.org/packages/vovan-ve/html-template)
+[![Latest Stable Version](https://img.shields.io/packagist/v/vovan-ve/html-template.svg)](https://packagist.org/packages/vovan-ve/html-template)
 [![Build Status](https://travis-ci.org/Vovan-VE/html-template.svg)](https://travis-ci.org/Vovan-VE/html-template)
 [![License](https://poser.pugx.org/vovan-ve/html-template/license)](https://packagist.org/packages/vovan-ve/html-template)
 
-Simple context sensitive HTML template engine. Yes, yet another.
+Simple context sensitive HTML template engine. Yes, yet another one.
 
 Synopsis
 --------
@@ -48,7 +48,7 @@ Install through [composer][]:
 
 or add to `require` section in your composer.json:
 
-    "vovan-ve/html-template": "~0.0.1"
+    "vovan-ve/html-template": "~0.0.3"
 
 License
 -------
