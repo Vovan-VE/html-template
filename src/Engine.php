@@ -7,6 +7,7 @@ use VovanVE\HtmlTemplate\caching\CacheWriteException;
 use VovanVE\HtmlTemplate\compile\CompileException;
 use VovanVE\HtmlTemplate\compile\CompilerInterface;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
+use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\source\TemplateNotFoundException;
 use VovanVE\HtmlTemplate\source\TemplateProviderInterface;
 use VovanVE\HtmlTemplate\source\TemplateReadException;
@@ -120,18 +121,18 @@ class Engine implements EngineInterface
 
     /**
      * @param string $name
-     * @param array $params
+     * @param RuntimeHelperInterface|null $runtime
      * @throws ConfigException
      * @throws CacheWriteException
      * @throws CompileException
      * @throws TemplateNotFoundException
      * @throws TemplateReadException
      */
-    public function runTemplate($name, $params = []): void
+    public function runTemplate($name, $runtime = null): void
     {
         $this
             ->compileTemplate($name)
-            ->run(new RuntimeHelper($params));
+            ->run($runtime ?? new RuntimeHelper());
     }
 
     /**

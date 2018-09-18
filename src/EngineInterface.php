@@ -5,6 +5,7 @@ use VovanVE\HtmlTemplate\caching\CachedEntryInterface;
 use VovanVE\HtmlTemplate\caching\CacheInterface;
 use VovanVE\HtmlTemplate\compile\CompileException;
 use VovanVE\HtmlTemplate\compile\CompilerInterface;
+use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\source\TemplateNotFoundException;
 use VovanVE\HtmlTemplate\source\TemplateProviderInterface;
 use VovanVE\HtmlTemplate\source\TemplateReadException;
@@ -59,7 +60,7 @@ interface EngineInterface
 
     /**
      * @param string $name
-     * @param array $params
+     * @param RuntimeHelperInterface|null $runtime
      */
-    public function runTemplate($name, $params = []): void;
+    public function runTemplate($name, $runtime = null): void;
 }
