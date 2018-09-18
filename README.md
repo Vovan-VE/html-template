@@ -34,6 +34,44 @@ Compiled code (wrapped manually only here):
 ?></span><span><?php echo $runtime->block('content') ?></span></a>
 ```
 
+Creating data for the example template above:
+
+```php
+use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
+
+$runtime = (new RuntimeHelper)
+    // params are always text/plain
+    ->setParams([
+        'link' => 'http://example.com?foo=bar&lorem=ipsum#hash',
+        'title' => 'Lorem <ipsum> "dolor" sit amet',
+        // Closure will execute only once to obtain its return value
+        'description' => function () {
+            return 'Some <text/plain> content';
+        },
+    ])
+    // blocks are text/html
+    ->setBlocks([
+        'content' => "<samp>content</samp>'s block content<br/>is a HTML",
+    ]);
+```
+
+Run a template when everything is prepared. Here `foobar` is a template's name
+covered by Template Provider.
+
+```php
+$engine->runTemplate('foobar', $runtime);
+```
+
+The output for the example above (wrapped manually only here):
+
+```html
+<a href="http://example.com?foo=bar&amp;lorem=ipsum#hash"
+title="Foo bar: Lorem &lt;ipsum&gt; &quot;dolor&quot; sit amet"
+><span id="foobar" class="it parses html"
+>Some &lt;text/plain&gt; content</span><span
+><samp>content</samp>'s block content<br/>is a HTML</span></a>
+```
+
 Description
 -----------
 
