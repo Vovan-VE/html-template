@@ -80,13 +80,17 @@ TBW.
 Installation
 ------------
 
+> **ATTENTION!** While major version number is `0` still there MAY be
+> BC break changes in minor versions `0.NEXT`, but not in revision
+> versions `0.x.NEXT`.
+
 Install through [composer][]:
 
     composer require vovan-ve/html-template
 
 or add to `require` section in your composer.json:
 
-    "vovan-ve/html-template": "~0.0.3"
+    "vovan-ve/html-template": "~0.1.0"
 
 License
 -------

@@ -19,7 +19,7 @@ class Compiler implements CompilerInterface
 {
     private const A_BUBBLE = Parser::ACTION_BUBBLE_THE_ONLY;
 
-    private const VERSION = '0.0.3-dev.1';
+    private const VERSION = '0.1.0-dev.1';
 
     public $charset = 'UTF-8';
 
