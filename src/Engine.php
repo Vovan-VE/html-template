@@ -14,9 +14,6 @@ use VovanVE\HtmlTemplate\source\TemplateReadException;
 
 class Engine implements EngineInterface
 {
-    /** @deprecated */
-    const VERSION = '0.0.3-dev';
-
     /** @var TemplateProviderInterface|null */
     private $templateProvider;
 

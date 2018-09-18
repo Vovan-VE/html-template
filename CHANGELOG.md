@@ -13,7 +13,7 @@ HTML Template Changelog
     `renderBlock($name): void` instead to output content instead of returning it.
 *   BC break: `\Closure` to render a block will be called every time the block
     is rendered from template.
-*   Deprecated: constant `\VovanVE\HtmlTemplate\Engine::VERSION`.
+*   BC break: delete useless constant `\VovanVE\HtmlTemplate\Engine::VERSION`.
 
 0.0.1
 -----
