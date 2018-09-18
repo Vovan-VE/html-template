@@ -7,6 +7,11 @@ use VovanVE\HtmlTemplate\source\TemplateInterface;
 interface CompilerInterface
 {
     /**
+     * @return string
+     */
+    public function getMeta(): string;
+
+    /**
      * @param TemplateInterface $template
      * @return CompiledEntryInterface
      * @throws CompileException

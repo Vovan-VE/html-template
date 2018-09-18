@@ -19,6 +19,8 @@ class Compiler implements CompilerInterface
 {
     private const A_BUBBLE = Parser::ACTION_BUBBLE_THE_ONLY;
 
+    private const VERSION = '0.0.1';
+
     public $charset = 'UTF-8';
 
     /** @var Parser */
@@ -33,6 +35,15 @@ class Compiler implements CompilerInterface
     private $disabledAttributes = [];
     /** @var bool[][] */
     private $disabledAttributesHash = [];
+
+    /**
+     * @return string
+     */
+    public function getMeta(): string
+    {
+        return "Compiler: " . self::VERSION . "\n";
+    }
+
 
     /**
      * @param TemplateInterface $template

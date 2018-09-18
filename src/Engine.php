@@ -13,7 +13,8 @@ use VovanVE\HtmlTemplate\source\TemplateReadException;
 
 class Engine implements EngineInterface
 {
-    const VERSION = '0.0.1-dev';
+    /** @deprecated */
+    const VERSION = '0.0.3-dev';
 
     /** @var TemplateProviderInterface|null */
     private $templateProvider;
@@ -107,7 +108,7 @@ class Engine implements EngineInterface
 
         $template = $templateProvider->getTemplate($name);
         $key = $template->getUniqueKey();
-        $meta = $template->getMeta() . $this->getMeta();
+        $meta = $template->getMeta() . $this->getMeta() . $compiler->getMeta();
 
         $cached = $cache->getEntry($key);
         if (null === $cached || $cached->getMeta() !== $meta) {
@@ -177,7 +178,6 @@ class Engine implements EngineInterface
      */
     private function getMeta(): string
     {
-        return "compiler: " . self::VERSION . "\n"
-            . "PHP: " . \PHP_VERSION . "\n";
+        return "PHP: " . \PHP_VERSION . "\n";
     }
 }
