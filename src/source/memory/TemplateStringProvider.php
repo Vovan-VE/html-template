@@ -11,7 +11,7 @@ class TemplateStringProvider extends TemplateProvider
      * @param string $content
      * @return $this
      */
-    public function setTemplate($name, $content): self
+    public function setTemplate(string $name, string $content): self
     {
         $this->templates[$name] = new TemplateString($content, $name);
         return $this;
@@ -21,7 +21,7 @@ class TemplateStringProvider extends TemplateProvider
      * @param string $name
      * @return $this
      */
-    public function deleteTemplate($name): self
+    public function deleteTemplate(string $name): self
     {
         unset($this->templates[$name]);
         return $this;
@@ -31,7 +31,7 @@ class TemplateStringProvider extends TemplateProvider
      * @param string $name
      * @return TemplateInterface|null
      */
-    protected function fetchTemplate($name): ?TemplateInterface
+    protected function fetchTemplate(string $name): ?TemplateInterface
     {
         return null;
     }

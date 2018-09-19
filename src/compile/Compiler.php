@@ -48,9 +48,9 @@ class Compiler implements CompilerInterface
     /**
      * @param TemplateInterface $template
      * @return CompiledEntryInterface
-     * @throws CompileException
+     * @throws SyntaxException
      */
-    public function compile($template): CompiledEntryInterface
+    public function compile(TemplateInterface $template): CompiledEntryInterface
     {
         $parser = $this->getParser();
         $actions = $this->getActionsMap();
@@ -70,7 +70,7 @@ class Compiler implements CompilerInterface
      * @param TemplateInterface $template
      * @return ReportInterface
      */
-    public function syntaxCheck($template): ReportInterface
+    public function syntaxCheck(TemplateInterface $template): ReportInterface
     {
         $parser = $this->getParser();
 
@@ -103,7 +103,7 @@ class Compiler implements CompilerInterface
      * @param string[] $elements
      * @return $this
      */
-    public function setDisabledElements($elements): self
+    public function setDisabledElements(array $elements): self
     {
         $this->freeActionsMap();
         $this->disabledElements = $elements;
@@ -126,7 +126,7 @@ class Compiler implements CompilerInterface
      * @param string[][] $attributesPerElements
      * @return $this
      */
-    public function setDisabledAttributes($attributesPerElements): self
+    public function setDisabledAttributes(array $attributesPerElements): self
     {
         $this->disabledAttributes = $attributesPerElements;
         $this->disabledAttributesHash = [];
@@ -152,7 +152,7 @@ class Compiler implements CompilerInterface
      * @param string $name
      * @return bool
      */
-    protected function isElementEnabled($name): bool
+    protected function isElementEnabled(string $name): bool
     {
         return [] === $this->disabledElementsHash
             || $this->isNameEnabledInHash($name, $this->disabledElementsHash);
@@ -164,7 +164,7 @@ class Compiler implements CompilerInterface
      * @param string $blocked
      * @return bool
      */
-    protected function areElementAttributesEnabled($element, $attributes, &$blocked): bool
+    protected function areElementAttributesEnabled(string $element, array $attributes, &$blocked): bool
     {
         $elements = $this->disabledAttributesHash;
         if ([] === $elements) {
@@ -275,25 +275,25 @@ class Compiler implements CompilerInterface
         $charset_at_runtime = var_export($this->charset, true);
 
         $contentAsIs = \Closure::fromCallable('strval');
-        $htmlEncodeNow = function ($content) {
+        $htmlEncodeNow = function (string $content) {
             return RuntimeHelper::htmlEncode($content, $this->charset);
         };
-        //$htmlEncodeAtRuntime = function ($expr) use ($charset_at_runtime) {
+        //$htmlEncodeAtRuntime = function (string $expr) use ($charset_at_runtime) {
         //    /** @uses RuntimeHelper::htmlEncode() */
         //    return '($runtime::htmlEncode(' . $expr . ', ' . $charset_at_runtime . '))';
         //};
-        $echoHtmlEncodeAtRuntime = function ($expr) use ($charset_at_runtime) {
+        $echoHtmlEncodeAtRuntime = function (string $expr) use ($charset_at_runtime) {
             /** @uses RuntimeHelper::htmlEncode() */
             return '<' . '?= $runtime::htmlEncode(' . $expr . ', ' . $charset_at_runtime . ') ?' . '>';
         };
-        $concatTwoFragments = function ($a, $b) {
+        $concatTwoFragments = function (string $a, string $b) {
             return $a . $b;
         };
         $emptyStringAtRuntime = function () {
             return '""';
         };
 
-        $surroundWithQuotes = function ($code) {
+        $surroundWithQuotes = function (string $code) {
             return '"' . $code . '"';
         };
         $emptyCode = function () {
@@ -306,11 +306,11 @@ class Compiler implements CompilerInterface
 
             'Node' => self::A_BUBBLE,
 
-            'Element' => function ($code) {
+            'Element' => function (string $code) {
                 return "<$code";
             },
             'ElementCode(begin)' => $concatTwoFragments,
-            'ElementCode(end)' => function ($name) {
+            'ElementCode(end)' => function (string $name) {
                 return "/$name>";
             },
             'ElementEndMark(slash)' => function () {
@@ -319,7 +319,7 @@ class Compiler implements CompilerInterface
             'ElementEndMark' => function () {
                 return '>';
             },
-            'ElementBeginContent(attr)' => function ($element, $attributes) {
+            'ElementBeginContent(attr)' => function (string $element, array $attributes) {
                 $result = $element;
                 $names = [];
                 foreach ($attributes as [$attribute, $code]) {
@@ -334,7 +334,7 @@ class Compiler implements CompilerInterface
             'ElementBeginContent' => self::A_BUBBLE,
             'ElementNameWS' => self::A_BUBBLE,
             'ElementName' => ($this->hasElementNameRestrictions())
-                ? function ($name) {
+                ? function (string $name) {
                     if ($this->isElementEnabled($name)) {
                         return $name;
                     }
@@ -342,37 +342,38 @@ class Compiler implements CompilerInterface
                 }
                 : self::A_BUBBLE,
 
-            'HtmlAttributes(list)' => function ($list, $attr) {
+            'HtmlAttributes(list)' => function (array $list, array $attr) {
                 $new_list = $list;
                 $new_list[] = $attr;
                 return $new_list;
             },
-            'HtmlAttributes(first)' => function ($attr) {
+            'HtmlAttributes(first)' => function (array $attr) {
                 return [$attr];
             },
             'HtmlAttributes(init)' => function () {
                 return [];
             },
-            'HtmlAttributeWS' => function ($attrData) {
+            'HtmlAttributeWS' => function (array $attrData) {
                 [$name, $code] = $attrData;
                 return [$name, " $code"];
             },
-            'HtmlAttribute(Value)' => function ($name, $eqValue) {
+            'HtmlAttribute(Value)' => function (string $name, string $eqValue) {
                 return [$name, $name . $eqValue];
             },
-            'HtmlAttribute(Bool)' => function ($name) {
+            'HtmlAttribute(Bool)' => function (string $name) {
                 return [$name, $name];
             },
-            'HtmlAttributeEqValue' => function ($value) {
+            'HtmlAttributeEqValue' => function (string $value) {
                 return "=$value";
             },
-            'HtmlAttributeValue(Expr)' => function ($expr) use ($charset_at_runtime) {
+            'HtmlAttributeValue(Expr)' => function (string $expr) use ($charset_at_runtime) {
+                /** @uses RuntimeHelperInterface::htmlEncode() */
                 return '"<' . '?= $runtime::htmlEncode(' . $expr . ', ' . $charset_at_runtime . ') ?' . '>"';
             },
             'HtmlAttributeValue' => self::A_BUBBLE,
             'HtmlAttributeValue(Plain)' => $surroundWithQuotes,
 
-            'HtmlName(ns)' => function ($a, $b) {
+            'HtmlName(ns)' => function (string $a, string $b) {
                 return "$a:$b";
             },
             'HtmlName' => self::A_BUBBLE,
@@ -416,10 +417,11 @@ class Compiler implements CompilerInterface
             'TagContinueAny' => self::A_BUBBLE,
             'WsTagContinue' => self::A_BUBBLE,
             'TagContinue(Empty)' => $emptyCode,
-            'TagContinue(Expr)' => function ($expr) use ($charset_at_runtime) {
+            'TagContinue(Expr)' => function (string $expr) use ($charset_at_runtime) {
+                /** @uses RuntimeHelperInterface::htmlEncode() */
                 return '<' . '?= $runtime::htmlEncode(' . $expr . ', ' . $charset_at_runtime . ') ?' . '>';
             },
-            'TagContinue(St)' => function ($st) {
+            'TagContinue(St)' => function (string $st) {
                 return '<' . '?php ' . $st . ' ?' . '>';
             },
             'WsTagExpressionContinue' => self::A_BUBBLE,
@@ -427,15 +429,16 @@ class Compiler implements CompilerInterface
             'StatementContinue(I)' => self::A_BUBBLE,
             'InlineStatementContinue' => self::A_BUBBLE,
 
-            'InlineStatement(block)' => function ($name) {
+            'InlineStatement(block)' => function (string $name) {
+                /** @uses RuntimeHelperInterface::renderBlock() */
                 return '$runtime->renderBlock(' . var_export($name, true) . ')';
             },
-            'InlineStatement(unknown)' => function ($name) {
+            'InlineStatement(unknown)' => function (string $name) {
                 throw new ActionAbortException("Unknown instructions `$name`");
             },
 
             'Expression' => self::A_BUBBLE,
-            'Variable' => function ($name) {
+            'Variable' => function (string $name) {
                 /** @uses RuntimeHelperInterface::param() */
                 return '($runtime->param(' . var_export($name, true) . '))';
             },
@@ -458,7 +461,7 @@ class Compiler implements CompilerInterface
      * @param string $blocked
      * @return bool
      */
-    protected function areNamesEnabledInHash($names, $hash, &$blocked): bool
+    protected function areNamesEnabledInHash(array $names, array $hash, &$blocked): bool
     {
         foreach ($names as $name) {
             if (!$this->isNameEnabledInHash($name, $hash)) {
@@ -474,7 +477,7 @@ class Compiler implements CompilerInterface
      * @param bool[] $hash
      * @return bool
      */
-    protected function isNameEnabledInHash($name, $hash): bool
+    protected function isNameEnabledInHash(string $name, array $hash): bool
     {
         if (isset($hash['*'])) {
             return false;

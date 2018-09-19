@@ -21,7 +21,7 @@ class CacheFileEntry extends CacheEntry implements CachedEntryInterface
      * @param string $filename
      * @return string
      */
-    public static function makeMetaFilename($filename): string
+    public static function makeMetaFilename(string $filename): string
     {
         return $filename . self::META_FILENAME_TAG;
     }
@@ -30,7 +30,7 @@ class CacheFileEntry extends CacheEntry implements CachedEntryInterface
      * @param string $className
      * @param string $filename
      */
-    public function __construct($className, $filename)
+    public function __construct(string $className, string $filename)
     {
         parent::__construct($className);
 

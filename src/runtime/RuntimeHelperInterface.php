@@ -7,18 +7,18 @@ interface RuntimeHelperInterface
      * @param string $name
      * @return mixed
      */
-    public function param($name);
+    public function param(string $name);
 
     /**
      * @param string $name
      * @return void
      */
-    public function renderBlock($name): void;
+    public function renderBlock(string $name): void;
 
     /**
      * @param string $content
      * @param string $charset
      * @return string
      */
-    public static function htmlEncode($content, $charset = 'UTF-8'): string;
+    public static function htmlEncode($content, string $charset = 'UTF-8'): string;
 }

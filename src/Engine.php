@@ -34,13 +34,9 @@ class Engine implements EngineInterface
     /**
      * @param TemplateProviderInterface|null $provider
      * @return $this
-     * @throws ConfigException
      */
-    public function setTemplateProvider($provider): EngineInterface
+    public function setTemplateProvider(?TemplateProviderInterface $provider): EngineInterface
     {
-        if (null !== $provider && !$provider instanceof TemplateProviderInterface) {
-            throw new ConfigException('Template Provider must be ' . TemplateProviderInterface::class . ' or null');
-        }
         $this->templateProvider = $provider;
         return $this;
     }
@@ -56,13 +52,9 @@ class Engine implements EngineInterface
     /**
      * @param CacheInterface|null $cache
      * @return $this
-     * @throws ConfigException
      */
-    public function setCache($cache): EngineInterface
+    public function setCache(?CacheInterface $cache): EngineInterface
     {
-        if (null !== $cache && !$cache instanceof CacheInterface) {
-            throw new ConfigException('Cache must be ' . CacheInterface::class . ' or null');
-        }
         $this->cache = $cache;
         return $this;
     }
@@ -78,13 +70,9 @@ class Engine implements EngineInterface
     /**
      * @param CompilerInterface|null $compiler
      * @return $this
-     * @throws ConfigException
      */
-    public function setCompiler($compiler): EngineInterface
+    public function setCompiler(?CompilerInterface $compiler): EngineInterface
     {
-        if (null !== $compiler && !$compiler instanceof CompilerInterface) {
-            throw new ConfigException('Cache must be ' . CompilerInterface::class . ' or null');
-        }
         $this->compiler = $compiler;
         return $this;
     }
@@ -92,13 +80,13 @@ class Engine implements EngineInterface
     /**
      * @param string $name
      * @return CachedEntryInterface
-     * @throws ConfigException
      * @throws CacheWriteException
      * @throws CompileException
+     * @throws ConfigException
      * @throws TemplateNotFoundException
      * @throws TemplateReadException
      */
-    public function compileTemplate($name): CachedEntryInterface
+    public function compileTemplate(string $name): CachedEntryInterface
     {
         $templateProvider = $this->requireTemplateProvider();
         $cache = $this->requireCache();
@@ -119,13 +107,13 @@ class Engine implements EngineInterface
     /**
      * @param string $name
      * @param RuntimeHelperInterface|null $runtime
-     * @throws ConfigException
      * @throws CacheWriteException
      * @throws CompileException
+     * @throws ConfigException
      * @throws TemplateNotFoundException
      * @throws TemplateReadException
      */
-    public function runTemplate($name, $runtime = null): void
+    public function runTemplate(string $name, ?RuntimeHelperInterface $runtime = null): void
     {
         $this
             ->compileTemplate($name)

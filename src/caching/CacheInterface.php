@@ -7,7 +7,7 @@ interface CacheInterface
      * @param string $key
      * @return CachedEntryInterface|null
      */
-    public function getEntry($key): ?CachedEntryInterface;
+    public function getEntry(string $key): ?CachedEntryInterface;
 
     /**
      * @param string $key
@@ -16,18 +16,18 @@ interface CacheInterface
      * @return CachedEntryInterface
      * @throws CacheWriteException
      */
-    public function setEntry($key, $content, $meta): CachedEntryInterface;
+    public function setEntry(string $key, string $content, string $meta): CachedEntryInterface;
 
     /**
      * @param string $key
      * @return void
      * @throws CacheWriteException
      */
-    public function deleteEntry($key): void;
+    public function deleteEntry(string $key): void;
 
     /**
      * @param string $key
      * @return bool
      */
-    public function entryExists($key): bool;
+    public function entryExists(string $key): bool;
 }

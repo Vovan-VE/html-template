@@ -13,8 +13,10 @@ class CompilerHelper
      * @param \VovanVE\parser\SyntaxException $e
      * @return SyntaxException
      */
-    public static function buildSyntaxException($template, $e): SyntaxException
-    {
+    public static function buildSyntaxException(
+        TemplateInterface $template,
+        \VovanVE\parser\SyntaxException $e
+    ): SyntaxException {
         $code = $template->getContent();
         $name = $template->getName();
         $offset = $e->getOffset();
@@ -48,7 +50,7 @@ class CompilerHelper
      * @param int $offset
      * @return int
      */
-    public static function calcLineNumber($code, $offset): int
+    public static function calcLineNumber(string $code, int $offset): int
     {
         if (!$offset) {
             return 1;

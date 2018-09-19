@@ -17,7 +17,7 @@ class ExpectSuccess extends Expect
      * @param bool $isFormat
      * @param string $message
      */
-    public function __construct($source, $expected, $isFormat, $message)
+    public function __construct(string $source, string $expected, bool $isFormat, string $message)
     {
         parent::__construct($source, $isFormat);
         $this->expected = $expected;
@@ -44,7 +44,7 @@ class ExpectSuccess extends Expect
      * @param BaseTestCase $test
      * @return void
      */
-    public function setExpectations($test): void
+    public function setExpectations(BaseTestCase $test): void
     {
     }
 
@@ -53,7 +53,7 @@ class ExpectSuccess extends Expect
      * @param string $result
      * @return void
      */
-    public function checkResult($test, $result): void
+    public function checkResult(BaseTestCase $test, string $result): void
     {
         if ($this->isFormat()) {
             $test::assertStringMatchesFormat($this->getExpected(), $result, $this->getMessage());

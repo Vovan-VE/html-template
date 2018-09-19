@@ -13,7 +13,7 @@ class TemplateFileProvider extends TemplateProvider
      * @param string $name
      * @return string
      */
-    protected static function makeKey($name): string
+    protected static function makeKey(string $name): string
     {
         $result = strtr($name, '\\', '/');
         $result = trim($result, '/');
@@ -23,7 +23,7 @@ class TemplateFileProvider extends TemplateProvider
     /**
      * @param string $path
      */
-    public function __construct($path)
+    public function __construct(string $path)
     {
         parent::__construct();
 
@@ -34,7 +34,7 @@ class TemplateFileProvider extends TemplateProvider
      * @param string $name
      * @return TemplateInterface|null
      */
-    protected function fetchTemplate($name): ?TemplateInterface
+    protected function fetchTemplate(string $name): ?TemplateInterface
     {
         $key = static::makeKey($name);
         $filename = $this->makeFileName($key);
@@ -48,7 +48,7 @@ class TemplateFileProvider extends TemplateProvider
      * @param string $key
      * @return string
      */
-    protected function makeFileName($key): string
+    protected function makeFileName(string $key): string
     {
         return $this->path . \DIRECTORY_SEPARATOR . $this->makeFileBaseName($key);
     }
@@ -57,7 +57,7 @@ class TemplateFileProvider extends TemplateProvider
      * @param string $key
      * @return string
      */
-    protected function makeFileBaseName($key): string
+    protected function makeFileBaseName(string $key): string
     {
         return $key;
     }

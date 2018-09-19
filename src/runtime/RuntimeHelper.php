@@ -13,7 +13,7 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @param array $params
      * @param array $blocks
      */
-    public function __construct($params = [], $blocks = [])
+    public function __construct(array $params = [], array $blocks = [])
     {
         $this->params = $params;
         $this->blocks = $blocks;
@@ -43,7 +43,7 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @param string $name
      * @return mixed
      */
-    public function param($name)
+    public function param(string $name)
     {
         return $this->getItemValue($name, $this->params);
     }
@@ -52,7 +52,7 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @param string $name
      * @return mixed
      */
-    public function renderBlock($name): void
+    public function renderBlock(string $name): void
     {
         $this->renderItem($name, $this->blocks);
     }
@@ -62,7 +62,7 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @param string $charset
      * @return string
      */
-    public static function htmlEncode($content, $charset = 'UTF-8'): string
+    public static function htmlEncode($content, string $charset = 'UTF-8'): string
     {
         return htmlspecialchars((string)$content, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
     }
@@ -72,7 +72,7 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @param array $definitions
      * @return mixed
      */
-    protected function getItemValue($name, &$definitions)
+    protected function getItemValue(string $name, array &$definitions)
     {
         if (!isset($definitions[$name]) && !array_key_exists($name, $definitions)) {
             return null;
@@ -90,7 +90,7 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @param array $definitions
      * @return void
      */
-    protected function renderItem($name, &$definitions): void
+    protected function renderItem(string $name, array $definitions): void
     {
         if (!isset($definitions[$name])) {
             return;

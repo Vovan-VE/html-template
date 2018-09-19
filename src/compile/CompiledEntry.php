@@ -8,7 +8,7 @@ class CompiledEntry extends CodeFragment implements CompiledEntryInterface
     /**
      * @param string $content
      */
-    public function __construct($content)
+    public function __construct(string $content)
     {
         parent::__construct();
 

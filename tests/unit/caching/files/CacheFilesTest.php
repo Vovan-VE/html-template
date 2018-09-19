@@ -19,7 +19,6 @@ class CacheFilesTest extends BaseTestCase
 
     /**
      * @return CacheFiles
-     * @throws \VovanVE\HtmlTemplate\ConfigException
      */
     public function testCreate(): CacheFiles
     {
@@ -33,7 +32,7 @@ class CacheFilesTest extends BaseTestCase
      * @return CacheFiles
      * @depends testCreate
      */
-    public function testGetOnEmpty($cache): CacheFiles
+    public function testGetOnEmpty(CacheFiles $cache): CacheFiles
     {
         $copy = clone $cache;
         foreach (self::KEYS as $key) {
@@ -48,7 +47,7 @@ class CacheFilesTest extends BaseTestCase
      * @depends testGetOnEmpty
      * @throws \VovanVE\HtmlTemplate\caching\CacheWriteException
      */
-    public function testSet($cache): CacheFiles
+    public function testSet(CacheFiles $cache): CacheFiles
     {
         $copy = clone $cache;
 
@@ -75,7 +74,7 @@ class CacheFilesTest extends BaseTestCase
      * @depends testCreate
      * @depends testSet
      */
-    public function testExistsWithData($orig, $copy)
+    public function testExistsWithData(CacheFiles $orig, CacheFiles $copy)
     {
         foreach (['orig' => $orig, 'copy' => $copy] as $which => $cache) {
             /** @var CacheFiles $cache */
@@ -94,7 +93,7 @@ class CacheFilesTest extends BaseTestCase
      * @depends testSet
      * @depends testExistsWithData
      */
-    public function testGetFulfilled($orig, $copy)
+    public function testGetFulfilled(CacheFiles $orig, CacheFiles $copy)
     {
         foreach (['orig' => $orig, 'copy' => $copy] as $which => $cache) {
             /** @var CacheFiles $cache */
@@ -119,7 +118,7 @@ class CacheFilesTest extends BaseTestCase
      * @depends testGetFulfilled
      * @throws \VovanVE\HtmlTemplate\caching\CacheWriteException
      */
-    public function testDelete($cache): CacheFiles
+    public function testDelete(CacheFiles $cache): CacheFiles
     {
         $this->expectNotToPerformAssertions();
         foreach (self::KEYS as $key) {
@@ -135,7 +134,7 @@ class CacheFilesTest extends BaseTestCase
      * @depends testCreate
      * @depends testDelete
      */
-    public function testExistsAfterDelete($orig, $copy)
+    public function testExistsAfterDelete(CacheFiles $orig, CacheFiles $copy)
     {
         foreach (['orig' => $orig, 'copy' => $copy] as $which => $cache) {
             /** @var CacheFiles $cache */

@@ -14,16 +14,16 @@ abstract class Template extends CodeFragment implements TemplateInterface
      * @param string $name
      * @return string
      */
-    protected static function makeKey($name): string
+    protected static function makeKey(string $name): string
     {
         return $name;
     }
 
     /**
      * @param string $name
-     * @param $key
+     * @param string|null $key
      */
-    public function __construct($name, $key = null)
+    public function __construct(string $name, ?string $key = null)
     {
         parent::__construct();
 

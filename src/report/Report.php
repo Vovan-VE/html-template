@@ -11,7 +11,7 @@ class Report implements ReportInterface
     /**
      * @param string $file
      */
-    public function __construct($file = '')
+    public function __construct(string $file = '')
     {
         $this->file = $file;
     }
@@ -36,7 +36,7 @@ class Report implements ReportInterface
      * @param int|null $minLevel
      * @return iterable|MessageInterface[]
      */
-    public function getMessages($minLevel = null): iterable
+    public function getMessages(?int $minLevel = null): iterable
     {
         foreach ($this->messages as $level => $messages) {
             if (null === $minLevel || $level <= $minLevel) {
@@ -51,7 +51,7 @@ class Report implements ReportInterface
      * @param MessageInterface $message
      * @return void
      */
-    public function addMessage($message): void
+    public function addMessage(MessageInterface $message): void
     {
         $level = $message->getLevel();
         if (isset($this->messages[$level])) {

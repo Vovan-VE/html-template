@@ -13,25 +13,25 @@ abstract class Cache implements CacheInterface
     private $classNameFormat = 'Compiled_' . self::PLACEHOLDER_HASH;
 
     /**
-     * @param string $path
      * @param string $classFormat
      * @param string $classNS
      * @throws ConfigException
      */
-    public function __construct($classFormat, $classNS = '')
+    public function __construct(string $classFormat, string $classNS = '')
     {
-        $this->classNamespace = $classNS;
-        $this->classNameFormat = $classFormat;
         if (false === strpos($classFormat, self::PLACEHOLDER_HASH)) {
             throw new ConfigException('Class format does not contain placeholder: ' . self::PLACEHOLDER_HASH);
         }
+
+        $this->classNamespace = $classNS;
+        $this->classNameFormat = $classFormat;
     }
 
     /**
      * @param string $hash
      * @return string
      */
-    protected function makeClassName($hash): string
+    protected function makeClassName(string $hash): string
     {
         $class = str_replace(self::PLACEHOLDER_HASH, $hash, $this->classNameFormat);
         if ($this->classNamespace) {
@@ -44,7 +44,7 @@ abstract class Cache implements CacheInterface
      * @param string $key
      * @return string
      */
-    protected function makeHash($key): string
+    protected function makeHash(string $key): string
     {
         return md5($key);
     }

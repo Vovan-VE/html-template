@@ -6,13 +6,14 @@ HTML Template Changelog
 
 *   **BC break**:
     *   Delete useless constant `\VovanVE\HtmlTemplate\Engine::VERSION`.
+    *   Almost all methods now has type hinting for arguments.
     *   Interface `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface` and
         implementation did delete method `block($name): mixed` and introduce new method
-        `renderBlock($name): void` instead to output content instead of returning it.
+        `renderBlock(string $name): void` instead to output content instead of returning it.
     *   Method `\VovanVE\HtmlTemplate\EngineInterface::runTemplate()` now receive
         optional `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface` in 2nd argument
         instead of just `array`.
-    *   Add method `\VovanVE\HtmlTemplate\compile\CompilerInterface::getMeta()`.
+    *   Add method `\VovanVE\HtmlTemplate\compile\CompilerInterface::getMeta(): string`.
     *   `\Closure` to render a block will be called every time the block
         is rendered from template.
 

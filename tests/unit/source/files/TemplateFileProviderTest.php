@@ -36,7 +36,7 @@ class TemplateFileProviderTest extends BaseTestCase
      * @param TemplateFileProvider $provider
      * @depends testCreate
      */
-    public function testSuccess($provider)
+    public function testSuccess(TemplateFileProvider $provider)
     {
         foreach (self::TEMPLATES as $name) {
             /** @noinspection PhpUnhandledExceptionInspection */
@@ -51,7 +51,7 @@ class TemplateFileProviderTest extends BaseTestCase
      * @param TemplateFileProvider $provider
      * @depends testCreate
      */
-    public function testNotFound($provider)
+    public function testNotFound(TemplateFileProvider $provider)
     {
         $this->expectException(TemplateNotFoundException::class);
         /** @noinspection PhpUnhandledExceptionInspection */
@@ -110,9 +110,9 @@ class TemplateFileProviderTest extends BaseTestCase
     }
 
     /**
-     * @param $path
+     * @param string $path
      */
-    protected static function cleanTempFiles($path): void
+    protected static function cleanTempFiles(string $path): void
     {
         foreach (new \DirectoryIterator($path) as $file) {
             if ($file->isFile() && preg_match('/\\.tpl$/D', $file->getBasename())) {

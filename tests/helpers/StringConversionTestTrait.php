@@ -12,7 +12,7 @@ trait StringConversionTestTrait
      * @param string $extension
      * @return iterable
      */
-    protected function expectationDataProvider($path, $extension): iterable
+    protected function expectationDataProvider(string $path, string $extension): iterable
     {
         $ext = strlen($extension);
 
@@ -38,7 +38,7 @@ trait StringConversionTestTrait
      * @param string $message
      * @return Expect
      */
-    protected function createExpectFromFile($filename, $message): Expect
+    protected function createExpectFromFile(string $filename, string $message): Expect
     {
         if (!file_exists($filename)) {
             throw new \InvalidArgumentException("File does not exist: $filename");
@@ -57,7 +57,7 @@ trait StringConversionTestTrait
      * @param string $message
      * @return Expect
      */
-    protected function createExpectFromContent($content, $message): Expect
+    protected function createExpectFromContent(string $content, string $message): Expect
     {
         $re = <<<'_REGEXP'
 /

@@ -32,7 +32,7 @@ class CacheStringsTest extends BaseTestCase
      * @return CacheStrings
      * @depends testCreate
      */
-    public function testGetOnEmpty($cache): CacheStrings
+    public function testGetOnEmpty(CacheStrings $cache): CacheStrings
     {
         $copy = clone $cache;
         foreach (self::KEYS as $key) {
@@ -46,7 +46,7 @@ class CacheStringsTest extends BaseTestCase
      * @return CacheStrings
      * @depends testGetOnEmpty
      */
-    public function testSet($cache): CacheStrings
+    public function testSet(CacheStrings $cache): CacheStrings
     {
         $copy = clone $cache;
 
@@ -72,7 +72,7 @@ class CacheStringsTest extends BaseTestCase
      * @return CacheStrings
      * @depends testSet
      */
-    public function testExistsWithData($cache): CacheStrings
+    public function testExistsWithData(CacheStrings $cache): CacheStrings
     {
         /** @var CacheStrings $cache */
         foreach (self::KEYS as $key) {
@@ -88,7 +88,7 @@ class CacheStringsTest extends BaseTestCase
      * @return CacheStrings
      * @depends testExistsWithData
      */
-    public function testGetFulfilled($cache): CacheStrings
+    public function testGetFulfilled(CacheStrings $cache): CacheStrings
     {
         foreach (self::KEYS as $key) {
             $entry = $cache->getEntry($key);
@@ -109,7 +109,7 @@ class CacheStringsTest extends BaseTestCase
      * @return CacheStrings
      * @depends testGetFulfilled
      */
-    public function testDelete($cache): CacheStrings
+    public function testDelete(CacheStrings $cache): CacheStrings
     {
         $this->expectNotToPerformAssertions();
         foreach (self::KEYS as $key) {
@@ -123,7 +123,7 @@ class CacheStringsTest extends BaseTestCase
      * @param CacheStrings $cache
      * @depends testDelete
      */
-    public function testExistsAfterDelete($cache)
+    public function testExistsAfterDelete(CacheStrings $cache)
     {
         /** @var CacheStrings $cache */
         foreach (self::KEYS as $key) {

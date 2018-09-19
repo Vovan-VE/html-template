@@ -40,7 +40,7 @@ _REGEXP;
      * @param string $classNS
      * @throws ConfigException
      */
-    public function __construct($path, $classFormat, $classNS = '')
+    public function __construct(string $path, string $classFormat, string $classNS = '')
     {
         parent::__construct($classFormat, $classNS);
 
@@ -54,7 +54,7 @@ _REGEXP;
      * @param string $key
      * @return CachedEntryInterface|null
      */
-    public function getEntry($key): ?CachedEntryInterface
+    public function getEntry(string $key): ?CachedEntryInterface
     {
         return
             (
@@ -71,7 +71,7 @@ _REGEXP;
      * @return CachedEntryInterface
      * @throws CacheWriteException
      */
-    public function setEntry($key, $content, $meta): CachedEntryInterface
+    public function setEntry(string $key, string $content, string $meta): CachedEntryInterface
     {
         $has = $this->loadedEntries[$key] ?? null;
         if ($has && $has->getMeta() === $meta) {
@@ -108,7 +108,7 @@ _REGEXP;
      * @return void
      * @throws CacheWriteException
      */
-    public function deleteEntry($key): void
+    public function deleteEntry(string $key): void
     {
         $entry = $this->loadedEntries[$key] ?? null;
         if ($entry) {
@@ -136,7 +136,7 @@ _REGEXP;
      * @param string $key
      * @return bool
      */
-    public function entryExists($key): bool
+    public function entryExists(string $key): bool
     {
         $entry = $this->loadedEntries[$key] ?? null;
         if (false === $entry) {
@@ -157,7 +157,7 @@ _REGEXP;
      * @param string $key
      * @return CachedEntryInterface|null
      */
-    protected function loadEntry($key): ?CachedEntryInterface
+    protected function loadEntry(string $key): ?CachedEntryInterface
     {
         $hash = $this->makeHash($key);
         $filename = $this->makeFilename($key, $hash);
@@ -173,7 +173,7 @@ _REGEXP;
      * @param string $hash
      * @return string
      */
-    protected function makeFilename($key, $hash): string
+    protected function makeFilename(string $key, string $hash): string
     {
         $basename = preg_match(self::RE_BASENAME, $key)
             ? $key
@@ -186,7 +186,7 @@ _REGEXP;
      * @param string $content
      * @return string
      */
-    private function makeClassContent($className, $content)
+    private function makeClassContent(string $className, string $content)
     {
         $code = '<' . "?php\n"
             . "/**\n"

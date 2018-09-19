@@ -14,7 +14,7 @@ class ExpectThrow extends Expect
      * @param bool $isFormat
      * @param string $message
      */
-    public function __construct($source, $isFormat, $message)
+    public function __construct(string $source, bool $isFormat, string $message)
     {
         // cannot set expected exception with format instead of regexp
         // cannot build regexp from format
@@ -32,7 +32,7 @@ class ExpectThrow extends Expect
      * @param BaseTestCase $test
      * @return void
      */
-    public function setExpectations($test): void
+    public function setExpectations(BaseTestCase $test): void
     {
         if ($this->isFormat()) {
             $match = $test::matches($this->getMessage());
@@ -63,7 +63,7 @@ class ExpectThrow extends Expect
      * @param string $result
      * @return void
      */
-    public function checkResult($test, $result): void
+    public function checkResult(BaseTestCase $test, string $result): void
     {
     }
 }

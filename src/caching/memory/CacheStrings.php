@@ -14,7 +14,7 @@ class CacheStrings extends Cache implements CacheInterface
      * @param string $key
      * @return CachedEntryInterface|null
      */
-    public function getEntry($key): ?CachedEntryInterface
+    public function getEntry(string $key): ?CachedEntryInterface
     {
         return $this->entries[$key] ?? null;
     }
@@ -25,7 +25,7 @@ class CacheStrings extends Cache implements CacheInterface
      * @param string $meta
      * @return CachedEntryInterface
      */
-    public function setEntry($key, $content, $meta): CachedEntryInterface
+    public function setEntry(string $key, string $content, string $meta): CachedEntryInterface
     {
         $has = $this->entries[$key] ?? null;
         if ($has && $has->getMeta() === $meta) {
@@ -44,7 +44,7 @@ class CacheStrings extends Cache implements CacheInterface
      * @param string $key
      * @return void
      */
-    public function deleteEntry($key): void
+    public function deleteEntry(string $key): void
     {
         unset($this->entries[$key]);
     }
@@ -53,7 +53,7 @@ class CacheStrings extends Cache implements CacheInterface
      * @param string $key
      * @return bool
      */
-    public function entryExists($key): bool
+    public function entryExists(string $key): bool
     {
         return isset($this->entries[$key]);
     }

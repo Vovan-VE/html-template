@@ -9,7 +9,7 @@ class TemplateString extends Template
      * @param string $content
      * @param string $name
      */
-    public function __construct($content, $name)
+    public function __construct(string $content, string $name)
     {
         parent::__construct($name, md5($content));
         $this->content = $content;

@@ -17,8 +17,13 @@ class SyntaxException extends CompileException
      * @param string $after
      * @param \Throwable|null $previous
      */
-    public function __construct($message = "", $errorLine = 0, $before = '', $after = '', \Throwable $previous = null)
-    {
+    public function __construct(
+        string $message = "",
+        int $errorLine = 0,
+        string $before = '',
+        string $after = '',
+        \Throwable $previous = null
+    ) {
         parent::__construct($message, 0, $previous);
         $this->errorLine = $errorLine;
         $this->before = $before;

@@ -32,7 +32,7 @@ class CompilerTest extends BaseTestCase
      * @dataProvider dataProvider
      * @depends testCreate
      */
-    public function testCompile($expect, $filename, $compiler)
+    public function testCompile(Expect $expect, string $filename, Compiler $compiler)
     {
         $template = new TemplateString($expect->getSource(), $filename);
 
@@ -48,7 +48,7 @@ class CompilerTest extends BaseTestCase
      * @param Compiler $compiler
      * @depends testCreate
      */
-    public function testCompileSpaces($compiler)
+    public function testCompileSpaces(Compiler $compiler)
     {
         // this test is separated to prevent stripping trailing whitespaces
         // on file save
@@ -129,7 +129,7 @@ class CompilerTest extends BaseTestCase
      * @param string $blocked
      * @dataProvider dataProviderDisabledElements
      */
-    public function testDisabledElementsAll($disabled, $source, $blocked)
+    public function testDisabledElementsAll(string $disabled, string $source, string $blocked)
     {
         $compiler = (new Compiler)->setDisabledElements([$disabled]);
         $template = new TemplateString($source, '');
@@ -155,11 +155,11 @@ class CompilerTest extends BaseTestCase
      * @dataProvider dataProviderDisabledAttributes
      */
     public function testDisabledAttributes(
-        $disabledElement,
-        $disabledAttribute,
-        $source,
-        $blockedElement,
-        $blockedAttribute
+        string $disabledElement,
+        string $disabledAttribute,
+        string $source,
+        string $blockedElement,
+        string $blockedAttribute
     ) {
         $compiler = (new Compiler)
             ->setDisabledAttributes([

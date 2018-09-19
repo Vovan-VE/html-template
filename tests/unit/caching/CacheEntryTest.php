@@ -14,7 +14,7 @@ class CacheEntryTest extends BaseTestCase
         $entry = new class($className) extends CacheEntry {
             private $code;
 
-            public function __construct($className)
+            public function __construct(string $className)
             {
                 parent::__construct($className);
 

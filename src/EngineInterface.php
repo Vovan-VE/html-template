@@ -20,9 +20,8 @@ interface EngineInterface
     /**
      * @param TemplateProviderInterface|null $provider
      * @return $this
-     * @throws ConfigException
      */
-    public function setTemplateProvider($provider): self;
+    public function setTemplateProvider(?TemplateProviderInterface $provider): self;
 
     /**
      * @return CacheInterface
@@ -32,9 +31,8 @@ interface EngineInterface
     /**
      * @param CacheInterface|null $cache
      * @return $this
-     * @throws ConfigException
-    */
-    public function setCache($cache): self;
+     */
+    public function setCache(?CacheInterface $cache): self;
 
     /**
      * @return CompilerInterface
@@ -44,9 +42,8 @@ interface EngineInterface
     /**
      * @param CompilerInterface|null $compiler
      * @return $this
-     * @throws ConfigException
      */
-    public function setCompiler($compiler): self;
+    public function setCompiler(?CompilerInterface $compiler): self;
 
     /**
      * @param string $name
@@ -56,11 +53,12 @@ interface EngineInterface
      * @throws TemplateNotFoundException
      * @throws TemplateReadException
      */
-    public function compileTemplate($name): CachedEntryInterface;
+    public function compileTemplate(string $name): CachedEntryInterface;
 
     /**
      * @param string $name
      * @param RuntimeHelperInterface|null $runtime
+     * @throws ConfigException
      */
-    public function runTemplate($name, $runtime = null): void;
+    public function runTemplate(string $name, ?RuntimeHelperInterface $runtime = null): void;
 }

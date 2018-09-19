@@ -13,7 +13,7 @@ class CacheStringEntry extends CacheEntry
      * @param string $content
      * @param string|null $meta
      */
-    public function __construct($className, $content, $meta)
+    public function __construct(string $className, string $content, ?string $meta)
     {
         parent::__construct($className);
         $this->content = $content;
