@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "vovan-ve/lr0-parser",
-            "version": "v1.5.0",
+            "version": "v1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Vovan-VE/parser.git",
-                "reference": "22ff1e12c923c9fefe64de84bc55e833358611b2"
+                "reference": "95315113c3d3c84523031d8ac87df104d8b461b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Vovan-VE/parser/zipball/22ff1e12c923c9fefe64de84bc55e833358611b2",
-                "reference": "22ff1e12c923c9fefe64de84bc55e833358611b2",
+                "url": "https://api.github.com/repos/Vovan-VE/parser/zipball/95315113c3d3c84523031d8ac87df104d8b461b9",
+                "reference": "95315113c3d3c84523031d8ac87df104d8b461b9",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,7 @@
                 }
             ],
             "description": "LR(0) parser with state table generator for any LR(0) grammar",
-            "time": "2018-09-17T08:47:16+00:00"
+            "time": "2018-09-19T17:08:15+00:00"
         }
     ],
     "packages-dev": [

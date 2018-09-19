@@ -1,3 +1,3 @@
 foo < bar
 ---- THROW% ----
-Unexpected <ws " ">; expected: <SLASH>, <HtmlNameWord> near ` bar` in `%s` at line 1
+Unexpected <ws " ">; expected: "/" or <HtmlNameWord> near ` bar` in `%s` at line 1

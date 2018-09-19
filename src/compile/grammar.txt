@@ -6,11 +6,11 @@ Node    : Element
 Node    : Tag
 Node    : Text
 
-Element                     : .LT ElementCode
+Element                     : "<" ElementCode
 ElementCode(begin)          : ElementBeginContent ElementEndMark
-ElementCode(end)            : .SLASH ElementNameWS .GT
-ElementEndMark(slash)       : .SLASH .GT
-ElementEndMark              : .GT
+ElementCode(end)            : "/" ElementNameWS ">"
+ElementEndMark(slash)       : "/" ">"
+ElementEndMark              : ">"
 ElementBeginContent(attr)   : ElementName HtmlAttributes
 ElementBeginContent         : ElementName
 ElementNameWS               : ElementName .ws
@@ -22,19 +22,19 @@ HtmlAttributeWS             : HtmlAttribute .ws
 HtmlAttributeWS             : HtmlAttribute
 HtmlAttribute(Value)        : HtmlName HtmlAttributeEqValue
 HtmlAttribute(Bool)         : HtmlName
-HtmlAttributeEqValue        : .EQ HtmlAttributeValue
+HtmlAttributeEqValue        : "=" HtmlAttributeValue
 HtmlAttributeValue(Expr)    : TagExpression
 HtmlAttributeValue          : HtmlQQString
 HtmlAttributeValue          : HtmlQString
 HtmlAttributeValue(Plain)   : HtmlPlainValue
 
-HtmlName(ns)        : HtmlSimpleName .COLON HtmlSimpleName
+HtmlName(ns)        : HtmlSimpleName ":" HtmlSimpleName
 HtmlName            : HtmlSimpleName
-HtmlSimpleName(d)   : HtmlSimpleName .DASH HtmlNameWord
+HtmlSimpleName(d)   : HtmlSimpleName "-" HtmlNameWord
 HtmlSimpleName      : HtmlNameWord
 
-HtmlQQString        : .QQ HtmlQQContent .QQ
-HtmlQQString(empty) : .QQ .QQ
+HtmlQQString        : <"> HtmlQQContent <">
+HtmlQQString(empty) : <"> <">
 HtmlQQContent(loop) : HtmlQQContent HtmlQQContentPart
 HtmlQQContent(first): HtmlQQContentPart
 HtmlQQContentPart   : HtmlQQText
@@ -44,8 +44,8 @@ HtmlQQText(first)   : HtmlQQTextPart
 HtmlQQTextPart      : HtmlFlowText
 HtmlQQTextPart      : HtmlQQTextPartSpec
 
-HtmlQString         : .Q HtmlQContent .Q
-HtmlQString(empty)  : .Q .Q
+HtmlQString         : <'> HtmlQContent <'>
+HtmlQString(empty)  : <'> <'>
 HtmlQContent(loop)  : HtmlQContent HtmlQContentPart
 HtmlQContent(first) : HtmlQContentPart
 HtmlQContentPart    : HtmlQText
@@ -55,37 +55,30 @@ HtmlQText(first)    : HtmlQTextPart
 HtmlQTextPart       : HtmlFlowText
 HtmlQTextPart       : HtmlQTextPartSpec
 
-
-
 Text(empty)         : .EolWithWs
 Text                : .EolWithWs InlineTextWithEolWs
 Text                : InlineTextWithEolWs
 InlineTextWithEolWs : InlineText .EolWithWs
 InlineTextWithEolWs : InlineText
 
-Tag                     : .TagStart TagContinueAny
-TagExpression           : .TagStart WsTagExpressionContinue
+Tag                     : "{{" TagContinueAny
+TagExpression           : "{{" WsTagExpressionContinue
 TagContinueAny(comment) : .CommentTagContinue
 TagContinueAny          : WsTagContinue
-CommentTagContinue      : CommentTagSharp .CommentTagContent CommentTagEnd
-CommentTagContinue      : CommentTagSharp CommentTagEnd
+CommentTagContinue      : "#" .CommentTagContent "#}}"
+CommentTagContinue      : "#" "#}}"
 WsTagContinue           : .ws TagContinue
 WsTagContinue           : TagContinue
-TagContinue(Empty)      : .TagEnd
+TagContinue(Empty)      : "}}"
 TagContinue(Expr)       : TagExpressionContinue
-TagContinue(St)         : .StatementMark StatementContinue
+TagContinue(St)         : "%" StatementContinue
 WsTagExpressionContinue : .ws TagExpressionContinue
 WsTagExpressionContinue : TagExpressionContinue
 TagExpressionContinue   : Expression .WsTagEnd
 StatementContinue(I)    : InlineStatementContinue
 InlineStatementContinue : InlineStatement .WsTagEnd
-WsTagEnd                : .ws TagEnd
-WsTagEnd                : TagEnd
-TagStart        : "{{"
-TagEnd          : "}}"
-CommentTagSharp : "#"
-CommentTagEnd   : "#}}"
-StatementMark   : "%"
+WsTagEnd                : .ws "}}"
+WsTagEnd                : "}}"
 
 InlineStatement(block)      : "block" .ws name
 InlineStatement(unknown)    : name
@@ -94,18 +87,9 @@ Expression  : Variable
 
 Variable    : "$" name
 
-LT      : "<"
-GT      : ">"
-SLASH   : "/"
-EQ      : "="
-COLON   : ":"
-DASH    : "-"
-QQ      : <">
-Q       : <'>
-ws      : /\s++/
-
 HtmlNameWord        : /(?i)[a-z][a-z0-9]*+/
 name                : /(?i)[a-z_][a-z_0-9]*+/
+ws                  : /\s++/
 InlineText          : /(?:[^\s<>{}]++|\h++(?!\z|\R)|\{(?!\{)|\}(?!\}))++/
 CommentTagContent   : /(?:[^#]++|#(?!\}\}))++/
 HtmlQQTextPartSpec  : /[<>']++/
