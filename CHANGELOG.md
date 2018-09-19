@@ -14,6 +14,8 @@ HTML Template Changelog
         optional `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface` in 2nd argument
         instead of just `array`.
     *   Add method `\VovanVE\HtmlTemplate\compile\CompilerInterface::getMeta(): string`.
+    *   Add method `checkTemplateSyntax(string $name): ReportInterface` to interface
+        `\VovanVE\HtmlTemplate\EngineInterface` and its implementation.
     *   `\Closure` to render a block will be called every time the block
         is rendered from template.
 

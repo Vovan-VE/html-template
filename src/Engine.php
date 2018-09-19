@@ -6,6 +6,7 @@ use VovanVE\HtmlTemplate\caching\CacheInterface;
 use VovanVE\HtmlTemplate\caching\CacheWriteException;
 use VovanVE\HtmlTemplate\compile\CompileException;
 use VovanVE\HtmlTemplate\compile\CompilerInterface;
+use VovanVE\HtmlTemplate\report\ReportInterface;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\source\TemplateNotFoundException;
@@ -102,6 +103,22 @@ class Engine implements EngineInterface
             $cached = $cache->setEntry($key, $compiled->getContent(), $meta);
         }
         return $cached;
+    }
+
+    /**
+     * @param string $name
+     * @return ReportInterface
+     * @throws ConfigException
+     * @throws TemplateNotFoundException
+     */
+    public function checkTemplateSyntax(string $name): ReportInterface
+    {
+        $templateProvider = $this->requireTemplateProvider();
+        $compiler = $this->requireCompiler();
+
+        $template = $templateProvider->getTemplate($name);
+
+        return $compiler->syntaxCheck($template);
     }
 
     /**

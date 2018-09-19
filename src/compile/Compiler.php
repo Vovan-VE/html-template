@@ -76,7 +76,7 @@ class Compiler implements CompilerInterface
 
         $source = $template->getContent();
 
-        $report = new Report();
+        $report = new Report($template->getName());
 
         try {
             $parser->parse($source);
