@@ -2,6 +2,7 @@ HTML Template
 =============
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/vovan-ve/html-template.svg)](https://packagist.org/packages/vovan-ve/html-template)
+[![Latest Dev Version](https://img.shields.io/packagist/vpre/vovan-ve/html-template.svg)](https://packagist.org/packages/vovan-ve/html-template)
 [![Build Status](https://travis-ci.org/Vovan-VE/html-template.svg)](https://travis-ci.org/Vovan-VE/html-template)
 [![License](https://poser.pugx.org/vovan-ve/html-template/license)](https://packagist.org/packages/vovan-ve/html-template)
 
