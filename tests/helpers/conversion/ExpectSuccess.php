@@ -42,14 +42,6 @@ class ExpectSuccess extends Expect
 
     /**
      * @param BaseTestCase $test
-     * @return void
-     */
-    public function setExpectations(BaseTestCase $test): void
-    {
-    }
-
-    /**
-     * @param BaseTestCase $test
      * @param string $result
      * @return void
      */

@@ -35,12 +35,16 @@ class CompilerTest extends BaseTestCase
     {
         $template = new TemplateString($expect->getSource(), $filename);
 
-        $expect->setExpectations($this);
+        try {
+            /** @noinspection PhpUnhandledExceptionInspection */
+            $result = $compiler->compile($template);
 
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $result = $compiler->compile($template);
-
-        $expect->checkResult($this, $result->getContent());
+            $expect->checkResult($this, $result->getContent());
+        } catch (\Exception $e) {
+            if (!$expect->caught($this, $e)) {
+                throw $e;
+            }
+        }
     }
 
     /**

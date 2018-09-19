@@ -35,14 +35,18 @@ abstract class Expect
 
     /**
      * @param BaseTestCase $test
-     * @return void
-     */
-    abstract public function setExpectations(BaseTestCase $test): void;
-
-    /**
-     * @param BaseTestCase $test
      * @param string $result
      * @return void
      */
     abstract public function checkResult(BaseTestCase $test, string $result): void;
+
+    /**
+     * @param BaseTestCase $test
+     * @param \Exception $e
+     * @return bool
+     */
+    public function caught(BaseTestCase $test, \Exception $e): bool
+    {
+        return false;
+    }
 }
