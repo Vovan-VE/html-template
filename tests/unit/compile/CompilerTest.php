@@ -1,8 +1,8 @@
 <?php
 namespace VovanVE\HtmlTemplate\tests\unit\compile;
 
-use VovanVE\HtmlTemplate\compile\CompileException;
 use VovanVE\HtmlTemplate\compile\Compiler;
+use VovanVE\HtmlTemplate\compile\SyntaxException;
 use VovanVE\HtmlTemplate\source\memory\TemplateString;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
 use VovanVE\HtmlTemplate\tests\helpers\conversion\Expect;
@@ -28,7 +28,6 @@ class CompilerTest extends BaseTestCase
      * @param Expect $expect
      * @param string $filename
      * @param Compiler $compiler
-     * @throws \VovanVE\HtmlTemplate\compile\CompileException
      * @dataProvider dataProvider
      * @depends testCreate
      */
@@ -112,7 +111,7 @@ class CompilerTest extends BaseTestCase
                         "Disabled HTML element (" . join(", ", $disabled)
                         . ") did compiled from `$source`"
                     );
-                } catch (CompileException $e) {
+                } catch (SyntaxException $e) {
                     $this->assertRegExp(
                         '/^HTML Element `<(?i:script)>` is not allowed near `/D',
                         $e->getMessage(),
@@ -137,7 +136,7 @@ class CompilerTest extends BaseTestCase
         try {
             $compiler->compile($template);
             $this->fail("Disabled HTML element ($disabled) did compiled from `$source`");
-        } catch (CompileException $e) {
+        } catch (SyntaxException $e) {
             $this->assertStringMatchesFormat(
                 "HTML Element `<$blocked>` is not allowed near `%s` in `` at line %d",
                 $e->getMessage(),
@@ -172,7 +171,7 @@ class CompilerTest extends BaseTestCase
             $this->fail(
                 "Disabled HTML attribute ($disabledAttribute in element $disabledElement) did compiled from `$source`"
             );
-        } catch (CompileException $e) {
+        } catch (SyntaxException $e) {
             $this->assertStringMatchesFormat(
                 "HTML attribute `$blockedAttribute` is not allowed in element `<$blockedElement>`"
                 . " near `%s` in `` at line %d",
