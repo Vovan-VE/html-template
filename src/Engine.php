@@ -110,6 +110,7 @@ class Engine implements EngineInterface
      * @return ReportInterface
      * @throws ConfigException
      * @throws TemplateNotFoundException
+     * @since 0.1.0
      */
     public function checkTemplateSyntax(string $name): ReportInterface
     {

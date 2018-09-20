@@ -89,6 +89,7 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @param string $name
      * @param array $definitions
      * @return void
+     * @since 0.1.0
      */
     protected function renderItem(string $name, array $definitions): void
     {
