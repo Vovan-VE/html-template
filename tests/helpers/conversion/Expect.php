@@ -35,10 +35,11 @@ abstract class Expect
 
     /**
      * @param BaseTestCase $test
+     * @param string $filename
      * @param string $result
      * @return void
      */
-    abstract public function checkResult(BaseTestCase $test, string $result): void;
+    abstract public function checkResult(BaseTestCase $test, string $filename, string $result): void;
 
     /**
      * @param BaseTestCase $test

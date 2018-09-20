@@ -315,19 +315,24 @@ class Compiler implements CompilerInterface
             'Element' => function (string $code) {
                 return "<$code";
             },
-            'ElementCode(begin)' => $concatTwoFragments,
-            'ElementCode(end)' => function (string $name) {
-                return "/$name>";
+            'ElementCode(begin)' => function (array $elementData, array $elementEnd) {
+                [$elementBegin, $code] = $elementData;
+                if ($elementEnd) {
+                    [$content, $elementEnd] = $elementEnd;
+                    if ($elementBegin !== $elementEnd) {
+                        throw new ActionAbortException("Unexpected closing tag `</$elementEnd>` instead of expected `</$elementBegin>`");
+                    }
+                    return $code . ">$content</$elementEnd>";
+                }
+                return $code . "/>";
             },
             'ElementCode(doctype)' => function (array $list) {
                 return '!DOCTYPE ' . join(' ', $list) . '>';
             },
-            'ElementEndMark(slash)' => function () {
-                return '/>';
+            'ElementEnd(single)' => function () {
+                return [];
             },
-            'ElementEndMark' => function () {
-                return '>';
-            },
+            'ElementEnd(block)' => self::A_BUBBLE,
             'ElementBeginContent(attr)' => function (string $element, array $attributes) {
                 $result = $element;
                 $names = [];
@@ -338,9 +343,18 @@ class Compiler implements CompilerInterface
                 if (!$this->areElementAttributesEnabled($element, $names, $blockedAttribute)) {
                     throw new ActionAbortException("HTML attribute `$blockedAttribute` is not allowed in element `<$element>`");
                 }
-                return $result;
+                return [$element, $result];
             },
-            'ElementBeginContent' => self::A_BUBBLE,
+            'ElementBeginContent' => function (string $element) {
+                return [$element, $element];
+            },
+            'BlockElementContinue' => function (string $content, string $element) {
+                return [$content, $element];
+            },
+            'BlockElementContinue(empty)' => function (string $element) {
+                return ['', $element];
+            },
+            'BlockElementClose' => self::A_BUBBLE,
             'ElementNameWS' => self::A_BUBBLE,
             'ElementName' => ($this->hasElementNameRestrictions())
                 ? function (string $name) {

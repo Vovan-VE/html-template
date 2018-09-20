@@ -7,11 +7,13 @@ Node    : Tag
 Node    : Text
 
 Element                     : "<" ElementCode
-ElementCode(begin)          : ElementBeginContent ElementEndMark
-ElementCode(end)            : "/" ElementNameWS ">"
+ElementCode(begin)          : ElementBeginContent ElementEnd
 ElementCode(doctype)        : "!" "DOCTYPE" .ws DoctypeContent ">"
-ElementEndMark(slash)       : "/" ">"
-ElementEndMark              : ">"
+ElementEnd(single)          : "/>"
+ElementEnd(block)           : ">" BlockElementContinue
+BlockElementContinue        : Content BlockElementClose
+BlockElementContinue(empty) : BlockElementClose
+BlockElementClose           : "</" ElementNameWS ">"
 ElementBeginContent(attr)   : ElementName HtmlAttributes
 ElementBeginContent         : ElementName
 ElementNameWS               : ElementName .ws

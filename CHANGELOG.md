@@ -18,6 +18,9 @@ HTML Template Changelog
         `\VovanVE\HtmlTemplate\EngineInterface` and its implementation.
     *   `\Closure` to render a block will be called every time the block
         is rendered from template.
+    *   HTML and XML tags now will parse in XML mode. This means that block elements
+        like `<div>` must be closed with corresponding end tags `</div>` with exactly
+        the same case, and single elements must be in form like `<img/>`.
 *   Add: `<!DOCTYPE...>` tag support.
 
 0.0.1
