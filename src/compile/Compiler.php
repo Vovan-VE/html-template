@@ -300,6 +300,11 @@ class Compiler implements CompilerInterface
         $emptyCode = function () {
             return '';
         };
+        $listAppendItem = function (array $list, $item) {
+            $new_list = $list;
+            $new_list[] = $item;
+            return $new_list;
+        };
 
         $map = new ActionsMadeMap([
             'Content(next)' => $concatTwoFragments,
@@ -313,6 +318,9 @@ class Compiler implements CompilerInterface
             'ElementCode(begin)' => $concatTwoFragments,
             'ElementCode(end)' => function (string $name) {
                 return "/$name>";
+            },
+            'ElementCode(doctype)' => function (array $list) {
+                return '!DOCTYPE ' . join(' ', $list) . '>';
             },
             'ElementEndMark(slash)' => function () {
                 return '/>';
@@ -343,11 +351,14 @@ class Compiler implements CompilerInterface
                 }
                 : self::A_BUBBLE,
 
-            'HtmlAttributes(list)' => function (array $list, array $attr) {
-                $new_list = $list;
-                $new_list[] = $attr;
-                return $new_list;
+            'DoctypeContent(list)' => $listAppendItem,
+            'DoctypeContent(first)' => function ($item) {
+                return [$item];
             },
+            'DoctypeContentItemWs' => self::A_BUBBLE,
+            'DoctypeContentItem' => self::A_BUBBLE,
+
+            'HtmlAttributes(list)' => $listAppendItem,
             'HtmlAttributes(first)' => function (array $attr) {
                 return [$attr];
             },
@@ -382,6 +393,8 @@ class Compiler implements CompilerInterface
             'HtmlSimpleName' => self::A_BUBBLE,
             'HtmlNameWord' => $contentAsIs,
 
+            'HtmlQQConst' => $surroundWithQuotes,
+            'HtmlQQConst(empty)' => $emptyStringAtRuntime,
             'HtmlQQString' => $surroundWithQuotes,
             'HtmlQQString(empty)' => $emptyStringAtRuntime,
             'HtmlQQContent(loop)' => $concatTwoFragments,
@@ -393,6 +406,8 @@ class Compiler implements CompilerInterface
             'HtmlQQTextPart' => self::A_BUBBLE,
             'HtmlQQTextPartSpec' => $htmlEncodeNow,
 
+            'HtmlQConst' => $surroundWithQuotes,
+            'HtmlQConst(empty)' => $emptyStringAtRuntime,
             'HtmlQString' => $surroundWithQuotes,
             'HtmlQString(empty)' => $emptyStringAtRuntime,
             'HtmlQContent(loop)' => $concatTwoFragments,

@@ -18,6 +18,7 @@ HTML Template Changelog
         `\VovanVE\HtmlTemplate\EngineInterface` and its implementation.
     *   `\Closure` to render a block will be called every time the block
         is rendered from template.
+*   Add: `<!DOCTYPE...>` tag support.
 
 0.0.1
 -----

@@ -9,6 +9,7 @@ Node    : Text
 Element                     : "<" ElementCode
 ElementCode(begin)          : ElementBeginContent ElementEndMark
 ElementCode(end)            : "/" ElementNameWS ">"
+ElementCode(doctype)        : "!" "DOCTYPE" .ws DoctypeContent ">"
 ElementEndMark(slash)       : "/" ">"
 ElementEndMark              : ">"
 ElementBeginContent(attr)   : ElementName HtmlAttributes
@@ -16,6 +17,13 @@ ElementBeginContent         : ElementName
 ElementNameWS               : ElementName .ws
 ElementNameWS               : ElementName
 ElementName                 : HtmlName
+DoctypeContent(list)        : DoctypeContent DoctypeContentItemWs
+DoctypeContent(first)       : DoctypeContentItemWs
+DoctypeContentItemWs        : DoctypeContentItem .ws
+DoctypeContentItemWs        : DoctypeContentItem
+DoctypeContentItem          : HtmlName
+DoctypeContentItem          : HtmlQQConst
+DoctypeContentItem          : HtmlQConst
 HtmlAttributes(list)        : HtmlAttributes HtmlAttributeWS
 HtmlAttributes(init)        : .ws
 HtmlAttributeWS             : HtmlAttribute .ws
@@ -33,6 +41,8 @@ HtmlName            : HtmlSimpleName
 HtmlSimpleName(d)   : HtmlSimpleName "-" HtmlNameWord
 HtmlSimpleName      : HtmlNameWord
 
+HtmlQQConst         : <"> HtmlQQText <">
+HtmlQQConst(empty)  : <"> <">
 HtmlQQString        : <"> HtmlQQContent <">
 HtmlQQString(empty) : <"> <">
 HtmlQQContent(loop) : HtmlQQContent HtmlQQContentPart
@@ -44,6 +54,8 @@ HtmlQQText(first)   : HtmlQQTextPart
 HtmlQQTextPart      : HtmlFlowText
 HtmlQQTextPart      : HtmlQQTextPartSpec
 
+HtmlQConst          : <'> HtmlQText <'>
+HtmlQConst(empty)   : <'> <'>
 HtmlQString         : <'> HtmlQContent <'>
 HtmlQString(empty)  : <'> <'>
 HtmlQContent(loop)  : HtmlQContent HtmlQContentPart
