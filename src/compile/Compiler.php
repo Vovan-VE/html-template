@@ -316,15 +316,19 @@ class Compiler implements CompilerInterface
                 return "<$code";
             },
             'ElementCode(begin)' => function (array $elementData, array $elementEnd) {
-                [$elementBegin, $code] = $elementData;
+                [$elementBegin, $attributes] = $elementData;
+                $result = $elementBegin;
+                $result .= join('', $attributes);
                 if ($elementEnd) {
                     [$content, $elementEnd] = $elementEnd;
                     if ($elementBegin !== $elementEnd) {
-                        throw new ActionAbortException("Unexpected closing tag `</$elementEnd>` instead of expected `</$elementBegin>`");
+                        throw new ActionAbortException(
+                            "Unexpected closing tag `</$elementEnd>` instead of expected `</$elementBegin>`"
+                        );
                     }
-                    return $code . ">$content</$elementEnd>";
+                    return $result . ">$content</$elementEnd>";
                 }
-                return $code . "/>";
+                return $result . "/>";
             },
             'ElementCode(doctype)' => function (array $list) {
                 return '!DOCTYPE ' . join(' ', $list) . '>';
@@ -334,19 +338,26 @@ class Compiler implements CompilerInterface
             },
             'ElementEnd(block)' => self::A_BUBBLE,
             'ElementBeginContent(attr)' => function (string $element, array $attributes) {
-                $result = $element;
+                $map = [];
                 $names = [];
                 foreach ($attributes as [$attribute, $code]) {
-                    $result .= $code;
+                    if (isset($map[$attribute])) {
+                        throw new ActionAbortException(
+                            "HTML attribute `$attribute` is duplicated in element `<$element>`"
+                        );
+                    }
+                    $map[$attribute] = $code;
                     $names[$attribute] = $attribute;
                 }
                 if (!$this->areElementAttributesEnabled($element, $names, $blockedAttribute)) {
-                    throw new ActionAbortException("HTML attribute `$blockedAttribute` is not allowed in element `<$element>`");
+                    throw new ActionAbortException(
+                        "HTML attribute `$blockedAttribute` is not allowed in element `<$element>`"
+                    );
                 }
-                return [$element, $result];
+                return [$element, $map];
             },
             'ElementBeginContent' => function (string $element) {
-                return [$element, $element];
+                return [$element, []];
             },
             'BlockElementContinue' => function (string $content, string $element) {
                 return [$content, $element];

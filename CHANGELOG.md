@@ -21,6 +21,7 @@ HTML Template Changelog
     *   HTML and XML tags now will parse in XML mode. This means that block elements
         like `<div>` must be closed with corresponding end tags `</div>` with exactly
         the same case, and single elements must be in form like `<img/>`.
+    *   HTML/XML attributes in elements now cannot be duplicated. Check is case sensitive.
 *   Add: `<!DOCTYPE...>` tag support.
 
 0.0.1
