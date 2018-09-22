@@ -57,7 +57,7 @@ class RuntimeHelper implements RuntimeHelperInterface
     /**
      * @param string $element
      * @param array $attributes
-     * @param array $content
+     * @param array|null $content
      * @return string
      * @since 0.1.0
      */

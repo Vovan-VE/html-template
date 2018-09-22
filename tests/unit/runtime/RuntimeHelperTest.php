@@ -83,4 +83,74 @@ class RuntimeHelperTest extends BaseTestCase
             $this->assertEquals($encoded, RuntimeHelper::htmlEncode($source), "at `$source`");
         }
     }
+
+    public function testHtmlDecodeEntity()
+    {
+        foreach (
+            [
+                '' => '',
+                'a' => 'a',
+                'a&lt;b' => 'a<b',
+                'a&gt;b' => 'a>b',
+                'a&quot;&amp;&#039;b' => 'a"&\'b',
+                'a&amp;amp;b' => 'a&amp;b',
+                'a&nbsp;b' => "a\u{A0}b",
+                'a&rarr;b' => 'a→b',
+            ]
+            as $source => $encoded
+        ) {
+            $this->assertEquals($encoded, RuntimeHelper::htmlDecodeEntity($source), "at `$source`");
+        }
+    }
+
+    /**
+     * @param string $element
+     * @param array $attributes
+     * @param array|null $content
+     * @param string $expect
+     * @dataProvider createElementDataProvider
+     */
+    public function testCreateElement($element, $attributes, $content, $expect)
+    {
+        $this->assertEquals($expect, RuntimeHelper::createElement($element, $attributes, $content));
+    }
+
+    public function createElementDataProvider()
+    {
+        return [
+            ['div', [], null, '<div/>'],
+            ['div', [], [], '<div></div>'],
+            ['div', [], ['a&lt;b'], '<div>a&lt;b</div>'],
+            ['div', [], ['a&lt;b', '<br/>'], '<div>a&lt;b<br/></div>'],
+            ['DIV', [], null, '<DIV/>'],
+            ['div', ['id' => 'foo'], null, '<div id="foo"/>'],
+            ['div', ['id' => 'foo'], [], '<div id="foo"></div>'],
+            ['div', ['foo' => 42], null, '<div foo="42"/>'],
+            ['div', ['foo' => 42], [], '<div foo="42"></div>'],
+            ['div', ['bar' => true], null, '<div bar/>'],
+            ['div', ['bar' => true], [], '<div bar></div>'],
+            ['div', ['lol' => false], null, '<div/>'],
+            ['div', ['lol' => false], [], '<div></div>'],
+            ['div', ['qux' => null], null, '<div/>'],
+            ['div', ['qux' => null], [], '<div></div>'],
+            ['div', ['id' => 'foo', 'foo' => 42], null, '<div id="foo" foo="42"/>'],
+            ['div', ['id' => 'foo', 'foo' => 42], [], '<div id="foo" foo="42"></div>'],
+            ['div', ['foo' => 42, 'id' => 'foo'], null, '<div foo="42" id="foo"/>'],
+            ['div', ['foo' => 42, 'id' => 'foo'], [], '<div foo="42" id="foo"></div>'],
+            ['div', ['id' => 'foo', 'foo' => 42, 'bar' => true, 'lol' => false, 'qux' => null], null,
+                '<div id="foo" foo="42" bar/>'],
+            ['div', ['id' => 'foo', 'foo' => 42, 'bar' => true, 'lol' => false, 'qux' => null], [],
+                '<div id="foo" foo="42" bar></div>'],
+            ['foo:bar', [], null, '<foo:bar/>'],
+            ['foo:bar', [], [], '<foo:bar></foo:bar>'],
+        ];
+    }
+
+    public function testCreateDocType()
+    {
+        $this->assertEquals('<!DOCTYPE foo>', RuntimeHelper::createDocType('foo'));
+        $this->assertEquals('<!DOCTYPE FOO>', RuntimeHelper::createDocType('FOO'));
+        $this->assertEquals('<!DOCTYPE foo "LOREM//IPSUM">', RuntimeHelper::createDocType('foo "LOREM//IPSUM"'));
+        $this->assertEquals('<!DOCTYPE foo "<&lt;&rarr;→">', RuntimeHelper::createDocType('foo "<&lt;&rarr;→"'));
+    }
 }
