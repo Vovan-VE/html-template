@@ -1,3 +1,3 @@
-<foo id="lorem"  name=ipsum title='dolor < sit " &#039; & &amp; amet > elit' disabled />
+<foo id="lorem"  name=ipsum title='dolor < sit " &#039; & &amp; &rarr; amet > elit' disabled />
 ---- OK ----
-<foo id="lorem" name="ipsum" title="dolor &lt; sit &quot; &#039; & &amp; amet &gt; elit" disabled/>
+($runtime::createElement('foo', ['id' => ('lorem'),'name' => 'ipsum','title' => ('dolor < sit " \' & & → amet > elit'),'disabled' => true]))

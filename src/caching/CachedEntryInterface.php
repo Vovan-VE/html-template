@@ -13,7 +13,7 @@ interface CachedEntryInterface extends CodeFragmentInterface
 
     /**
      * @param RuntimeHelperInterface $runtime
-     * @return void
+     * @return string
      */
-    public function run(RuntimeHelperInterface $runtime): void;
+    public function run(RuntimeHelperInterface $runtime): string;
 }

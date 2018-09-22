@@ -40,9 +40,9 @@ class CacheStringEntry extends CacheEntry
 
         /** @uses RuntimeEntryDummyInterface::run() */
         $code .= "class $name {\n"
-            . "    public static function run(\$runtime): void\n"
+            . "    public static function run(\$runtime): string\n"
             . "    {\n"
-            . "?" . ">" . $this->getContent() . "<" . "?php\n"
+            . "        return " . $this->getContent() . ";\n"
             . "    }\n"
             . "}\n";
 

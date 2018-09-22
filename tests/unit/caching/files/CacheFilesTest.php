@@ -54,13 +54,14 @@ class CacheFilesTest extends BaseTestCase
         $this->expectNotToPerformAssertions();
 
         foreach (self::KEYS as $key) {
+            /** @uses RuntimeCounter::didRun() */
             $code =
-                "<?php\n" .
-                "        if (" . var_export($key, true) . " !== \$runtime->param('key')) {\n".
-                "            throw new \\RuntimeException('Wrong code executed');\n".
-                "        }\n".
-                "        \$runtime->didRun();\n" .
-                "?>";
+                "(function () use (\$runtime) {\n".
+                "    if (" . var_export($key, true) . " !== \$runtime->param('key')) {\n".
+                "        throw new \\RuntimeException('Wrong code executed');\n".
+                "    }\n".
+                "    return (string)\$runtime->didRun();\n".
+                "})()";
 
             /** @noinspection PhpUnhandledExceptionInspection */
             $copy->setEntry($key, $code, "Meta of: $key\n");
@@ -104,8 +105,8 @@ class CacheFilesTest extends BaseTestCase
                 $runtime = new RuntimeCounter([
                     'key' => $key,
                 ]);
-                $entry->run($runtime);
-                $entry->run($runtime);
+                $this->assertEquals('1', $entry->run($runtime));
+                $this->assertEquals('2', $entry->run($runtime));
                 $this->assertEquals(2, $runtime->getRunsCount(), "`$key` in $which runs count");
             }
         }

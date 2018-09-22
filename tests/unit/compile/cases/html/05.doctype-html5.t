@@ -1,3 +1,3 @@
 <!DOCTYPE html>
 ---- OK ----
-<!DOCTYPE html>
+($runtime::createDocType('html'))

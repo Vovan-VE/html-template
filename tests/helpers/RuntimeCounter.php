@@ -8,9 +8,9 @@ class RuntimeCounter extends RuntimeHelper
     /** @var int */
     private $runsCount = 0;
 
-    public function didRun(): void
+    public function didRun(): int
     {
-        $this->runsCount++;
+        return ++$this->runsCount;
     }
 
     /**

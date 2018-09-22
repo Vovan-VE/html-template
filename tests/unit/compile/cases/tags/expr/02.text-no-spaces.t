@@ -1,3 +1,3 @@
 lorem{{$foo}}ipsum
 ---- OK ----
-lorem<?= $runtime::htmlEncode(($runtime->param('foo')), 'UTF-8') ?>ipsum
+('lorem' . ($runtime::htmlEncode(($runtime->param('foo')))) . 'ipsum')

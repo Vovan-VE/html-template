@@ -3,4 +3,4 @@ Lorem {{# comment #}} ipsum
 {{# ... { ... {{ ... # ... } ... }} ... #} ... #}} sit
 {{# comment {{# comment #}} amet
 ---- OK ----
-Lorem  ipsum dolor sit amet
+('Lorem ' . ' ipsum' . ' dolor' . ' sit' . ' amet')

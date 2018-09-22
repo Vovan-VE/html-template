@@ -67,43 +67,6 @@ class RuntimeHelperTest extends BaseTestCase
         $this->assertNull($runtime->param('bar'));
     }
 
-    public function testRenderBlockPlain()
-    {
-        $content = "foo <bar> lol </bar> baz\nqwe.";
-        $runtime = (new RuntimeHelper)->setBlocks([
-            'string' => $content,
-        ]);
-
-        $this->expectOutputString($content);
-        $runtime->renderBlock('string');
-    }
-
-    public function testRenderBlockClosure()
-    {
-        $calls_count = 0;
-
-        $runtime = (new RuntimeHelper)->setBlocks([
-            'foo' => function () use (&$calls_count) {
-                echo ++$calls_count, "\n";
-            },
-        ]);
-
-        $this->expectOutputString("1\n2\n");
-
-        $runtime->renderBlock('foo');
-        $runtime->renderBlock('foo');
-    }
-
-    public function testUndefinedBlock()
-    {
-        $runtime = new RuntimeHelper();
-
-        $this->expectOutputString('');
-
-        $runtime->renderBlock('foo');
-        $runtime->renderBlock('baz');
-    }
-
     public function testHtmlEncode()
     {
         foreach (

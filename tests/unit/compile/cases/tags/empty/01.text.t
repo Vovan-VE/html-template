@@ -3,4 +3,4 @@ Lorem {{ }} ipsum{{}}dolor {{
 {{}}  {{}}
 amet
 ---- OK ----
-Lorem  ipsumdolor  sit  amet
+('Lorem ' . ' ipsum' . 'dolor ' . ' sit' . '  ' . 'amet')

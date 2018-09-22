@@ -125,15 +125,16 @@ class Engine implements EngineInterface
     /**
      * @param string $name
      * @param RuntimeHelperInterface|null $runtime
+     * @return string
      * @throws CacheWriteException
      * @throws CompileException
      * @throws ConfigException
      * @throws TemplateNotFoundException
      * @throws TemplateReadException
      */
-    public function runTemplate(string $name, ?RuntimeHelperInterface $runtime = null): void
+    public function runTemplate(string $name, ?RuntimeHelperInterface $runtime = null): string
     {
-        $this
+        return $this
             ->compileTemplate($name)
             ->run($runtime ?? new RuntimeHelper());
     }

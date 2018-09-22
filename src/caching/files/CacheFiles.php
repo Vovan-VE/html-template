@@ -205,9 +205,9 @@ _REGEXP;
 
         /** @uses RuntimeEntryDummyInterface::run() */
         $code .= "class $name {\n"
-            . "    public static function run(\$runtime): void\n"
+            . "    public static function run(\$runtime): string\n"
             . "    {\n"
-            . "?" . ">$content<" . "?php\n"
+            . "        return $content;\n"
             . "    }\n"
             . "}\n";
 

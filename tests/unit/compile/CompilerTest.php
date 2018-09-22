@@ -78,7 +78,10 @@ class CompilerTest extends BaseTestCase
         /** @noinspection PhpUnhandledExceptionInspection */
         $result = $compiler->compile($template);
 
-        $this->assertEquals('lorem,ipsum,dolor,sit,amet,consectepture.', $result->getContent());
+        $this->assertEquals(
+            "('lorem,' . 'ipsum,' . 'dolor,' . 'sit,' . 'amet,' . 'consectepture.')",
+            $result->getContent()
+        );
     }
 
     public function testDisabledElements()

@@ -21,18 +21,26 @@ Template example:
         {{ $description }}
     </span>
     <span>
-        {{ %block content }}
+        {{#  #}}
     </span>
 </a>
 ```
 
-Compiled code (wrapped manually only here):
+Compiled code (formatted manually only here for demonstration):
 
 ```php
-<a href="<?= $runtime::htmlEncode(($runtime->param('link')), 'UTF-8')
-?>" title="Foo bar: <?= $runtime::htmlEncode(($runtime->param('title')), 'UTF-8')
-?>"><span id="foobar" class="it parses html"><?= $runtime::htmlEncode(($runtime->param('description')), 'UTF-8')
-?></span><span><?php $runtime->renderBlock('content') ?></span></a>
+($runtime::createElement('a', [
+    'href'  => ($runtime->param('link')),
+    'title' => ('Foo bar: ' . ($runtime->param('title')))
+], [
+    ($runtime::createElement('span', [
+        'id'    => 'foobar',
+        'class' => ('it parses html')
+    ], [
+        ($runtime::htmlEncode(($runtime->param('description'))))
+    ])),
+    ($runtime::createElement('span', [], []))
+]))
 ```
 
 Creating data for the example template above:
@@ -49,10 +57,6 @@ $runtime = (new RuntimeHelper)
         'description' => function () {
             return 'Some <text/plain> content';
         },
-    ])
-    // blocks are text/html
-    ->setBlocks([
-        'content' => "<samp>content</samp>'s block content<br/>is a HTML",
     ]);
 ```
 
@@ -60,7 +64,7 @@ Run a template when everything is prepared. Here `foobar` is a template's name
 covered by Template Provider.
 
 ```php
-$engine->runTemplate('foobar', $runtime);
+echo $engine->runTemplate('foobar', $runtime);
 ```
 
 The output for the example above (wrapped manually only here):
@@ -69,8 +73,7 @@ The output for the example above (wrapped manually only here):
 <a href="http://example.com?foo=bar&amp;lorem=ipsum#hash"
 title="Foo bar: Lorem &lt;ipsum&gt; &quot;dolor&quot; sit amet"
 ><span id="foobar" class="it parses html"
->Some &lt;text/plain&gt; content</span><span
-><samp>content</samp>'s block content<br/>is a HTML</span></a>
+>Some &lt;text/plain&gt; content</span><span></span></a>
 ```
 
 Description

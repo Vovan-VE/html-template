@@ -6,17 +6,14 @@ class RuntimeHelper implements RuntimeHelperInterface
     /** @var array */
     private $params;
 
-    /** @var array */
-    private $blocks;
+    private const CHARSET = 'UTF-8';
 
     /**
      * @param array $params
-     * @param array $blocks
      */
-    public function __construct(array $params = [], array $blocks = [])
+    public function __construct(array $params = [])
     {
         $this->params = $params;
-        $this->blocks = $blocks;
     }
 
     /**
@@ -30,16 +27,6 @@ class RuntimeHelper implements RuntimeHelperInterface
     }
 
     /**
-     * @param array $blocks
-     * @return $this
-     */
-    public function setBlocks(array $blocks): self
-    {
-        $this->blocks = $blocks;
-        return $this;
-    }
-
-    /**
      * @param string $name
      * @return mixed
      */
@@ -49,22 +36,65 @@ class RuntimeHelper implements RuntimeHelperInterface
     }
 
     /**
-     * @param string $name
-     * @return mixed
+     * @param string $content
+     * @return string
      */
-    public function renderBlock(string $name): void
+    public static function htmlEncode(string $content): string
     {
-        $this->renderItem($name, $this->blocks);
+        return htmlspecialchars((string)$content, ENT_QUOTES | ENT_SUBSTITUTE, self::CHARSET);
     }
 
     /**
-     * @param string $content
-     * @param string $charset
+     * @param string $html
      * @return string
+     * @since 0.1.0
      */
-    public static function htmlEncode($content, string $charset = 'UTF-8'): string
+    public static function htmlDecodeEntity(string $html): string
     {
-        return htmlspecialchars((string)$content, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
+        return html_entity_decode($html, ENT_QUOTES | ENT_HTML5, self::CHARSET);
+    }
+
+    /**
+     * @param string $element
+     * @param array $attributes
+     * @param array $content
+     * @return string
+     * @since 0.1.0
+     */
+    public static function createElement(string $element, array $attributes, ?array $content = null): string
+    {
+        $result = "<$element";
+        foreach ($attributes as $name => $value) {
+            if (null === $value || false === $value) {
+                continue;
+            }
+            $result .= " $name";
+            if (true !== $value) {
+                $result .= '="' . static::htmlEncode($value) . '"';
+            }
+        }
+
+        if (null === $content) {
+            $result .= "/>";
+        } else {
+            $result .= ">";
+            foreach ($content as $item) {
+                $result .= $item;
+            }
+            $result .= "</$element>";
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string $code
+     * @return string
+     * @since 0.1.0
+     */
+    public static function createDocType(string $code): string
+    {
+        return "<!DOCTYPE $code>";
     }
 
     /**
@@ -83,27 +113,5 @@ class RuntimeHelper implements RuntimeHelperInterface
             $value = $definitions[$name] = $value();
         }
         return $value;
-    }
-
-    /**
-     * @param string $name
-     * @param array $definitions
-     * @return void
-     * @since 0.1.0
-     */
-    protected function renderItem(string $name, array $definitions): void
-    {
-        if (!isset($definitions[$name])) {
-            return;
-        }
-
-        $value = $definitions[$name];
-
-        if ($value instanceof \Closure) {
-            $value();
-            return;
-        }
-
-        echo $value;
     }
 }

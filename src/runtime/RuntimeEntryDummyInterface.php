@@ -5,6 +5,7 @@ interface RuntimeEntryDummyInterface
 {
     /**
      * @param RuntimeHelperInterface $runtime
+     * @return string
      */
-    public static function run(RuntimeHelperInterface $runtime): void;
+    public static function run(RuntimeHelperInterface $runtime): string;
 }

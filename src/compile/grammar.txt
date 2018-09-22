@@ -1,4 +1,5 @@
-Goal            : Content $
+Goal            : RootContent $
+RootContent     : Content
 Content(next)   : Content Node
 Content(first)  : Node
 
@@ -23,9 +24,9 @@ DoctypeContent(list)        : DoctypeContent DoctypeContentItemWs
 DoctypeContent(first)       : DoctypeContentItemWs
 DoctypeContentItemWs        : DoctypeContentItem .ws
 DoctypeContentItemWs        : DoctypeContentItem
-DoctypeContentItem          : HtmlName
-DoctypeContentItem          : HtmlQQConst
-DoctypeContentItem          : HtmlQConst
+DoctypeContentItem(name)    : HtmlName
+DoctypeContentItem(qq)      : HtmlQQConst
+DoctypeContentItem(q)       : HtmlQConst
 HtmlAttributes(list)        : HtmlAttributes HtmlAttributeWS
 HtmlAttributes(init)        : .ws
 HtmlAttributeWS             : HtmlAttribute .ws
@@ -53,7 +54,7 @@ HtmlQQContentPart   : HtmlQQText
 HtmlQQContentPart(E): TagExpression
 HtmlQQText(loop)    : HtmlQQText HtmlQQTextPart
 HtmlQQText(first)   : HtmlQQTextPart
-HtmlQQTextPart      : HtmlFlowText
+HtmlQQTextPart(flow): HtmlFlowText
 HtmlQQTextPart      : HtmlQQTextPartSpec
 
 HtmlQConst          : <'> HtmlQText <'>
@@ -66,7 +67,7 @@ HtmlQContentPart    : HtmlQText
 HtmlQContentPart(E) : TagExpression
 HtmlQText(loop)     : HtmlQText HtmlQTextPart
 HtmlQText(first)    : HtmlQTextPart
-HtmlQTextPart       : HtmlFlowText
+HtmlQTextPart(flow) : HtmlFlowText
 HtmlQTextPart       : HtmlQTextPartSpec
 
 Text(empty)         : .EolWithWs
@@ -94,7 +95,6 @@ InlineStatementContinue : InlineStatement .WsTagEnd
 WsTagEnd                : .ws "}}"
 WsTagEnd                : "}}"
 
-InlineStatement(block)      : "block" .ws name
 InlineStatement(unknown)    : name
 
 Expression  : Variable

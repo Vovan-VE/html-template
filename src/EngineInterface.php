@@ -70,7 +70,7 @@ interface EngineInterface
     /**
      * @param string $name
      * @param RuntimeHelperInterface|null $runtime
-     * @throws ConfigException
+     * @return string
      */
-    public function runTemplate(string $name, ?RuntimeHelperInterface $runtime = null): void;
+    public function runTemplate(string $name, ?RuntimeHelperInterface $runtime = null): string;
 }

@@ -2,6 +2,7 @@
 namespace VovanVE\HtmlTemplate\tests\unit\caching;
 
 use VovanVE\HtmlTemplate\caching\CacheEntry;
+use VovanVE\HtmlTemplate\runtime\RuntimeEntryDummyInterface;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
 use VovanVE\HtmlTemplate\tests\helpers\RuntimeCounter;
 
@@ -22,11 +23,13 @@ class CacheEntryTest extends BaseTestCase
                 $ns = substr($className, 0, $p);
                 $name = substr($className, $p + 1);
 
+                /** @uses RuntimeEntryDummyInterface::run() */
+                /** @uses RuntimeCounter::didRun() */
                 $this->code =
                     "namespace $ns;\n" .
                     "class $name {\n" .
-                    "    public static function run(\$runtime): void {\n" .
-                    "        \$runtime->didRun();\n" .
+                    "    public static function run(\$runtime): string {\n" .
+                    "        return (string)\$runtime->didRun();\n" .
                     "    }\n" .
                     "}";
             }
@@ -59,13 +62,13 @@ class CacheEntryTest extends BaseTestCase
         $runtime = new RuntimeCounter();
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $entry->run($runtime);
+        $this->assertEquals('1', $entry->run($runtime));
         $this->assertEquals(1, $runtime->getRunsCount());
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $entry->run($runtime);
+        $this->assertEquals('2', $entry->run($runtime));
         /** @noinspection PhpUnhandledExceptionInspection */
-        $entry->run($runtime);
+        $this->assertEquals('3', $entry->run($runtime));
 
         $this->assertEquals(3, $runtime->getRunsCount());
     }

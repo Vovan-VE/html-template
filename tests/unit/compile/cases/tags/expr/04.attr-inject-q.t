@@ -1,3 +1,3 @@
-<div title='Lorem{{ $foo }}ipsum'/>
+<div title='Lorem{{ $foo }}ipsum&#039;&quot;&amp;&lt;&gt;&rarr;'/>
 ---- OK ----
-<div title="Lorem<?= $runtime::htmlEncode(($runtime->param('foo')), 'UTF-8') ?>ipsum"/>
+($runtime::createElement('div', ['title' => ('Lorem' . ($runtime->param('foo')) . 'ipsum\'"&<>→')]))
