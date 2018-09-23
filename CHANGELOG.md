@@ -46,6 +46,7 @@ HTML Template Changelog
             to interface `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface`
             and its implementation.
 *   Add: `<!DOCTYPE...>` tag support.
+*   Fix: broken `dash-case` names.
 
 0.0.1
 -----

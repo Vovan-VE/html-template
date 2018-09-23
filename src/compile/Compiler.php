@@ -311,7 +311,7 @@ class Compiler implements CompilerInterface
             return $a . $b;
         };
         $emptyStringAtRuntime = function () {
-            return '""';
+            return "''";
         };
         $concatStringsArrayAtRuntime = function (array $strings) {
             if (1 === count($strings)) {
@@ -325,6 +325,9 @@ class Compiler implements CompilerInterface
         };
         $makeNull = function () {
             return null;
+        };
+        $makeEmptyCode = function () {
+            return '';
         };
 
         $map = new ActionsMadeMap([
@@ -439,12 +442,14 @@ class Compiler implements CompilerInterface
                 return "$a:$b";
             },
             'HtmlName' => self::A_BUBBLE,
-            'HtmlSimpleName(d)' => $concatTwoFragments,
+            'HtmlSimpleName(d)' => function (string $a, string $b) {
+                return "$a-$b";
+            },
             'HtmlSimpleName' => self::A_BUBBLE,
             'HtmlNameWord' => $contentAsIs,
 
             'HtmlQQConst' => self::A_BUBBLE,
-            'HtmlQQConst(empty)' => $emptyStringAtRuntime,
+            'HtmlQQConst(empty)' => $makeEmptyCode,
             'HtmlQQString' => $concatStringsArrayAtRuntime,
             'HtmlQQString(empty)' => $emptyStringAtRuntime,
             'HtmlQQContent(loop)' => $listAppendItem,
@@ -458,7 +463,7 @@ class Compiler implements CompilerInterface
             'HtmlQQTextPartSpec' => $contentAsIs,
 
             'HtmlQConst' => self::A_BUBBLE,
-            'HtmlQConst(empty)' => $emptyStringAtRuntime,
+            'HtmlQConst(empty)' => $makeEmptyCode,
             'HtmlQString' => $concatStringsArrayAtRuntime,
             'HtmlQString(empty)' => $emptyStringAtRuntime,
             'HtmlQContent(loop)' => $listAppendItem,
