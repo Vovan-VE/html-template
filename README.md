@@ -16,12 +16,12 @@ See [an example](./examples/01.basics.php).
 Template example:
 
 ```html
-<a href={{$link}} title="Foo bar: {{ $title }}">
+<a href={$link} title="Foo bar: { $title }">
     <span id=foobar class='it parses html'>
-        {{ $description }}
+        { $description }
     </span>
     <span>
-        {{#  #}}
+        {#  #}
     </span>
 </a>
 ```
@@ -35,7 +35,7 @@ Compiled code (formatted manually only here for demonstration):
 ], [
     ($runtime::createElement('span', [
         'id'    => 'foobar',
-        'class' => ('it parses html')
+        'class' => 'it parses html'
     ], [
         ($runtime::htmlEncode(($runtime->param('description'))))
     ])),

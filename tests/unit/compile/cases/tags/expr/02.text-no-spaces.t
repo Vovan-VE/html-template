@@ -1,4 +1,4 @@
-lorem{{$foo}}ipsum
+lorem{$foo}ipsum
 ---- CODE ----
 ('lorem' . ($runtime::htmlEncode(($runtime->param('foo')))) . 'ipsum')
 ---- RESULT ----

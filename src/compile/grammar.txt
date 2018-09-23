@@ -76,15 +76,15 @@ Text                : InlineTextWithEolWs
 InlineTextWithEolWs : InlineText .EolWithWs
 InlineTextWithEolWs : InlineText
 
-Tag                     : "{{" TagContinueAny
-TagExpression           : "{{" WsTagExpressionContinue
+Tag                     : "{" TagContinueAny
+TagExpression           : "{" WsTagExpressionContinue
 TagContinueAny(comment) : .CommentTagContinue
 TagContinueAny          : WsTagContinue
-CommentTagContinue      : "#" .CommentTagContent "#}}"
-CommentTagContinue      : "#" "#}}"
+CommentTagContinue      : "#" .CommentTagContent "#}"
+CommentTagContinue      : "#" "#}"
 WsTagContinue           : .ws TagContinue
 WsTagContinue           : TagContinue
-TagContinue(Empty)      : "}}"
+TagContinue(Empty)      : "}"
 TagContinue(Expr)       : TagExpressionContinue
 TagContinue(St)         : "%" StatementContinue
 WsTagExpressionContinue : .ws TagExpressionContinue
@@ -92,8 +92,8 @@ WsTagExpressionContinue : TagExpressionContinue
 TagExpressionContinue   : Expression .WsTagEnd
 StatementContinue(I)    : InlineStatementContinue
 InlineStatementContinue : InlineStatement .WsTagEnd
-WsTagEnd                : .ws "}}"
-WsTagEnd                : "}}"
+WsTagEnd                : .ws "}"
+WsTagEnd                : "}"
 
 InlineStatement(unknown)    : name
 
@@ -104,8 +104,8 @@ Variable    : "$" name
 HtmlNameWord        : /(?i)[a-z][a-z0-9]*+/
 name                : /(?i)[a-z_][a-z_0-9]*+/
 ws                  : /\s++/
-InlineText          : /(?:[^\s<>{}]++|\h++(?!\z|\R)|\{(?!\{)|\}(?!\}))++/
-CommentTagContent   : /(?:[^#]++|#(?!\}\}))++/
+InlineText          : /(?:[^\s<>{}]++|\h++(?!\z|\R))++/
+CommentTagContent   : /(?:[^#]++|#(?!\}))++/
 HtmlQQTextPartSpec  : /[<>']++/
 HtmlQTextPartSpec   : /[<>"]++/
 EolWithWs           : /\h*+(?:\R\h*+)++/

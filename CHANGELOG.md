@@ -8,6 +8,7 @@ HTML Template Changelog
     *   Usage
         *   Change main concept of templates to be declarative instead of imperative.
         *   Drop support of `{{ %block name }}` instruction.
+        *   Change template tags to single curly braces `{ ... }`.
         *   HTML and XML tags now will parse in XML mode. This means that block elements
             like `<div>` must be closed with corresponding end tags `</div>` with exactly
             the same case, and single elements must be in form like `<img/>`.

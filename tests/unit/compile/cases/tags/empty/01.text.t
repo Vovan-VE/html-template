@@ -1,6 +1,6 @@
-Lorem {{ }} ipsum{{}}dolor {{
-}} sit
-{{}}  {{}}
+Lorem { } ipsum{}dolor {
+} sit
+{}  {}
 amet
 ---- CODE ----
 ('Lorem ' . ' ipsum' . 'dolor ' . ' sit' . '  ' . 'amet')
