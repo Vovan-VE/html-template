@@ -151,12 +151,4 @@ class RuntimeHelperTest extends BaseTestCase
             ['foo:bar', [], [], '<foo:bar></foo:bar>'],
         ];
     }
-
-    public function testCreateDocType()
-    {
-        $this->assertEquals('<!DOCTYPE foo>', RuntimeHelper::createDocType('foo'));
-        $this->assertEquals('<!DOCTYPE FOO>', RuntimeHelper::createDocType('FOO'));
-        $this->assertEquals('<!DOCTYPE foo "LOREM//IPSUM">', RuntimeHelper::createDocType('foo "LOREM//IPSUM"'));
-        $this->assertEquals('<!DOCTYPE foo "<&lt;&rarr;→">', RuntimeHelper::createDocType('foo "<&lt;&rarr;→"'));
-    }
 }

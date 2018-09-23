@@ -314,6 +314,9 @@ class Compiler implements CompilerInterface
             return '""';
         };
         $concatStringsArrayAtRuntime = function (array $strings) {
+            if (1 === count($strings)) {
+                return $strings[0];
+            }
             return '(' . join(' . ', $strings) . ')';
         };
 
@@ -345,7 +348,7 @@ class Compiler implements CompilerInterface
             'Element' => self::A_BUBBLE,
             'ElementCode(begin)' => function (array $elementData, array $elementEnd) {
                 [$elementBegin, $attributes] = $elementData;
-                $add_attributes = ', [' . join(',', $attributes) . ']';
+                $add_attributes = ',[' . join(',', $attributes) . ']';
                 $result = var_export($elementBegin, true);
                 if ($elementEnd) {
                     [$content, $elementEnd] = $elementEnd;
@@ -354,7 +357,7 @@ class Compiler implements CompilerInterface
                             "Unexpected closing tag `</$elementEnd>` instead of expected `</$elementBegin>`"
                         );
                     }
-                    $add_content = ', [' . join(',', $content) . ']';
+                    $add_content = ',[' . join(',', $content) . ']';
                 } else {
                     $add_content = '';
                 }
@@ -368,7 +371,7 @@ class Compiler implements CompilerInterface
                 return "(\$runtime::createElement($result))";
             },
             'ElementCode(doctype)' => function (array $list) {
-                return "(\$runtime::createDocType(" . join(" . ' ' . ", $list) . "))";
+                return var_export('<!DOCTYPE ' . join(' ', $list) . '>', true);
             },
             'ElementEnd(single)' => $initArrayEmpty,
             'ElementEnd(block)' => self::A_BUBBLE,
@@ -381,7 +384,7 @@ class Compiler implements CompilerInterface
                             "HTML attribute `$attribute` is duplicated in element `<$element>`"
                         );
                     }
-                    $map[$attribute] = var_export($attribute, true) . ' => ' . $valueInCode;
+                    $map[$attribute] = var_export($attribute, true) . '=>' . $valueInCode;
                     $names[$attribute] = $attribute;
                 }
                 if (!$this->areElementAttributesEnabled($element, $names, $blockedAttribute)) {
@@ -413,7 +416,7 @@ class Compiler implements CompilerInterface
 
             'DoctypeContent(list)' => $listAppendItem,
             'DoctypeContent(first)' => $initArrayOfOne,
-            'DoctypeContentItemWs' => $toPhpString,
+            'DoctypeContentItemWs' => self::A_BUBBLE,
             'DoctypeContentItem(name)' => self::A_BUBBLE,
             'DoctypeContentItem' => $toHtmlStringNow,
 

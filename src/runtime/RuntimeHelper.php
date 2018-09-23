@@ -88,16 +88,6 @@ class RuntimeHelper implements RuntimeHelperInterface
     }
 
     /**
-     * @param string $code
-     * @return string
-     * @since 0.1.0
-     */
-    public static function createDocType(string $code): string
-    {
-        return "<!DOCTYPE $code>";
-    }
-
-    /**
      * @param string $name
      * @param array $definitions
      * @return mixed

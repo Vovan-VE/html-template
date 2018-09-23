@@ -44,8 +44,6 @@ HTML Template Changelog
             `createElement(string $element, array $attributes = [], ?array $content = null): string`
             to interface `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface`
             and its implementation.
-        *   Add: static method `createDocType(string $code): string` to interface
-            `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface` and its implementation.
 *   Add: `<!DOCTYPE...>` tag support.
 
 0.0.1

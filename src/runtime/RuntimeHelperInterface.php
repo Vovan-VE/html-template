@@ -30,11 +30,4 @@ interface RuntimeHelperInterface
      * @since 0.1.0
      */
     public static function createElement(string $element, array $attributes = [], ?array $content = null): string;
-
-    /**
-     * @param string $code
-     * @return string
-     * @since 0.1.0
-     */
-    public static function createDocType(string $code): string;
 }
