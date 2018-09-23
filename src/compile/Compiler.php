@@ -317,11 +317,8 @@ class Compiler implements CompilerInterface
             return '(' . join(' . ', $strings) . ')';
         };
 
-        $surroundWithQuotes = function (string $code) {
-            return '"' . $code . '"';
-        };
-        $surroundWithApos = function (string $code) {
-            return "'" . $code . "'";
+        $toHtmlStringNow = function (string $string) {
+            return '"' . RuntimeHelper::htmlEncode($string) . '"';
         };
         $makeNull = function () {
             return null;
@@ -418,8 +415,7 @@ class Compiler implements CompilerInterface
             'DoctypeContent(first)' => $initArrayOfOne,
             'DoctypeContentItemWs' => $toPhpString,
             'DoctypeContentItem(name)' => self::A_BUBBLE,
-            'DoctypeContentItem(qq)' => $surroundWithQuotes,
-            'DoctypeContentItem(q)' => $surroundWithApos,
+            'DoctypeContentItem' => $toHtmlStringNow,
 
             'HtmlAttributes(list)' => $listAppendItem,
             'HtmlAttributes(first)' => $initArrayOfOne,

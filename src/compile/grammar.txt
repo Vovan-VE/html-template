@@ -25,8 +25,8 @@ DoctypeContent(first)       : DoctypeContentItemWs
 DoctypeContentItemWs        : DoctypeContentItem .ws
 DoctypeContentItemWs        : DoctypeContentItem
 DoctypeContentItem(name)    : HtmlName
-DoctypeContentItem(qq)      : HtmlQQConst
-DoctypeContentItem(q)       : HtmlQConst
+DoctypeContentItem          : HtmlQQConst
+DoctypeContentItem          : HtmlQConst
 HtmlAttributes(list)        : HtmlAttributes HtmlAttributeWS
 HtmlAttributes(init)        : .ws
 HtmlAttributeWS             : HtmlAttribute .ws
