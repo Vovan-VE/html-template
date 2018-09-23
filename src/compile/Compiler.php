@@ -348,7 +348,8 @@ class Compiler implements CompilerInterface
             'Element' => self::A_BUBBLE,
             'ElementCode(begin)' => function (array $elementData, array $elementEnd) {
                 [$elementBegin, $attributes] = $elementData;
-                $result = var_export($elementBegin, true) . ', [' . join(',', $attributes) . ']';
+                $add_attributes = ', [' . join(',', $attributes) . ']';
+                $result = var_export($elementBegin, true);
                 if ($elementEnd) {
                     [$content, $elementEnd] = $elementEnd;
                     if ($elementBegin !== $elementEnd) {
@@ -356,8 +357,16 @@ class Compiler implements CompilerInterface
                             "Unexpected closing tag `</$elementEnd>` instead of expected `</$elementBegin>`"
                         );
                     }
-                    $result .= ", [" . join(',', $content) . "]";
+                    $add_content = ', [' . join(',', $content) . ']';
+                } else {
+                    $add_content = '';
                 }
+
+                if ($attributes || '' !== $add_content) {
+                    $result .= $add_attributes;
+                }
+                $result .= $add_content;
+
                 /** @uses RuntimeHelperInterface::createElement() */
                 return "(\$runtime::createElement($result))";
             },

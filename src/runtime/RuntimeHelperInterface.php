@@ -29,7 +29,7 @@ interface RuntimeHelperInterface
      * @return string
      * @since 0.1.0
      */
-    public static function createElement(string $element, array $attributes, ?array $content = null): string;
+    public static function createElement(string $element, array $attributes = [], ?array $content = null): string;
 
     /**
      * @param string $code

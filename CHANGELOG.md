@@ -41,7 +41,7 @@ HTML Template Changelog
         *   Add: static method `htmlDecodeEntity(string $html): string` to interface
             `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface` and its implementation.
         *   Add: static method
-            `createElement(string $element, array $attributes, ?array $content = null): string`
+            `createElement(string $element, array $attributes = [], ?array $content = null): string`
             to interface `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface`
             and its implementation.
         *   Add: static method `createDocType(string $code): string` to interface

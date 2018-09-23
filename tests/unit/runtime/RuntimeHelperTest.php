@@ -103,6 +103,12 @@ class RuntimeHelperTest extends BaseTestCase
         }
     }
 
+    public function testCreateElementShort()
+    {
+        $this->assertEquals('<foo/>', RuntimeHelper::createElement('foo'));
+        $this->assertEquals('<foo/>', RuntimeHelper::createElement('foo', []));
+    }
+
     /**
      * @param string $element
      * @param array $attributes
