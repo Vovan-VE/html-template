@@ -2,5 +2,7 @@ Lorem {{ }} ipsum{{}}dolor {{
 }} sit
 {{}}  {{}}
 amet
----- OK ----
+---- CODE ----
 ('Lorem ' . ' ipsum' . 'dolor ' . ' sit' . '  ' . 'amet')
+---- RESULT ----
+Lorem  ipsumdolor  sit  amet

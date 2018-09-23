@@ -1,3 +1,5 @@
 lorem ' ipsum " dolor & sit &amp; amet &rarr; elit &lt; foo &gt; bar
----- OK ----
+---- CODE ----
 'lorem \' ipsum " dolor & sit &amp; amet &rarr; elit &lt; foo &gt; bar'
+---- RESULT ----
+lorem ' ipsum " dolor & sit &amp; amet &rarr; elit &lt; foo &gt; bar

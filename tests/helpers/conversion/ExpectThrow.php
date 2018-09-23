@@ -33,9 +33,19 @@ class ExpectThrow extends Expect
      * @param string $result
      * @return void
      */
-    public function checkResult(BaseTestCase $test, string $filename, string $result): void
+    public function checkCode(BaseTestCase $test, string $filename, string $result): void
     {
         $test::fail("Bad source was successfully compiled from `$filename`: $result");
+    }
+
+    /**
+     * @param BaseTestCase $test
+     * @param string $filename
+     * @param string $result
+     * @return void
+     */
+    public function checkResult(BaseTestCase $test, string $filename, string $result): void
+    {
     }
 
     /**

@@ -9,19 +9,33 @@ class ExpectSuccess extends Expect
     private $expected;
     /** @var string */
     private $message;
+    /** @var string */
+    private $result;
+    /** @var bool */
+    private $resultIsFormat;
 
     /**
      * ExpectSuccess constructor.
-     * @param string $source
-     * @param string $expected
-     * @param bool $isFormat
      * @param string $message
+     * @param string $source
+     * @param bool $isFormat
+     * @param string $expected
+     * @param bool $resultIsFormat
+     * @param string $result
      */
-    public function __construct(string $source, string $expected, bool $isFormat, string $message)
-    {
+    public function __construct(
+        string $message,
+        string $source,
+        bool $isFormat,
+        string $expected,
+        bool $resultIsFormat,
+        string $result
+    ) {
         parent::__construct($source, $isFormat);
         $this->expected = $expected;
         $this->message = $message;
+        $this->resultIsFormat = $resultIsFormat;
+        $this->result = $result;
     }
 
     /**
@@ -41,6 +55,37 @@ class ExpectSuccess extends Expect
     }
 
     /**
+     * @return bool
+     */
+    public function resultIsFormat(): bool
+    {
+        return $this->resultIsFormat;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResult(): string
+    {
+        return $this->result;
+    }
+
+    /**
+     * @param BaseTestCase $test
+     * @param string $filename
+     * @param string $result
+     * @return void
+     */
+    public function checkCode(BaseTestCase $test, string $filename, string $result): void
+    {
+        if ($this->isFormat()) {
+            $test::assertStringMatchesFormat($this->getExpected(), $result, $this->getMessage());
+        } else {
+            $test::assertEquals($this->getExpected(), $result, $this->getMessage());
+        }
+    }
+
+    /**
      * @param BaseTestCase $test
      * @param string $filename
      * @param string $result
@@ -48,10 +93,10 @@ class ExpectSuccess extends Expect
      */
     public function checkResult(BaseTestCase $test, string $filename, string $result): void
     {
-        if ($this->isFormat()) {
-            $test::assertStringMatchesFormat($this->getExpected(), $result, $this->getMessage());
+        if ($this->resultIsFormat()) {
+            $test::assertStringMatchesFormat($this->getResult(), $result, $this->getMessage());
         } else {
-            $test::assertEquals($this->getExpected(), $result, $this->getMessage());
+            $test::assertEquals($this->getResult(), $result, $this->getMessage());
         }
     }
 }

@@ -1,11 +1,13 @@
 <?php
 namespace VovanVE\HtmlTemplate\tests\unit\compile;
 
+use VovanVE\HtmlTemplate\caching\memory\CacheStrings;
 use VovanVE\HtmlTemplate\compile\Compiler;
 use VovanVE\HtmlTemplate\compile\SyntaxException;
 use VovanVE\HtmlTemplate\source\memory\TemplateString;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
 use VovanVE\HtmlTemplate\tests\helpers\conversion\Expect;
+use VovanVE\HtmlTemplate\tests\helpers\RuntimeCounter;
 use VovanVE\HtmlTemplate\tests\helpers\StringConversionTestTrait;
 
 class CompilerTest extends BaseTestCase
@@ -34,12 +36,20 @@ class CompilerTest extends BaseTestCase
     public function testCompile(Expect $expect, string $filename, Compiler $compiler)
     {
         $template = new TemplateString($expect->getSource(), $filename);
+        $cache = new CacheStrings(__FUNCTION__ . '_%{hash}', __CLASS__);
+        $runtime = new RuntimeCounter();;
 
         try {
             /** @noinspection PhpUnhandledExceptionInspection */
-            $result = $compiler->compile($template);
+            $code = $compiler->compile($template);
 
-            $expect->checkResult($this, $filename, $result->getContent());
+            $expect->checkCode($this, $filename, $code->getContent());
+
+            $cached = $cache->setEntry($template->getUniqueKey(), $code->getContent(), $template->getMeta());
+
+            $result = $cached->run($runtime);
+
+            $expect->checkResult($this, $filename, $result);
         } catch (\Exception $e) {
             if (!$expect->caught($this, $e)) {
                 throw $e;

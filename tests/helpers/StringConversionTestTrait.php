@@ -59,47 +59,46 @@ trait StringConversionTestTrait
      */
     protected function createExpectFromContent(string $content, string $message): Expect
     {
+        if ( '' !== $content && "\n" === $content[-1]) {
+            $content = substr($content, 0, -1);
+        }
+
         $re = <<<'_REGEXP'
 /
-    ^
-    (?<source>
-        (?:
-            [^\n]++
-        |
-            \n (?! ---- \h [A-Z]+ %? \h ----\n)
-        )*+
-    )
-    \n
-    ---- \h (?<type> [A-Z]+ ) (?<format> %? ) \h ---- \n
-    (?<result>
-        .*+
-    )
-    $
-/Dxs
-
+    (?: ^ | \n )
+    ---- \h ([A-Z]+) (%?) \h ----
+    (?: $ | \n )
+/Dx
 _REGEXP;
-        if (!preg_match($re, $content, $match)) {
-            throw new \InvalidArgumentException('Invalid format');
+        $parts = preg_split($re, $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+        $input = array_shift($parts);
+        $blocks = [];
+        while ($parts) {
+            $type = array_shift($parts);
+            $isFormat = (bool)array_shift($parts);
+            $value = array_shift($parts);
+
+            if (isset($blocks[$type])) {
+                throw new \LogicException("Duplicate block '$type'");
+            }
+            $blocks[$type] = [$isFormat, $value];
         }
 
-        $source = $match['source'];
-        $type = $match['type'];
-        $isFormat = (bool)$match['format'];
-        $result = $match['result'];
+        ksort($blocks);
 
-        if ('' !== $result && "\n" === $result[-1]) {
-            $result = substr($result, 0, -1);
-        }
-
-        switch ($type) {
-            case 'OK':
-                return new ExpectSuccess($source, $result, $isFormat, $message);
+        $keys = join(',', array_keys($blocks));
+        switch ($keys) {
+            case 'CODE,RESULT':
+                [$codeIsFormat, $code] = $blocks['CODE'];
+                [$resultIsFormat, $result] = $blocks['RESULT'];
+                return new ExpectSuccess($message, $input, $codeIsFormat, $code, $resultIsFormat, $result);
 
             case 'THROW':
-                return new ExpectThrow($source, $isFormat, $result);
+                return new ExpectThrow($input, ...$blocks['THROW']);
 
             default:
-                throw new \InvalidArgumentException("Unknown type '$type'");
+                throw new \InvalidArgumentException("Unknown set of blocks: $keys");
         }
     }
 }
