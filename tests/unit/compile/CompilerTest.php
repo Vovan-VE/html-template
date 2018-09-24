@@ -94,6 +94,60 @@ class CompilerTest extends BaseTestCase
         );
     }
 
+    /**
+     * @param Compiler $compiler
+     * @depends testCreate
+     */
+    public function testCompileStringEscape(Compiler $compiler)
+    {
+        // this test is separated to prevent stripping trailing whitespaces
+        // on file save
+
+        $template = new TemplateString(<<<'TEXT'
+{ "b: \b.
+e: \e.
+f: \f.
+n: \n.
+r: \r.
+t: \t.
+v: \v.
+x0: \x00.
+x7F: \x7F.
+x80: \x80.
+u7FF: \u{7FF}.
+u800: \u{800}.
+uFFFF: \uFFFF.
+u10000: \u{10000}.
+u10FFF0: \u{10FFF0}." }
+TEXT
+, '');
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $result = $compiler->compile($template);
+
+        $this->assertEquals(
+            json_encode(<<<CODE
+(\$runtime::htmlEncode('b: \x08.
+e: \x1B.
+f: \x0C.
+n: \x0A.
+r: \x0D.
+t: \x09.
+v: \x0B.
+x0: ' . "\\0" . '.
+x7F: \u{7F}.
+x80: \u{80}.
+u7FF: \u{7FF}.
+u800: \u{800}.
+uFFFF: \u{FFFF}.
+u10000: \u{10000}.
+u10FFF0: \u{10FFF0}.'))
+CODE
+            , JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+            json_encode($result->getContent(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+        );
+    }
+
     public function testDisabledElements()
     {
         foreach (

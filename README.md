@@ -15,13 +15,13 @@ See [an example](./examples/01.basics.php).
 
 Template example:
 
-```html
-<a href={$link} title="Foo bar: { $title }">
+```jsx
+<a href={ $link } title={ "Foo bar: ${ $title }" }>
     <span id=foobar class='it parses html'>
         { $description }
     </span>
     <span>
-        {#  #}
+        {# comment #}
     </span>
 </a>
 ```

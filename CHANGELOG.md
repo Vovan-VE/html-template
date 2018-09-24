@@ -8,6 +8,8 @@ HTML Template Changelog
     *   Usage
         *   Change main concept of templates to be declarative instead of imperative.
         *   Drop support of `{{ %block name }}` instruction.
+        *   Drop expression insertion in quoted HTML attributes like `x="...{{$var}}..."`.
+            Replaced with string literals like `x={"...${$var}..."}`.
         *   Change template tags to single curly braces `{ ... }`.
         *   HTML and XML tags now will parse in XML mode. This means that block elements
             like `<div>` must be closed with corresponding end tags `</div>` with exactly
@@ -45,6 +47,7 @@ HTML Template Changelog
             `createElement(string $element, array $attributes = [], ?array $content = null): string`
             to interface `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface`
             and its implementation.
+*   Add: string literals with possible expression injection in expression tags.
 *   Add: `<!DOCTYPE...>` tag support.
 *   Fix: broken `dash-case` names.
 

@@ -19,7 +19,17 @@ class Compiler implements CompilerInterface
 {
     private const A_BUBBLE = Parser::ACTION_BUBBLE_THE_ONLY;
 
-    private const VERSION = '0.1.0-dev.2';
+    private const VERSION = '0.1.0-dev.3';
+
+    private const STRING_ESCAPE_LETTER = [
+        'b' => "\x08",
+        'e' => "\e",
+        'f' => "\f",
+        'n' => "\n",
+        'r' => "\r",
+        't' => "\t",
+        'v' => "\v",
+    ];
 
     /** @var Parser */
     private $parser;
@@ -272,6 +282,7 @@ class Compiler implements CompilerInterface
     protected function createActionsMap(): ActionsMadeMap
     {
         $contentAsIs = \Closure::fromCallable('strval');
+        $hexToDec = \Closure::fromCallable('hexdec');
         $toPhpString = function (string $content) {
             return var_export($content, true);
         };
@@ -319,6 +330,18 @@ class Compiler implements CompilerInterface
             }
             return '(' . join(' . ', $strings) . ')';
         };
+        $concatTextChunksArrayToPhpString = function (array $texts) {
+            return var_export(join('', $texts), true);
+        };
+        $stringWithDollarAtRuntime = function () {
+            return "'\$'";
+        };
+        $stringWithApostrophNow = function () {
+            return "'";
+        };
+        $stringWithQuotNow = function () {
+            return '"';
+        };
 
         $toHtmlStringNow = function (string $string) {
             return '"' . RuntimeHelper::htmlEncode($string) . '"';
@@ -330,6 +353,12 @@ class Compiler implements CompilerInterface
             return '';
         };
 
+        $charFromCode = function ($code) {
+            if ($code > 0x10FFFF) {
+                throw new ActionAbortException("Too big code - max is `10FFFF`");
+            }
+            return CompilerHelper::utf8CharFromCode($code);
+        };
         $map = new ActionsMadeMap([
             'RootContent' => function (array $nodes) {
                 switch (count($nodes)) {
@@ -435,7 +464,7 @@ class Compiler implements CompilerInterface
             },
             'HtmlAttributeEqValue' => self::A_BUBBLE,
             'HtmlAttributeValue(Expr)' => self::A_BUBBLE,
-            'HtmlAttributeValue' => self::A_BUBBLE,
+            'HtmlAttributeValue(String)' => $toPhpString,
             'HtmlAttributeValue(Plain)' => $toPhpString,
 
             'HtmlName(ns)' => function (string $a, string $b) {
@@ -448,14 +477,10 @@ class Compiler implements CompilerInterface
             'HtmlSimpleName' => self::A_BUBBLE,
             'HtmlNameWord' => $contentAsIs,
 
+            'HtmlQuotedConst' => self::A_BUBBLE,
+
             'HtmlQQConst' => self::A_BUBBLE,
             'HtmlQQConst(empty)' => $makeEmptyCode,
-            'HtmlQQString' => $concatStringsArrayAtRuntime,
-            'HtmlQQString(empty)' => $emptyStringAtRuntime,
-            'HtmlQQContent(loop)' => $listAppendItem,
-            'HtmlQQContent(first)' => $initArrayOfOne,
-            'HtmlQQContentPart' => $toPhpString,
-            'HtmlQQContentPart(E)' => self::A_BUBBLE,
             'HtmlQQText(loop)' => $concatTwoFragments,
             'HtmlQQText(first)' => self::A_BUBBLE,
             'HtmlQQTextPart(flow)' => $htmlDecodeNow,
@@ -464,12 +489,6 @@ class Compiler implements CompilerInterface
 
             'HtmlQConst' => self::A_BUBBLE,
             'HtmlQConst(empty)' => $makeEmptyCode,
-            'HtmlQString' => $concatStringsArrayAtRuntime,
-            'HtmlQString(empty)' => $emptyStringAtRuntime,
-            'HtmlQContent(loop)' => $listAppendItem,
-            'HtmlQContent(first)' => $initArrayOfOne,
-            'HtmlQContentPart' => $toPhpString,
-            'HtmlQContentPart(E)' => self::A_BUBBLE,
             'HtmlQText(loop)' => $concatTwoFragments,
             'HtmlQText(first)' => self::A_BUBBLE,
             'HtmlQTextPart(flow)' => $htmlDecodeNow,
@@ -477,7 +496,7 @@ class Compiler implements CompilerInterface
             'HtmlQTextPartSpec' => $contentAsIs,
 
             'HtmlPlainValue' => $contentAsIs,
-            'HtmlFlowText' => $contentAsIs,
+            'HtmlQuotedContentSafe' => $contentAsIs,
 
             'Text' => $toPhpString,
             'Text(empty)' => $makeNull,
@@ -502,10 +521,57 @@ class Compiler implements CompilerInterface
             },
 
             'Expression' => self::A_BUBBLE,
+
             'Variable' => function (string $name) {
                 /** @uses RuntimeHelperInterface::param() */
                 return '($runtime->param(' . var_export($name, true) . '))';
             },
+
+            'StringLiteral' => self::A_BUBBLE,
+
+            'StringLiteralQQ' => $concatStringsArrayAtRuntime,
+            'StringLiteralQQ(empty)' => $emptyStringAtRuntime,
+            'StringLiteralQQContent(list)' => $listAppendItem,
+            'StringLiteralQQContent(first)' => $initArrayOfOne,
+            'StringLiteralQQPart(text)' => $concatTextChunksArrayToPhpString,
+            'StringLiteralQQPart(expr)' => self::A_BUBBLE,
+            'StringLiteralQQPart(dollar)' => $stringWithDollarAtRuntime,
+            'StringLiteralQQPartText(list)' => $listAppendItem,
+            'StringLiteralQQPartText(first)' => $initArrayOfOne,
+            'StringLiteralQQPartTextChunk' => self::A_BUBBLE,
+            'StringLiteralQQPartTextChunk(q)' => $stringWithApostrophNow,
+
+            'StringLiteralQ' => $concatStringsArrayAtRuntime,
+            'StringLiteralQ(empty)' => $emptyStringAtRuntime,
+            'StringLiteralQContent(list)' => $listAppendItem,
+            'StringLiteralQContent(first)' => $initArrayOfOne,
+            'StringLiteralQPart(text)' => $concatTextChunksArrayToPhpString,
+            'StringLiteralQPart(expr)' => self::A_BUBBLE,
+            'StringLiteralQPart(dollar)' => $stringWithDollarAtRuntime,
+            'StringLiteralQPartText(list)' => $listAppendItem,
+            'StringLiteralQPartText(first)' => $initArrayOfOne,
+            'StringLiteralQPartTextChunk' => self::A_BUBBLE,
+            'StringLiteralQPartTextChunk(qq)' => $stringWithQuotNow,
+
+            'StringLiteralEscape' => self::A_BUBBLE,
+            'StringLiteralEscapeCode' => self::A_BUBBLE,
+
+            'EscapeCodeX' => $charFromCode,
+            'EscapeCodeU' => $charFromCode,
+            'EscapeCodeUCode' => self::A_BUBBLE,
+            'EscapeCodeHex2' => $hexToDec,
+            'EscapeCodeHex4' => $hexToDec,
+            'EscapeCodeHex' => $hexToDec,
+
+            'EscapeCodeSingleLetter' => function ($letter) {
+                if (isset(self::STRING_ESCAPE_LETTER[$letter])) {
+                    return self::STRING_ESCAPE_LETTER[$letter];
+                }
+                throw new ActionAbortException("Unknown escape-letter code `\\$letter`");
+            },
+            'StringLiteralTextSafe' => $contentAsIs,
+            'EscapeCodePunctuation' => $contentAsIs,
+
             'name' => $contentAsIs,
         ]);
 

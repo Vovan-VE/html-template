@@ -69,4 +69,66 @@ class CompilerHelperTest extends BaseTestCase
             $this->assertEquals($line, CompilerHelper::calcLineNumber("{$text}эюя", $offset), "UTF-8 #$i append text");
         }
     }
+
+    /**
+     * @param int $code
+     * @param string $hex
+     * @dataProvider utf8CharDataProvider
+     */
+    public function testUtf8CharFromCode($code, $hex)
+    {
+        $this->assertEquals($hex, bin2hex(CompilerHelper::utf8CharFromCode($code)), sprintf('U+%X', $code));
+    }
+
+    public function utf8CharDataProvider()
+    {
+        return [
+            [0x0, '00'],
+            [0x1, '01'],
+            [0x2, '02'],
+            [0x4, '04'],
+            [0x8, '08'],
+            [0x10, '10'],
+            [0x20, '20'],
+            [0x40, '40'],
+            [0x7F, '7f'],
+            [0x80, 'c280'],
+            [0x81, 'c281'],
+            [0x100, 'c480'],
+            [0x200, 'c880'],
+            [0x400, 'd080'],
+            [0x7FF, 'dfbf'],
+            [0x800, 'e0a080'],
+            [0x801, 'e0a081'],
+            [0x840, 'e0a180'],
+            [0xFFFF, 'efbfbf'],
+            [0x10000, 'f0908080'],
+            [0x10001, 'f0908081'],
+            [0x10040, 'f0908180'],
+            [0x11000, 'f0918080'],
+            [0x20000, 'f0a08080'],
+            [0x40000, 'f1808080'],
+            [0x80000, 'f2808080'],
+            [0x100000, 'f4808080'],
+            [0x10FFFF, 'f48fbfbf'],
+        ];
+    }
+
+    /**
+     * @param int $code
+     * @dataProvider utf8CharFailDataProvider
+     */
+    public function testUtf8CharFromCodeFail($code)
+    {
+        $this->expectException(\OutOfRangeException::class);
+        CompilerHelper::utf8CharFromCode($code);
+    }
+
+    public function utf8CharFailDataProvider()
+    {
+        return [
+            [-42],
+            [0x110000],
+        ];
+    }
 }

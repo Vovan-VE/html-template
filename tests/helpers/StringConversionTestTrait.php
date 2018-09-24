@@ -98,7 +98,7 @@ _REGEXP;
                 return new ExpectThrow($input, ...$blocks['THROW']);
 
             default:
-                throw new \InvalidArgumentException("Unknown set of blocks: $keys");
+                throw new \InvalidArgumentException("Unknown set of blocks: $keys. Target: $message");
         }
     }
 }

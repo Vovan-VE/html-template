@@ -72,4 +72,28 @@ class CompilerHelper
 
         return -1;
     }
+
+    /**
+     * @param int $code
+     * @return string
+     * @since 0.1.0
+     */
+    public static function utf8CharFromCode(int $code): string
+    {
+        if ($code >= 0) {
+            if ($code <= 0x7F) {
+                return chr($code);
+            }
+            if ($code <= 0x7FF) {
+                return chr(0xC0 | $code >> 6) . chr(0x80 | $code & 0x3F);
+            }
+            if ($code <= 0xFFFF) {
+                return chr(0xE0 | $code >> 12) . chr(0x80 | $code >> 6 & 0x3F) . chr(0x80 | $code & 0x3F);
+            }
+            if ($code <= 0x10FFFF) {
+                return chr(0xF0 | $code >> 18) . chr(0x80 | $code >> 12 & 0x3F) . chr(0x80 | $code >> 6 & 0x3F) . chr(0x80 | $code & 0x3F);
+            }
+        }
+        throw new \OutOfRangeException('Too big code - max is 0x10FFFF');
+    }
 }
