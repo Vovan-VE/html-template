@@ -16,9 +16,9 @@ See [an example](./examples/01.basics.php).
 Template example:
 
 ```jsx
-<a href={ $link } title={ "Foo bar: ${ $title }" }>
+<a href={ link } title={ "Foo bar: ${ title }" }>
     <span id=foobar class='it parses html'>
-        { $description }
+        { description }
     </span>
     <span>
         {# comment #}

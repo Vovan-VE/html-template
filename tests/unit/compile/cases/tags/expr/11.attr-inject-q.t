@@ -1,4 +1,4 @@
-<div title={ 'Lorem${ $foo }ipsum&amp;' }/>
+<div title={ 'Lorem${ foo }ipsum&amp;' }/>
 ---- CODE ----
 ($runtime::createElement('div',['title'=>('Lorem' . ($runtime->param('foo')) . 'ipsum&amp;')]))
 ---- RESULT ----

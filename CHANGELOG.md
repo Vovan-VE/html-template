@@ -8,9 +8,10 @@ HTML Template Changelog
     *   Usage
         *   Change main concept of templates to be declarative instead of imperative.
         *   Drop support of `{{ %block name }}` instruction.
-        *   Drop expression insertion in quoted HTML attributes like `x="...{{$var}}..."`.
-            Replaced with string literals like `x={"...${$var}..."}`.
+        *   Drop expression insertion in quoted HTML attributes like `x="...{{ $var }}..."`.
+            Replaced with string literals like `x={"...${ var }..."}`.
         *   Change template tags to single curly braces `{ ... }`.
+        *   Change variable syntax to just `name` instead of `$name`.
         *   HTML and XML tags now will parse in XML mode. This means that block elements
             like `<div>` must be closed with corresponding end tags `</div>` with exactly
             the same case, and single elements must be in form like `<img/>`.

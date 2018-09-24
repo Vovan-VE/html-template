@@ -1,4 +1,4 @@
-<div title={ $foo }></div>
+<div title={ foo }></div>
 ---- CODE ----
 ($runtime::createElement('div',['title'=>($runtime->param('foo'))],[]))
 ---- RESULT ----

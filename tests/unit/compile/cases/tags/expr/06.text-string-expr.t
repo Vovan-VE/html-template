@@ -1,4 +1,4 @@
-Lorem { "ipsum ${ $dolor } sit ${ "amet" } consectepture ${ "adipisicing ${ $elit } sed" } do" } eiusmod
+Lorem { "ipsum ${ dolor } sit ${ "amet" } consectepture ${ "adipisicing ${ elit } sed" } do" } eiusmod
 ---- CODE ----
 ('Lorem ' . ($runtime::htmlEncode(('ipsum ' . ($runtime->param('dolor')) . ' sit ' . 'amet' . ' consectepture ' . ('adipisicing ' . ($runtime->param('elit')) . ' sed') . ' do'))) . ' eiusmod')
 ---- RESULT ----

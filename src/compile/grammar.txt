@@ -89,7 +89,7 @@ InlineStatement(unknown)    : name
 Expression      : Variable
 Expression      : StringLiteral
 
-Variable    : "$" name
+Variable        : name
 
 StringLiteral   : StringLiteralQQ
 StringLiteral   : StringLiteralQ

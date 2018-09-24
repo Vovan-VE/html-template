@@ -19,7 +19,7 @@ class Compiler implements CompilerInterface
 {
     private const A_BUBBLE = Parser::ACTION_BUBBLE_THE_ONLY;
 
-    private const VERSION = '0.1.0-dev.3';
+    private const VERSION = '0.1.0-dev.4';
 
     private const STRING_ESCAPE_LETTER = [
         'b' => "\x08",
