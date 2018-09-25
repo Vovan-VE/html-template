@@ -2,6 +2,9 @@
 namespace VovanVE\HtmlTemplate\tests\unit\runtime;
 
 use VovanVE\HtmlTemplate\components\BaseComponent;
+use VovanVE\HtmlTemplate\components\ComponentInterface;
+use VovanVE\HtmlTemplate\components\ComponentSpawnerInterface;
+use VovanVE\HtmlTemplate\helpers\ObjectHelper;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
 use VovanVE\HtmlTemplate\tests\helpers\TestComponent;
@@ -175,6 +178,23 @@ class RuntimeHelperTest extends BaseTestCase
                         return '<test:foo>' . join('', $content) . '</test:foo>';
                     }
                 },
+                'Factory' => new class(97) implements ComponentSpawnerInterface {
+                    /** @var TestComponent */
+                    private $origin;
+
+                    public function __construct($foo)
+                    {
+                        $this->origin = new TestComponent();
+                        $this->origin->foo = $foo;
+                    }
+
+                    public function getComponent(array $properties = []): ComponentInterface
+                    {
+                        $copy = clone $this->origin;
+                        ObjectHelper::setObjectProperties($copy, $properties);
+                        return $copy;
+                    }
+                },
             ]);
 
         $this->assertEquals($expected, $runtime->createComponent($name, $props, $content));
@@ -202,6 +222,19 @@ class RuntimeHelperTest extends BaseTestCase
                 '<test:foo></test:foo>'],
             ['Boo', [], ['text', '<br/>', '&lt;&gt;'],
                 '<test:foo>text<br/>&lt;&gt;</test:foo>'],
+
+            ['Factory', [], null,
+                '<!-- Test Component: foo=97 bar=null /-->'],
+            ['Factory', [], [],
+                '<!-- Test Component: foo=97 bar=null --><!-- /Test Component -->'],
+            ['Factory', [], ['text', '<br/>', '&lt;&gt;'],
+                '<!-- Test Component: foo=97 bar=null -->text<br/>&lt;&gt;<!-- /Test Component -->'],
+            ['Factory', ['foo' => 42], null,
+                '<!-- Test Component: foo=42 bar=null /-->'],
+            ['Factory', ['foo' => '42'], null,
+                '<!-- Test Component: foo="42" bar=null /-->'],
+            ['Factory', ['foo' => true, 'bar' => [10, '20', null]], null,
+                '<!-- Test Component: foo=true bar=[10,"20",null] /-->'],
         ];
     }
 }

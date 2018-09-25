@@ -2,6 +2,7 @@
 namespace VovanVE\HtmlTemplate\runtime;
 
 use VovanVE\HtmlTemplate\components\ComponentInterface;
+use VovanVE\HtmlTemplate\components\ComponentSpawnerInterface;
 use VovanVE\HtmlTemplate\ConfigException;
 
 class RuntimeHelper implements RuntimeHelperInterface
@@ -9,7 +10,7 @@ class RuntimeHelper implements RuntimeHelperInterface
     /** @var array */
     private $params;
     /**
-     * @var string[]|ComponentInterface[]
+     * @var string[]|ComponentInterface[]|ComponentSpawnerInterface[]
      * @since 0.1.0
      */
     private $components = [];
@@ -138,17 +139,24 @@ class RuntimeHelper implements RuntimeHelperInterface
             if (!class_exists($component_definition)) {
                 throw new ConfigException("Component definition `$name` refers to unknown class");
             }
+            if (!is_subclass_of($component_definition, ComponentInterface::class)) {
+                throw new ConfigException("Component `$name` does not implement `ComponentInterface`");
+            }
+
             $component = new $component_definition($properties);
         } elseif (is_object($component_definition)) {
-            $component = $component_definition;
+            if ($component_definition instanceof ComponentSpawnerInterface) {
+                $component = $component_definition->getComponent($properties);
+            } elseif ($component_definition instanceof ComponentInterface) {
+                $component = $component_definition;
+            } else {
+                throw new ConfigException("Component `$name` does not implement any of expected interfaces");
+            }
         } else {
             throw new ConfigException("Component definition `$name` has unsupported type");
         }
 
-        if (!$component instanceof ComponentInterface) {
-            throw new ConfigException("Component `$name` does not implement `ComponentInterface`");
-        }
-
+        /** @var ComponentInterface $component */
         return $component->render($content);
     }
 

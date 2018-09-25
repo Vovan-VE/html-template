@@ -4,8 +4,11 @@ HTML Template Changelog
 0.1.1
 -----
 
-*   Add: Component definition now can be instance of
-    `\VovanVE\HtmlTemplate\components\ComponentInterface` too.
+*   Add: Component definition now can be instance of:
+    *   `\VovanVE\HtmlTemplate\components\ComponentSpawnerInterface` to create
+        customized components at runtime;
+    *   `\VovanVE\HtmlTemplate\components\ComponentInterface` too render ready
+        component instance.
 
 0.1.0
 -----
