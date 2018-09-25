@@ -73,7 +73,7 @@ class RuntimeHelper implements RuntimeHelperInterface
      */
     public static function htmlEncode(string $content): string
     {
-        return htmlspecialchars((string)$content, ENT_QUOTES | ENT_SUBSTITUTE, self::CHARSET);
+        return htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, self::CHARSET);
     }
 
     /**
