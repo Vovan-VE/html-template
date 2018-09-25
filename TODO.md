@@ -2,4 +2,7 @@ TODO
 ====
 
 *   `CacheInterface::deleteAllEntries()`
-*   Define blocks in `RuntimeHelper`s constructor `$params` with prefix like `&name`.
+*   Compile-time check around components:
+    *   is defined
+    *   has props
+    *   allows/requires content

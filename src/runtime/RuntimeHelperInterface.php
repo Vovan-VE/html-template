@@ -1,6 +1,8 @@
 <?php
 namespace VovanVE\HtmlTemplate\runtime;
 
+use VovanVE\HtmlTemplate\ConfigException;
+
 interface RuntimeHelperInterface
 {
     /**
@@ -30,4 +32,14 @@ interface RuntimeHelperInterface
      * @since 0.1.0
      */
     public static function createElement(string $element, array $attributes = [], ?array $content = null): string;
+
+    /**
+     * @param string $name
+     * @param array $properties
+     * @param array|null $content
+     * @return string
+     * @throws ConfigException
+     * @since 0.1.0
+     */
+    public function createComponent(string $name, array $properties = [], ?array $content = null): string;
 }

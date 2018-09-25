@@ -19,7 +19,7 @@ class Compiler implements CompilerInterface
 {
     private const A_BUBBLE = Parser::ACTION_BUBBLE_THE_ONLY;
 
-    private const VERSION = '0.1.0-dev.4';
+    private const VERSION = '0.1.0-dev.5';
 
     private const STRING_ESCAPE_LETTER = [
         'b' => "\x08",
@@ -399,8 +399,20 @@ class Compiler implements CompilerInterface
                 }
                 $result .= $add_content;
 
-                /** @uses RuntimeHelperInterface::createElement() */
-                return "(\$runtime::createElement($result))";
+                if (CompilerHelper::isComponentName($elementBegin)) {
+                    /** @uses RuntimeHelperInterface::createComponent() */
+                    $method = '->createComponent';
+                } elseif (CompilerHelper::isElementName($elementBegin)) {
+                    /** @uses RuntimeHelperInterface::createElement() */
+                    $method = '::createElement';
+                } else {
+                    throw new ActionAbortException(
+                        "Bad name <$elementBegin>"
+                        . ", Component name must start with uppercase letter"
+                        . " and HTML element name must be lowercase"
+                    );
+                }
+                return "(\$runtime$method($result))";
             },
             'ElementCode(doctype)' => function (array $list) {
                 return var_export('<!DOCTYPE ' . join(' ', $list) . '>', true);

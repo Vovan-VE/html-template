@@ -7,15 +7,16 @@ HTML Template Changelog
 *   **BC break**:
     *   Usage
         *   Change main concept of templates to be declarative instead of imperative.
-        *   Drop support of `{{ %block name }}` instruction.
+        *   Drop support of `{{ %block name }}` instruction. Replaced with Components.
         *   Drop expression insertion in quoted HTML attributes like `x="...{{ $var }}..."`.
             Replaced with string literals like `x={"...${ var }..."}`.
         *   Change template tags to single curly braces `{ ... }`.
         *   Change variable syntax to just `name` instead of `$name`.
-        *   HTML and XML tags now will parse in XML mode. This means that block elements
+        *   HTML tags now will parse in XML mode. This means that block elements
             like `<div>` must be closed with corresponding end tags `</div>` with exactly
             the same case, and single elements must be in form like `<img/>`.
-        *   HTML/XML attributes in elements now cannot be duplicated. Check is case sensitive.
+        *   HTML elements names now must be lowercase.
+        *   HTML attributes in elements now cannot be duplicated. Check is case sensitive.
         *   Work with UTF-8 charset only without any choice.
     *   API
         *   Delete: useless constant `\VovanVE\HtmlTemplate\Engine::VERSION`.
@@ -48,8 +49,13 @@ HTML Template Changelog
             `createElement(string $element, array $attributes = [], ?array $content = null): string`
             to interface `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface`
             and its implementation.
+        *   Add: method
+            `createComponent(string $name, array $properties = [], ?array $content = null): string`
+            to interface `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface`
+            and its implementation.
 *   Add: string literals with possible expression injection in expression tags.
 *   Add: `<!DOCTYPE...>` tag support.
+*   Add: Components support to render custom markup.
 *   Fix: broken `dash-case` names.
 
 0.0.1

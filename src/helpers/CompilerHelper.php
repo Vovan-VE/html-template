@@ -96,4 +96,24 @@ class CompilerHelper
         }
         throw new \OutOfRangeException('Too big code - max is 0x10FFFF');
     }
+
+    /**
+     * @param string $name
+     * @return bool
+     * @since 0.1.0
+     */
+    public static function isComponentName(string $name): bool
+    {
+        return (bool)preg_match('/^[A-Z]/', $name);
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     * @since 0.1.0
+     */
+    public static function isElementName(string $name): bool
+    {
+        return (bool)preg_match('/^[-a-z:]++$/D', $name);
+    }
 }

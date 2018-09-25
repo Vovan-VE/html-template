@@ -9,6 +9,7 @@ use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
 use VovanVE\HtmlTemplate\tests\helpers\conversion\Expect;
 use VovanVE\HtmlTemplate\tests\helpers\RuntimeCounter;
 use VovanVE\HtmlTemplate\tests\helpers\StringConversionTestTrait;
+use VovanVE\HtmlTemplate\tests\helpers\TestComponent;
 
 class CompilerTest extends BaseTestCase
 {
@@ -37,7 +38,10 @@ class CompilerTest extends BaseTestCase
     {
         $template = new TemplateString($expect->getSource(), $filename);
         $cache = new CacheStrings(__FUNCTION__ . '_%{hash}', __CLASS__);
-        $runtime = new RuntimeCounter();;
+        $runtime = (new RuntimeCounter)
+            ->setComponents([
+                'TestComponent' => TestComponent::class,
+            ]);
 
         try {
             /** @noinspection PhpUnhandledExceptionInspection */

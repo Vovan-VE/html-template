@@ -131,4 +131,62 @@ class CompilerHelperTest extends BaseTestCase
             [0x110000],
         ];
     }
+
+    /**
+     * @param string $name
+     * @param bool $isValid
+     * @dataProvider componentNameDataProvider
+     */
+    public function testIsComponentName(string $name, bool $isValid)
+    {
+        $this->assertEquals(
+            $isValid,
+            CompilerHelper::isComponentName($name),
+            "name `$name` must be " . ($isValid ? 'valid' : 'invalid')
+        );
+    }
+
+    public function componentNameDataProvider()
+    {
+        return [
+            ['Foo', true],
+            ['FooBar', true],
+            ['FOO', true],
+            ['F', true],
+            ['lorem', false],
+            ['loremIpsum', false],
+            ['lorem-ipsum', false],
+            ['lorem:ipsum', false],
+            ['lorem-ipsum:sit-amet', false],
+        ];
+    }
+
+    /**
+     * @param string $name
+     * @param bool $isValid
+     * @dataProvider elementNameDataProvider
+     */
+    public function testIsElementName(string $name, bool $isValid)
+    {
+        $this->assertEquals(
+            $isValid,
+            CompilerHelper::isElementName($name),
+            "name `$name` must be " . ($isValid ? 'valid' : 'invalid')
+        );
+    }
+
+    public function elementNameDataProvider()
+    {
+        return [
+            ['lorem', true],
+            ['lorem-ipsum', true],
+            ['lorem:ipsum', true],
+            ['lorem-ipsum:sit-amet', true],
+            ['Foo', false],
+            ['FooBar', false],
+            ['FOO', false],
+            ['F', false],
+            ['loremIpsum', false],
+        ];
+    }
 }

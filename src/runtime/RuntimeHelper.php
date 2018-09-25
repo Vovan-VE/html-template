@@ -1,10 +1,18 @@
 <?php
 namespace VovanVE\HtmlTemplate\runtime;
 
+use VovanVE\HtmlTemplate\components\ComponentInterface;
+use VovanVE\HtmlTemplate\ConfigException;
+
 class RuntimeHelper implements RuntimeHelperInterface
 {
     /** @var array */
     private $params;
+    /**
+     * @var array
+     * @since 0.1.0
+     */
+    private $components = [];
 
     private const CHARSET = 'UTF-8';
 
@@ -23,6 +31,29 @@ class RuntimeHelper implements RuntimeHelperInterface
     public function setParams(array $params): self
     {
         $this->params = $params;
+        return $this;
+    }
+
+    /**
+     * @param array $components
+     * @return $this
+     * @since 0.1.0
+     */
+    public function setComponents(array $components): self
+    {
+        $this->components = $components;
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string $class
+     * @return $this
+     * @since 0.1.0
+     */
+    public function setComponent(string $name, string $class): self
+    {
+        $this->components[$name] = $class;
         return $this;
     }
 
@@ -85,6 +116,30 @@ class RuntimeHelper implements RuntimeHelperInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $name
+     * @param array $properties
+     * @param array|null $content
+     * @return string
+     * @throws ConfigException
+     * @since 0.1.0
+     */
+    public function createComponent(string $name, array $properties = [], ?array $content = null): string
+    {
+        /** @var string $component_class */
+        $component_class = $this->components[$name] ?? null;
+        if (null === $component_class) {
+            throw new ConfigException("Unknown component `$name`");
+        }
+        if (!is_subclass_of($component_class, ComponentInterface::class)) {
+            throw new ConfigException("Component `$name` does not implement `ComponentInterface`");
+        }
+
+        /** @var ComponentInterface $component */
+        $component = new $component_class($properties);
+        return $component->render($content);
     }
 
     /**
