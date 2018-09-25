@@ -1,4 +1,5 @@
-Goal            : Content $
+Goal            : RootContent $
+RootContent     : Content
 Content(next)   : Content Node
 Content(first)  : Node
 
@@ -6,56 +7,57 @@ Node    : Element
 Node    : Tag
 Node    : Text
 
-Element                     : .LT ElementCode
-ElementCode(begin)          : ElementBeginContent ElementEndMark
-ElementCode(end)            : .SLASH ElementNameWS .GT
-ElementEndMark(slash)       : .SLASH .GT
-ElementEndMark              : .GT
+Element                     : "<" ElementCode
+ElementCode(begin)          : ElementBeginContent ElementEnd
+ElementCode(doctype)        : "!" "DOCTYPE" .ws DoctypeContent ">"
+ElementEnd(single)          : "/>"
+ElementEnd(block)           : ">" BlockElementContinue
+BlockElementContinue        : Content BlockElementClose
+BlockElementContinue(empty) : BlockElementClose
+BlockElementClose           : "</" ElementNameWS ">"
 ElementBeginContent(attr)   : ElementName HtmlAttributes
 ElementBeginContent         : ElementName
 ElementNameWS               : ElementName .ws
 ElementNameWS               : ElementName
 ElementName                 : HtmlName
+DoctypeContent(list)        : DoctypeContent DoctypeContentItemWs
+DoctypeContent(first)       : DoctypeContentItemWs
+DoctypeContentItemWs        : DoctypeContentItem .ws
+DoctypeContentItemWs        : DoctypeContentItem
+DoctypeContentItem(name)    : HtmlName
+DoctypeContentItem          : HtmlQuotedConst
 HtmlAttributes(list)        : HtmlAttributes HtmlAttributeWS
 HtmlAttributes(init)        : .ws
 HtmlAttributeWS             : HtmlAttribute .ws
 HtmlAttributeWS             : HtmlAttribute
 HtmlAttribute(Value)        : HtmlName HtmlAttributeEqValue
 HtmlAttribute(Bool)         : HtmlName
-HtmlAttributeEqValue        : .EQ HtmlAttributeValue
+HtmlAttributeEqValue        : "=" HtmlAttributeValue
 HtmlAttributeValue(Expr)    : TagExpression
-HtmlAttributeValue          : HtmlQQString
-HtmlAttributeValue          : HtmlQString
+HtmlAttributeValue(String)  : HtmlQuotedConst
 HtmlAttributeValue(Plain)   : HtmlPlainValue
 
-HtmlName(ns)        : HtmlSimpleName .COLON HtmlSimpleName
+HtmlName(ns)        : HtmlSimpleName ":" HtmlSimpleName
 HtmlName            : HtmlSimpleName
-HtmlSimpleName(d)   : HtmlSimpleName .DASH HtmlNameWord
+HtmlSimpleName(d)   : HtmlSimpleName "-" HtmlNameWord
 HtmlSimpleName      : HtmlNameWord
 
-HtmlQQString        : .QQ HtmlQQContent .QQ
-HtmlQQString(empty) : .QQ .QQ
-HtmlQQContent(loop) : HtmlQQContent HtmlQQContentPart
-HtmlQQContent(first): HtmlQQContentPart
-HtmlQQContentPart   : HtmlQQText
-HtmlQQContentPart(E): TagExpression
+HtmlQuotedConst     : HtmlQQConst
+HtmlQuotedConst     : HtmlQConst
+
+HtmlQQConst         : <"> HtmlQQText <">
+HtmlQQConst(empty)  : <"> <">
 HtmlQQText(loop)    : HtmlQQText HtmlQQTextPart
 HtmlQQText(first)   : HtmlQQTextPart
-HtmlQQTextPart      : HtmlFlowText
+HtmlQQTextPart(flow): HtmlQuotedContentSafe
 HtmlQQTextPart      : HtmlQQTextPartSpec
 
-HtmlQString         : .Q HtmlQContent .Q
-HtmlQString(empty)  : .Q .Q
-HtmlQContent(loop)  : HtmlQContent HtmlQContentPart
-HtmlQContent(first) : HtmlQContentPart
-HtmlQContentPart    : HtmlQText
-HtmlQContentPart(E) : TagExpression
+HtmlQConst          : <'> HtmlQText <'>
+HtmlQConst(empty)   : <'> <'>
 HtmlQText(loop)     : HtmlQText HtmlQTextPart
 HtmlQText(first)    : HtmlQTextPart
-HtmlQTextPart       : HtmlFlowText
+HtmlQTextPart(flow) : HtmlQuotedContentSafe
 HtmlQTextPart       : HtmlQTextPartSpec
-
-
 
 Text(empty)         : .EolWithWs
 Text                : .EolWithWs InlineTextWithEolWs
@@ -63,53 +65,88 @@ Text                : InlineTextWithEolWs
 InlineTextWithEolWs : InlineText .EolWithWs
 InlineTextWithEolWs : InlineText
 
-Tag                     : .TagStart TagContinueAny
-TagExpression           : .TagStart WsTagExpressionContinue
+Tag                     : "{" TagContinueAny
+TagExpression           : "{" WsTagExpressionContinue
 TagContinueAny(comment) : .CommentTagContinue
 TagContinueAny          : WsTagContinue
-CommentTagContinue      : CommentTagSharp .CommentTagContent CommentTagEnd
-CommentTagContinue      : CommentTagSharp CommentTagEnd
+CommentTagContinue      : "#" .CommentTagContent "#}"
+CommentTagContinue      : "#" "#}"
 WsTagContinue           : .ws TagContinue
 WsTagContinue           : TagContinue
-TagContinue(Empty)      : .TagEnd
+TagContinue(Empty)      : "}"
 TagContinue(Expr)       : TagExpressionContinue
-TagContinue(St)         : .StatementMark StatementContinue
+TagContinue(St)         : "%" StatementContinue
 WsTagExpressionContinue : .ws TagExpressionContinue
 WsTagExpressionContinue : TagExpressionContinue
 TagExpressionContinue   : Expression .WsTagEnd
 StatementContinue(I)    : InlineStatementContinue
 InlineStatementContinue : InlineStatement .WsTagEnd
-WsTagEnd                : .ws TagEnd
-WsTagEnd                : TagEnd
-TagStart        : "{{"
-TagEnd          : "}}"
-CommentTagSharp : "#"
-CommentTagEnd   : "#}}"
-StatementMark   : "%"
+WsTagEnd                : .ws "}"
+WsTagEnd                : "}"
 
-InlineStatement(block)      : "block" .ws name
 InlineStatement(unknown)    : name
 
-Expression  : Variable
+Expression      : Variable
+Expression      : StringLiteral
 
-Variable    : "$" name
+Variable        : name
 
-LT      : "<"
-GT      : ">"
-SLASH   : "/"
-EQ      : "="
-COLON   : ":"
-DASH    : "-"
-QQ      : <">
-Q       : <'>
-ws      : /\s++/
+StringLiteral   : StringLiteralQQ
+StringLiteral   : StringLiteralQ
 
-HtmlNameWord        : /(?i)[a-z][a-z0-9]*+/
-name                : /(?i)[a-z_][a-z_0-9]*+/
-InlineText          : /(?:[^\s<>{}]++|\h++(?!\z|\R)|\{(?!\{)|\}(?!\}))++/
-CommentTagContent   : /(?:[^#]++|#(?!\}\}))++/
-HtmlQQTextPartSpec  : /[<>']++/
-HtmlQTextPartSpec   : /[<>"]++/
-EolWithWs           : /\h*+(?:\R\h*+)++/
-HtmlPlainValue      : /[^<>'"={}\s]++/
-HtmlFlowText        : /[^<>'"{}]++/
+StringLiteralQQ                 : <"> StringLiteralQQContent <">
+StringLiteralQQ(empty)          : <"> <">
+StringLiteralQQContent(list)    : StringLiteralQQContent StringLiteralQQPart
+StringLiteralQQContent(first)   : StringLiteralQQPart
+StringLiteralQQPart(text)       : StringLiteralQQPartText
+StringLiteralQQPart(expr)       : "${" WsTagExpressionContinue
+StringLiteralQQPart(dollar)     : "$"
+StringLiteralQQPartText(list)   : StringLiteralQQPartText StringLiteralQQPartTextChunk
+StringLiteralQQPartText(first)  : StringLiteralQQPartTextChunk
+StringLiteralQQPartTextChunk    : StringLiteralTextSafe
+StringLiteralQQPartTextChunk    : StringLiteralEscape
+StringLiteralQQPartTextChunk(q) : <'>
+
+StringLiteralQ                  : <'> StringLiteralQContent <'>
+StringLiteralQ(empty)           : <'> <'>
+StringLiteralQContent(list)     : StringLiteralQContent StringLiteralQPart
+StringLiteralQContent(first)    : StringLiteralQPart
+StringLiteralQPart(text)        : StringLiteralQPartText
+StringLiteralQPart(expr)        : "${" WsTagExpressionContinue
+StringLiteralQPart(dollar)      : "$"
+StringLiteralQPartText(list)    : StringLiteralQPartText StringLiteralQPartTextChunk
+StringLiteralQPartText(first)   : StringLiteralQPartTextChunk
+StringLiteralQPartTextChunk     : StringLiteralTextSafe
+StringLiteralQPartTextChunk     : StringLiteralEscape
+StringLiteralQPartTextChunk(qq) : <">
+
+StringLiteralEscape     : "\" StringLiteralEscapeCode
+StringLiteralEscapeCode : EscapeCodeX
+StringLiteralEscapeCode : EscapeCodeU
+StringLiteralEscapeCode : EscapeCodeSingleLetter
+StringLiteralEscapeCode : EscapeCodePunctuation
+
+EscapeCodeX             : "x" EscapeCodeHex2
+EscapeCodeX             : "X" EscapeCodeHex2
+EscapeCodeU             : "u" EscapeCodeUCode
+EscapeCodeU             : "U" EscapeCodeUCode
+EscapeCodeUCode         : EscapeCodeHex4
+EscapeCodeUCode         : "{" EscapeCodeHex "}"
+
+
+HtmlNameWord            : /(?i)[a-z][a-z0-9]*+/
+name                    : /(?i)[a-z_][a-z_0-9]*+/
+ws                      : /\s++/
+InlineText              : /(?:[^\s<>{}]++|\h++(?!\z|\R))++/
+CommentTagContent       : /(?:[^#]++|#(?!\}))++/
+HtmlQQTextPartSpec      : /'++/
+HtmlQTextPartSpec       : /"++/
+HtmlQuotedContentSafe   : /[^'"]++/
+EolWithWs               : /\h*+(?:\R\h*+)++/
+HtmlPlainValue          : /[^<>'"={}\s\/]++|\/(?!>)/
+EscapeCodeHex2          : /(?i)[a-f0-9]{2}+/
+EscapeCodeHex4          : /(?i)[a-f0-9]{4}+/
+EscapeCodeHex           : /(?i)[a-f0-9]++/
+EscapeCodeSingleLetter  : /(?i)(?![xu])[a-z]/
+EscapeCodePunctuation   : /[-!"#$%&'()*+,.\/:;<=>?@\[\]\\^_`{|}~]/
+StringLiteralTextSafe   : /[^'"$\\]++/

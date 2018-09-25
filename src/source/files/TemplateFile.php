@@ -15,7 +15,7 @@ class TemplateFile extends Template
      * @param string $key
      * @param string $filename
      */
-    public function __construct($name, $key, $filename)
+    public function __construct(string $name, string $key, string $filename)
     {
         parent::__construct($name, $key);
 

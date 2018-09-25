@@ -29,7 +29,7 @@ class TemplateProviderTest extends BaseTestCase
              * @param string $name
              * @return TemplateInterface
              */
-            protected function fetchTemplate($name): TemplateInterface
+            protected function fetchTemplate(string $name): TemplateInterface
             {
                 if ('' === $name) {
                     throw new TemplateNotFoundException();
@@ -59,7 +59,7 @@ class TemplateProviderTest extends BaseTestCase
      * @throws TemplateNotFoundException
      * @throws \VovanVE\HtmlTemplate\source\TemplateReadException
      */
-    public function testFetches($provider): TemplateProvider
+    public function testFetches(TemplateProvider $provider): TemplateProvider
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         $first = $provider->getTemplate('foo/bar');
@@ -89,7 +89,7 @@ class TemplateProviderTest extends BaseTestCase
      * @param TemplateProvider|\Countable $provider
      * @depends testFetches
      */
-    public function testClear($provider)
+    public function testClear(TemplateProvider $provider)
     {
         $this->assertSame($provider, $provider->clear());
         $this->assertCount(0, $provider);
@@ -99,7 +99,7 @@ class TemplateProviderTest extends BaseTestCase
      * @param TemplateProvider $provider
      * @depends testCreate
      */
-    public function testFetcheFailure($provider)
+    public function testFetcheFailure(TemplateProvider $provider)
     {
         $this->expectException(TemplateNotFoundException::class);
 

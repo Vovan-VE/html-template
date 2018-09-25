@@ -20,7 +20,7 @@ class Message implements MessageInterface
      * @param string $message
      * @param int $line
      */
-    public function __construct($level, $message, $line = 0)
+    public function __construct(int $level, string $message, int $line = 0)
     {
         $this->level = $level;
         $this->message = $message;

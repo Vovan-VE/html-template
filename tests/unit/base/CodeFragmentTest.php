@@ -31,7 +31,7 @@ class CodeFragmentTest extends BaseTestCase
             /**
              * @param string $content
              */
-            public function __construct($content)
+            public function __construct(string $content)
             {
                 parent::__construct();
                 $this->content = $content;

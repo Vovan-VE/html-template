@@ -15,12 +15,12 @@ $engine = (new Engine)
             ->setTemplate(
                 'foo',
                 <<<'TPL'
-<a href={{ $link }} title="Foo bar: {{ $title }}">
+<a href={ link } title={ "Foo bar: ${ title }" }>
     <span id=foobar class='it parses html'>
-        {{ $description }}
+        { description }
     </span>
     <span>
-        {{ %block content }}
+        {# comment #}
     </span>
 </a>
 TPL
@@ -35,9 +35,6 @@ $runtime = (new RuntimeHelper)
         'description' => function () {
             return 'Some <text/plain> content';
         },
-    ])
-    ->setBlocks([
-        'content' => "<samp>content</samp>'s block content<br/>is a HTML",
     ]);
 
 $compiled = $engine->compileTemplate('foo');
@@ -49,6 +46,6 @@ echo ">>>>>>>>", PHP_EOL;
 echo PHP_EOL;
 echo "Template output:", PHP_EOL;
 echo "<<<<<<<<", PHP_EOL;
-$compiled->run($runtime);
+echo $compiled->run($runtime);
 echo PHP_EOL;
 echo ">>>>>>>>", PHP_EOL;

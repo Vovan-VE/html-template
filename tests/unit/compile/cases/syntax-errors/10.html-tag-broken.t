@@ -1,3 +1,3 @@
 foo <div <br/> bar
 ---- THROW% ----
-Unexpected <LT "<">; expected: <GT>, <SLASH> near `<br/> bar` in `%s` at line 1
+Unexpected "<"; expected: "/>" or ">" near `<br/> bar` in `%s` at line 1

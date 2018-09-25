@@ -17,7 +17,7 @@ abstract class TemplateProvider implements TemplateProviderInterface
      * @return TemplateInterface
      * @throws TemplateNotFoundException
      */
-    public function getTemplate($name): TemplateInterface
+    public function getTemplate(string $name): TemplateInterface
     {
         $template = $this->templates[$name] ?? ($this->templates[$name] = $this->fetchTemplate($name) ?? false);
         if (false === $template) {
@@ -39,5 +39,5 @@ abstract class TemplateProvider implements TemplateProviderInterface
      * @param string $name
      * @return TemplateInterface|null
      */
-    abstract protected function fetchTemplate($name): ?TemplateInterface;
+    abstract protected function fetchTemplate(string $name): ?TemplateInterface;
 }

@@ -8,9 +8,9 @@ class RuntimeCounter extends RuntimeHelper
     /** @var int */
     private $runsCount = 0;
 
-    public function didRun(): void
+    public function didRun(): int
     {
-        $this->runsCount++;
+        return ++$this->runsCount;
     }
 
     /**
@@ -19,5 +19,19 @@ class RuntimeCounter extends RuntimeHelper
     public function getRunsCount(): int
     {
         return $this->runsCount;
+    }
+
+    /**
+     * @param string $name
+     * @param array $definitions
+     * @return mixed
+     */
+    protected function getItemValue(string $name, array &$definitions)
+    {
+        $value = parent::getItemValue($name, $definitions);
+        if (null === $value) {
+            return $value = $definitions[$name] = "[value of &$name]";
+        }
+        return $value;
     }
 }

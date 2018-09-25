@@ -13,7 +13,7 @@ abstract class CacheEntry extends CodeFragment implements CachedEntryInterface
     /**
      * @param string $className
      */
-    public function __construct($className)
+    public function __construct(string $className)
     {
         parent::__construct();
 
@@ -30,10 +30,10 @@ abstract class CacheEntry extends CodeFragment implements CachedEntryInterface
 
     /**
      * @param RuntimeHelperInterface $runtime
-     * @return void
+     * @return string
      * @throws CacheConsistencyException
      */
-    public function run($runtime): void
+    public function run(RuntimeHelperInterface $runtime): string
     {
         $class = $this->getClassName();
         if (!class_exists($class, false)) {
@@ -48,7 +48,7 @@ abstract class CacheEntry extends CodeFragment implements CachedEntryInterface
 
         /** @var RuntimeEntryDummyInterface|string $dummy */
         $dummy = $class;
-        $dummy::run($runtime);
+        return $dummy::run($runtime);
     }
 
     /**

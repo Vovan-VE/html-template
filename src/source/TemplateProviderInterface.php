@@ -8,5 +8,5 @@ interface TemplateProviderInterface
      * @return TemplateInterface
      * @throws TemplateNotFoundException
      */
-    public function getTemplate($name): TemplateInterface;
+    public function getTemplate(string $name): TemplateInterface;
 }

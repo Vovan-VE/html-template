@@ -14,7 +14,8 @@ class CacheStringEntryTest extends BaseTestCase
     {
         $class = self::NS . '\\' . self::NAME;
 
-        $content = '<?php $runtime->didRun(); ?>';
+        /** @uses RuntimeCounter::didRun() */
+        $content = '(string)$runtime->didRun()';
         $meta = "String code HASH: " . md5($content) . "\n";
 
         $entry = new CacheStringEntry($class, $content, $meta);
@@ -26,9 +27,9 @@ class CacheStringEntryTest extends BaseTestCase
         $runtime = new RuntimeCounter();
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $entry->run($runtime);
+        $this->assertEquals('1', $entry->run($runtime));
         /** @noinspection PhpUnhandledExceptionInspection */
-        $entry->run($runtime);
+        $this->assertEquals('2', $entry->run($runtime));
 
         $this->assertEquals(2, $runtime->getRunsCount(), 'runs count');
     }

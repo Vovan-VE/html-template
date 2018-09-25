@@ -19,7 +19,17 @@ class Compiler implements CompilerInterface
 {
     private const A_BUBBLE = Parser::ACTION_BUBBLE_THE_ONLY;
 
-    public $charset = 'UTF-8';
+    private const VERSION = '0.1.0';
+
+    private const STRING_ESCAPE_LETTER = [
+        'b' => "\x08",
+        'e' => "\e",
+        'f' => "\f",
+        'n' => "\n",
+        'r' => "\r",
+        't' => "\t",
+        'v' => "\v",
+    ];
 
     /** @var Parser */
     private $parser;
@@ -35,11 +45,21 @@ class Compiler implements CompilerInterface
     private $disabledAttributesHash = [];
 
     /**
+     * @return string
+     * @since 0.1.0
+     */
+    public function getMeta(): string
+    {
+        return "Compiler: " . self::VERSION . "\n";
+    }
+
+
+    /**
      * @param TemplateInterface $template
      * @return CompiledEntryInterface
-     * @throws CompileException
+     * @throws SyntaxException
      */
-    public function compile($template): CompiledEntryInterface
+    public function compile(TemplateInterface $template): CompiledEntryInterface
     {
         $parser = $this->getParser();
         $actions = $this->getActionsMap();
@@ -59,13 +79,13 @@ class Compiler implements CompilerInterface
      * @param TemplateInterface $template
      * @return ReportInterface
      */
-    public function syntaxCheck($template): ReportInterface
+    public function syntaxCheck(TemplateInterface $template): ReportInterface
     {
         $parser = $this->getParser();
 
         $source = $template->getContent();
 
-        $report = new Report();
+        $report = new Report($template->getName());
 
         try {
             $parser->parse($source);
@@ -92,7 +112,7 @@ class Compiler implements CompilerInterface
      * @param string[] $elements
      * @return $this
      */
-    public function setDisabledElements($elements): self
+    public function setDisabledElements(array $elements): self
     {
         $this->freeActionsMap();
         $this->disabledElements = $elements;
@@ -115,7 +135,7 @@ class Compiler implements CompilerInterface
      * @param string[][] $attributesPerElements
      * @return $this
      */
-    public function setDisabledAttributes($attributesPerElements): self
+    public function setDisabledAttributes(array $attributesPerElements): self
     {
         $this->disabledAttributes = $attributesPerElements;
         $this->disabledAttributesHash = [];
@@ -141,7 +161,7 @@ class Compiler implements CompilerInterface
      * @param string $name
      * @return bool
      */
-    protected function isElementEnabled($name): bool
+    protected function isElementEnabled(string $name): bool
     {
         return [] === $this->disabledElementsHash
             || $this->isNameEnabledInHash($name, $this->disabledElementsHash);
@@ -153,7 +173,7 @@ class Compiler implements CompilerInterface
      * @param string $blocked
      * @return bool
      */
-    protected function areElementAttributesEnabled($element, $attributes, &$blocked): bool
+    protected function areElementAttributesEnabled(string $element, array $attributes, &$blocked): bool
     {
         $elements = $this->disabledAttributesHash;
         if ([] === $elements) {
@@ -261,69 +281,176 @@ class Compiler implements CompilerInterface
 
     protected function createActionsMap(): ActionsMadeMap
     {
-        $charset_at_runtime = var_export($this->charset, true);
-
         $contentAsIs = \Closure::fromCallable('strval');
-        $htmlEncodeNow = function ($content) {
-            return RuntimeHelper::htmlEncode($content, $this->charset);
+        $hexToDec = \Closure::fromCallable('hexdec');
+        $toPhpString = function (string $content) {
+            return var_export($content, true);
         };
-        //$htmlEncodeAtRuntime = function ($expr) use ($charset_at_runtime) {
-        //    /** @uses RuntimeHelper::htmlEncode() */
-        //    return '($runtime::htmlEncode(' . $expr . ', ' . $charset_at_runtime . '))';
-        //};
-        $echoHtmlEncodeAtRuntime = function ($expr) use ($charset_at_runtime) {
+        $initArrayEmpty = function () {
+            return [];
+        };
+        $initArrayOfOne = function ($value) {
+            return [$value];
+        };
+        $initArrayOfOneNotNull = function ($value) {
+            if (null === $value) {
+                return [];
+            }
+            return [$value];
+        };
+        $listAppendItem = function (array $list, $item) {
+            $new_list = $list;
+            $new_list[] = $item;
+            return $new_list;
+        };
+        $listAppendItemNotNull = function (array $list, $item) {
+            if (null === $item) {
+                return $list;
+            }
+            $new_list = $list;
+            $new_list[] = $item;
+            return $new_list;
+        };
+        $htmlEncodeAtRuntime = function (string $expr) {
             /** @uses RuntimeHelper::htmlEncode() */
-            return '<' . '?= $runtime::htmlEncode(' . $expr . ', ' . $charset_at_runtime . ') ?' . '>';
+            return "(\$runtime::htmlEncode($expr))";
         };
-        $concatTwoFragments = function ($a, $b) {
+        $htmlDecodeNow = function (string $content) {
+            return RuntimeHelper::htmlDecodeEntity($content);
+        };
+        $concatTwoFragments = function (string $a, string $b) {
             return $a . $b;
         };
         $emptyStringAtRuntime = function () {
-            return '""';
+            return "''";
+        };
+        $concatStringsArrayAtRuntime = function (array $strings) {
+            if (1 === count($strings)) {
+                return $strings[0];
+            }
+            return '(' . join(' . ', $strings) . ')';
+        };
+        $concatTextChunksArrayToPhpString = function (array $texts) {
+            return var_export(join('', $texts), true);
+        };
+        $stringWithDollarAtRuntime = function () {
+            return "'\$'";
+        };
+        $stringWithApostrophNow = function () {
+            return "'";
+        };
+        $stringWithQuotNow = function () {
+            return '"';
         };
 
-        $surroundWithQuotes = function ($code) {
-            return '"' . $code . '"';
+        $toHtmlStringNow = function (string $string) {
+            return '"' . RuntimeHelper::htmlEncode($string) . '"';
         };
-        $emptyCode = function () {
+        $makeNull = function () {
+            return null;
+        };
+        $makeEmptyCode = function () {
             return '';
         };
 
+        $charFromCode = function ($code) {
+            if ($code > 0x10FFFF) {
+                throw new ActionAbortException("Too big code - max is `10FFFF`");
+            }
+            return CompilerHelper::utf8CharFromCode($code);
+        };
         $map = new ActionsMadeMap([
-            'Content(next)' => $concatTwoFragments,
-            'Content(first)' => self::A_BUBBLE,
+            'RootContent' => function (array $nodes) {
+                switch (count($nodes)) {
+                    case 0:
+                        return "''";
+
+                    case 1:
+                        return $nodes[0];
+
+                    default:
+                        return '(' . join(' . ', $nodes) . ')';
+                }
+            },
+            'Content(next)' => $listAppendItemNotNull,
+            'Content(first)' => $initArrayOfOneNotNull,
 
             'Node' => self::A_BUBBLE,
 
-            'Element' => function ($code) {
-                return "<$code";
+            'Element' => self::A_BUBBLE,
+            'ElementCode(begin)' => function (array $elementData, array $elementEnd) {
+                [$elementBegin, $attributes] = $elementData;
+                $add_attributes = ',[' . join(',', $attributes) . ']';
+                $result = var_export($elementBegin, true);
+                if ($elementEnd) {
+                    [$content, $elementEnd] = $elementEnd;
+                    if ($elementBegin !== $elementEnd) {
+                        throw new ActionAbortException(
+                            "Unexpected closing tag `</$elementEnd>` instead of expected `</$elementBegin>`"
+                        );
+                    }
+                    $add_content = ',[' . join(',', $content) . ']';
+                } else {
+                    $add_content = '';
+                }
+
+                if ($attributes || '' !== $add_content) {
+                    $result .= $add_attributes;
+                }
+                $result .= $add_content;
+
+                if (CompilerHelper::isComponentName($elementBegin)) {
+                    /** @uses RuntimeHelperInterface::createComponent() */
+                    $method = '->createComponent';
+                } elseif (CompilerHelper::isElementName($elementBegin)) {
+                    /** @uses RuntimeHelperInterface::createElement() */
+                    $method = '::createElement';
+                } else {
+                    throw new ActionAbortException(
+                        "Bad name <$elementBegin>"
+                        . ", Component name must start with uppercase letter"
+                        . " and HTML element name must be lowercase"
+                    );
+                }
+                return "(\$runtime$method($result))";
             },
-            'ElementCode(begin)' => $concatTwoFragments,
-            'ElementCode(end)' => function ($name) {
-                return "/$name>";
+            'ElementCode(doctype)' => function (array $list) {
+                return var_export('<!DOCTYPE ' . join(' ', $list) . '>', true);
             },
-            'ElementEndMark(slash)' => function () {
-                return '/>';
-            },
-            'ElementEndMark' => function () {
-                return '>';
-            },
-            'ElementBeginContent(attr)' => function ($element, $attributes) {
-                $result = $element;
+            'ElementEnd(single)' => $initArrayEmpty,
+            'ElementEnd(block)' => self::A_BUBBLE,
+            'ElementBeginContent(attr)' => function (string $element, array $attributes) {
+                $map = [];
                 $names = [];
-                foreach ($attributes as [$attribute, $code]) {
-                    $result .= $code;
+                foreach ($attributes as [$attribute, $valueInCode]) {
+                    if (isset($map[$attribute])) {
+                        throw new ActionAbortException(
+                            "HTML attribute `$attribute` is duplicated in element `<$element>`"
+                        );
+                    }
+                    $map[$attribute] = var_export($attribute, true) . '=>' . $valueInCode;
                     $names[$attribute] = $attribute;
                 }
                 if (!$this->areElementAttributesEnabled($element, $names, $blockedAttribute)) {
-                    throw new ActionAbortException("HTML attribute `$blockedAttribute` is not allowed in element `<$element>`");
+                    throw new ActionAbortException(
+                        "HTML attribute `$blockedAttribute` is not allowed in element `<$element>`"
+                    );
                 }
-                return $result;
+                return [$element, $map];
             },
-            'ElementBeginContent' => self::A_BUBBLE,
+            'ElementBeginContent' => function (string $element) {
+                return [$element, []];
+            },
+            'BlockElementContinue' => function (array $content, string $element) {
+                return [$content, $element];
+            },
+            'BlockElementContinue(empty)' => function (string $element) {
+                return [[], $element];
+            },
+            'BlockElementClose' => self::A_BUBBLE,
             'ElementNameWS' => self::A_BUBBLE,
             'ElementName' => ($this->hasElementNameRestrictions())
-                ? function ($name) {
+                ? function (string $name) {
                     if ($this->isElementEnabled($name)) {
                         return $name;
                     }
@@ -331,103 +458,132 @@ class Compiler implements CompilerInterface
                 }
                 : self::A_BUBBLE,
 
-            'HtmlAttributes(list)' => function ($list, $attr) {
-                $new_list = $list;
-                $new_list[] = $attr;
-                return $new_list;
-            },
-            'HtmlAttributes(first)' => function ($attr) {
-                return [$attr];
-            },
-            'HtmlAttributes(init)' => function () {
-                return [];
-            },
-            'HtmlAttributeWS' => function ($attrData) {
-                [$name, $code] = $attrData;
-                return [$name, " $code"];
-            },
-            'HtmlAttribute(Value)' => function ($name, $eqValue) {
-                return [$name, $name . $eqValue];
-            },
-            'HtmlAttribute(Bool)' => function ($name) {
-                return [$name, $name];
-            },
-            'HtmlAttributeEqValue' => function ($value) {
-                return "=$value";
-            },
-            'HtmlAttributeValue(Expr)' => function ($expr) use ($charset_at_runtime) {
-                return '"<' . '?= $runtime::htmlEncode(' . $expr . ', ' . $charset_at_runtime . ') ?' . '>"';
-            },
-            'HtmlAttributeValue' => self::A_BUBBLE,
-            'HtmlAttributeValue(Plain)' => $surroundWithQuotes,
+            'DoctypeContent(list)' => $listAppendItem,
+            'DoctypeContent(first)' => $initArrayOfOne,
+            'DoctypeContentItemWs' => self::A_BUBBLE,
+            'DoctypeContentItem(name)' => self::A_BUBBLE,
+            'DoctypeContentItem' => $toHtmlStringNow,
 
-            'HtmlName(ns)' => function ($a, $b) {
+            'HtmlAttributes(list)' => $listAppendItem,
+            'HtmlAttributes(first)' => $initArrayOfOne,
+            'HtmlAttributes(init)' => $initArrayEmpty,
+            'HtmlAttributeWS' => self::A_BUBBLE,
+            'HtmlAttribute(Value)' => function (string $name, string $value) {
+                return [$name, $value];
+            },
+            'HtmlAttribute(Bool)' => function (string $name) {
+                return [$name, 'true'];
+            },
+            'HtmlAttributeEqValue' => self::A_BUBBLE,
+            'HtmlAttributeValue(Expr)' => self::A_BUBBLE,
+            'HtmlAttributeValue(String)' => $toPhpString,
+            'HtmlAttributeValue(Plain)' => $toPhpString,
+
+            'HtmlName(ns)' => function (string $a, string $b) {
                 return "$a:$b";
             },
             'HtmlName' => self::A_BUBBLE,
-            'HtmlSimpleName(d)' => $concatTwoFragments,
+            'HtmlSimpleName(d)' => function (string $a, string $b) {
+                return "$a-$b";
+            },
             'HtmlSimpleName' => self::A_BUBBLE,
             'HtmlNameWord' => $contentAsIs,
 
-            'HtmlQQString' => $surroundWithQuotes,
-            'HtmlQQString(empty)' => $emptyStringAtRuntime,
-            'HtmlQQContent(loop)' => $concatTwoFragments,
-            'HtmlQQContent(first)' => self::A_BUBBLE,
-            'HtmlQQContentPart' => self::A_BUBBLE,
-            'HtmlQQContentPart(E)' => $echoHtmlEncodeAtRuntime,
+            'HtmlQuotedConst' => self::A_BUBBLE,
+
+            'HtmlQQConst' => self::A_BUBBLE,
+            'HtmlQQConst(empty)' => $makeEmptyCode,
             'HtmlQQText(loop)' => $concatTwoFragments,
             'HtmlQQText(first)' => self::A_BUBBLE,
+            'HtmlQQTextPart(flow)' => $htmlDecodeNow,
             'HtmlQQTextPart' => self::A_BUBBLE,
-            'HtmlQQTextPartSpec' => $htmlEncodeNow,
+            'HtmlQQTextPartSpec' => $contentAsIs,
 
-            'HtmlQString' => $surroundWithQuotes,
-            'HtmlQString(empty)' => $emptyStringAtRuntime,
-            'HtmlQContent(loop)' => $concatTwoFragments,
-            'HtmlQContent(first)' => self::A_BUBBLE,
-            'HtmlQContentPart' => self::A_BUBBLE,
-            'HtmlQContentPart(E)' => $echoHtmlEncodeAtRuntime,
+            'HtmlQConst' => self::A_BUBBLE,
+            'HtmlQConst(empty)' => $makeEmptyCode,
             'HtmlQText(loop)' => $concatTwoFragments,
             'HtmlQText(first)' => self::A_BUBBLE,
+            'HtmlQTextPart(flow)' => $htmlDecodeNow,
             'HtmlQTextPart' => self::A_BUBBLE,
-            'HtmlQTextPartSpec' => $htmlEncodeNow,
+            'HtmlQTextPartSpec' => $contentAsIs,
 
             'HtmlPlainValue' => $contentAsIs,
-            'HtmlFlowText' => $contentAsIs,
+            'HtmlQuotedContentSafe' => $contentAsIs,
 
-            'Text' => self::A_BUBBLE,
-            'Text(empty)' => $emptyCode,
+            'Text' => $toPhpString,
+            'Text(empty)' => $makeNull,
             'InlineTextWithEolWs' => self::A_BUBBLE,
             'InlineText' => $contentAsIs,
 
             'Tag' => self::A_BUBBLE,
             'TagExpression' => self::A_BUBBLE,
-            'TagContinueAny(comment)' => $emptyCode,
+            'TagContinueAny(comment)' => $makeNull,
             'TagContinueAny' => self::A_BUBBLE,
             'WsTagContinue' => self::A_BUBBLE,
-            'TagContinue(Empty)' => $emptyCode,
-            'TagContinue(Expr)' => function ($expr) use ($charset_at_runtime) {
-                return '<' . '?= $runtime::htmlEncode(' . $expr . ', ' . $charset_at_runtime . ') ?' . '>';
-            },
-            'TagContinue(St)' => function ($st) {
-                return '<' . '?php ' . $st . ' ?' . '>';
-            },
+            'TagContinue(Empty)' => $makeNull,
+            'TagContinue(Expr)' => $htmlEncodeAtRuntime,
+            'TagContinue(St)' => self::A_BUBBLE,
             'WsTagExpressionContinue' => self::A_BUBBLE,
             'TagExpressionContinue' => self::A_BUBBLE,
             'StatementContinue(I)' => self::A_BUBBLE,
             'InlineStatementContinue' => self::A_BUBBLE,
 
-            'InlineStatement(block)' => function ($name) {
-                return 'echo $runtime->block(' . var_export($name, true) . ')';
-            },
-            'InlineStatement(unknown)' => function ($name) {
+            'InlineStatement(unknown)' => function (string $name) {
                 throw new ActionAbortException("Unknown instructions `$name`");
             },
 
             'Expression' => self::A_BUBBLE,
-            'Variable' => function ($name) {
+
+            'Variable' => function (string $name) {
                 /** @uses RuntimeHelperInterface::param() */
                 return '($runtime->param(' . var_export($name, true) . '))';
             },
+
+            'StringLiteral' => self::A_BUBBLE,
+
+            'StringLiteralQQ' => $concatStringsArrayAtRuntime,
+            'StringLiteralQQ(empty)' => $emptyStringAtRuntime,
+            'StringLiteralQQContent(list)' => $listAppendItem,
+            'StringLiteralQQContent(first)' => $initArrayOfOne,
+            'StringLiteralQQPart(text)' => $concatTextChunksArrayToPhpString,
+            'StringLiteralQQPart(expr)' => self::A_BUBBLE,
+            'StringLiteralQQPart(dollar)' => $stringWithDollarAtRuntime,
+            'StringLiteralQQPartText(list)' => $listAppendItem,
+            'StringLiteralQQPartText(first)' => $initArrayOfOne,
+            'StringLiteralQQPartTextChunk' => self::A_BUBBLE,
+            'StringLiteralQQPartTextChunk(q)' => $stringWithApostrophNow,
+
+            'StringLiteralQ' => $concatStringsArrayAtRuntime,
+            'StringLiteralQ(empty)' => $emptyStringAtRuntime,
+            'StringLiteralQContent(list)' => $listAppendItem,
+            'StringLiteralQContent(first)' => $initArrayOfOne,
+            'StringLiteralQPart(text)' => $concatTextChunksArrayToPhpString,
+            'StringLiteralQPart(expr)' => self::A_BUBBLE,
+            'StringLiteralQPart(dollar)' => $stringWithDollarAtRuntime,
+            'StringLiteralQPartText(list)' => $listAppendItem,
+            'StringLiteralQPartText(first)' => $initArrayOfOne,
+            'StringLiteralQPartTextChunk' => self::A_BUBBLE,
+            'StringLiteralQPartTextChunk(qq)' => $stringWithQuotNow,
+
+            'StringLiteralEscape' => self::A_BUBBLE,
+            'StringLiteralEscapeCode' => self::A_BUBBLE,
+
+            'EscapeCodeX' => $charFromCode,
+            'EscapeCodeU' => $charFromCode,
+            'EscapeCodeUCode' => self::A_BUBBLE,
+            'EscapeCodeHex2' => $hexToDec,
+            'EscapeCodeHex4' => $hexToDec,
+            'EscapeCodeHex' => $hexToDec,
+
+            'EscapeCodeSingleLetter' => function ($letter) {
+                if (isset(self::STRING_ESCAPE_LETTER[$letter])) {
+                    return self::STRING_ESCAPE_LETTER[$letter];
+                }
+                throw new ActionAbortException("Unknown escape-letter code `\\$letter`");
+            },
+            'StringLiteralTextSafe' => $contentAsIs,
+            'EscapeCodePunctuation' => $contentAsIs,
+
             'name' => $contentAsIs,
         ]);
 
@@ -447,7 +603,7 @@ class Compiler implements CompilerInterface
      * @param string $blocked
      * @return bool
      */
-    protected function areNamesEnabledInHash($names, $hash, &$blocked): bool
+    protected function areNamesEnabledInHash(array $names, array $hash, &$blocked): bool
     {
         foreach ($names as $name) {
             if (!$this->isNameEnabledInHash($name, $hash)) {
@@ -463,7 +619,7 @@ class Compiler implements CompilerInterface
      * @param bool[] $hash
      * @return bool
      */
-    protected function isNameEnabledInHash($name, $hash): bool
+    protected function isNameEnabledInHash(string $name, array $hash): bool
     {
         if (isset($hash['*'])) {
             return false;

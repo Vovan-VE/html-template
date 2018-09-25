@@ -1,5 +1,7 @@
 lorem  ipsum,
     dolor  sit,
         amet  consectepture.
----- OK ----
+---- CODE ----
+('lorem  ipsum,' . 'dolor  sit,' . 'amet  consectepture.')
+---- RESULT ----
 lorem  ipsum,dolor  sit,amet  consectepture.

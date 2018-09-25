@@ -14,7 +14,7 @@ abstract class Expect
      * @param string $source
      * @param bool $isFormat
      */
-    public function __construct($source, $isFormat)
+    public function __construct(string $source, bool $isFormat)
     {
         $this->source = $source;
         $this->isFormat = $isFormat;
@@ -35,14 +35,27 @@ abstract class Expect
 
     /**
      * @param BaseTestCase $test
-     * @return void
-     */
-    abstract public function setExpectations($test): void;
-
-    /**
-     * @param BaseTestCase $test
+     * @param string $filename
      * @param string $result
      * @return void
      */
-    abstract public function checkResult($test, $result): void;
+    abstract public function checkCode(BaseTestCase $test, string $filename, string $result): void;
+
+    /**
+     * @param BaseTestCase $test
+     * @param string $filename
+     * @param string $result
+     * @return void
+     */
+    abstract public function checkResult(BaseTestCase $test, string $filename, string $result): void;
+
+    /**
+     * @param BaseTestCase $test
+     * @param \Exception $e
+     * @return bool
+     */
+    public function caught(BaseTestCase $test, \Exception $e): bool
+    {
+        return false;
+    }
 }

@@ -14,16 +14,16 @@ interface ReportInterface
     public function isSuccess(): bool;
 
     /**
-     * @param int $minLevel
+     * @param int|null $minLevel
      * @return iterable|MessageInterface[]
      */
-    public function getMessages($minLevel): iterable;
+    public function getMessages(?int $minLevel = null): iterable;
 
     /**
      * @param MessageInterface $message
      * @return void
      */
-    public function addMessage($message): void;
+    public function addMessage(MessageInterface $message): void;
 
     /**
      * @return void

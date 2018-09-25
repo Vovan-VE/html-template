@@ -5,6 +5,8 @@ use VovanVE\HtmlTemplate\caching\CachedEntryInterface;
 use VovanVE\HtmlTemplate\caching\CacheInterface;
 use VovanVE\HtmlTemplate\compile\CompileException;
 use VovanVE\HtmlTemplate\compile\CompilerInterface;
+use VovanVE\HtmlTemplate\report\ReportInterface;
+use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\source\TemplateNotFoundException;
 use VovanVE\HtmlTemplate\source\TemplateProviderInterface;
 use VovanVE\HtmlTemplate\source\TemplateReadException;
@@ -19,9 +21,8 @@ interface EngineInterface
     /**
      * @param TemplateProviderInterface|null $provider
      * @return $this
-     * @throws ConfigException
      */
-    public function setTemplateProvider($provider): self;
+    public function setTemplateProvider(?TemplateProviderInterface $provider): self;
 
     /**
      * @return CacheInterface
@@ -31,9 +32,8 @@ interface EngineInterface
     /**
      * @param CacheInterface|null $cache
      * @return $this
-     * @throws ConfigException
-    */
-    public function setCache($cache): self;
+     */
+    public function setCache(?CacheInterface $cache): self;
 
     /**
      * @return CompilerInterface
@@ -43,9 +43,8 @@ interface EngineInterface
     /**
      * @param CompilerInterface|null $compiler
      * @return $this
-     * @throws ConfigException
      */
-    public function setCompiler($compiler): self;
+    public function setCompiler(?CompilerInterface $compiler): self;
 
     /**
      * @param string $name
@@ -55,11 +54,23 @@ interface EngineInterface
      * @throws TemplateNotFoundException
      * @throws TemplateReadException
      */
-    public function compileTemplate($name): CachedEntryInterface;
+    public function compileTemplate(string $name): CachedEntryInterface;
 
     /**
      * @param string $name
-     * @param array $params
+     * @return ReportInterface
+     * @throws ConfigException
+     * @throws CompileException
+     * @throws TemplateNotFoundException
+     * @throws TemplateReadException
+     * @since 0.1.0
      */
-    public function runTemplate($name, $params = []): void;
+    public function checkTemplateSyntax(string $name): ReportInterface;
+
+    /**
+     * @param string $name
+     * @param RuntimeHelperInterface|null $runtime
+     * @return string
+     */
+    public function runTemplate(string $name, ?RuntimeHelperInterface $runtime = null): string;
 }

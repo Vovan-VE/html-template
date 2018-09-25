@@ -2,6 +2,7 @@
 namespace VovanVE\HtmlTemplate\tests\unit\caching\files;
 
 use VovanVE\HtmlTemplate\caching\files\CacheFileEntry;
+use VovanVE\HtmlTemplate\runtime\RuntimeEntryDummyInterface;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
 use VovanVE\HtmlTemplate\tests\helpers\RuntimeCounter;
 
@@ -31,21 +32,23 @@ class CacheFileEntryTest extends BaseTestCase
         $runtime = new RuntimeCounter();
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $entry->run($runtime);
+        $this->assertEquals('1', $entry->run($runtime));
         /** @noinspection PhpUnhandledExceptionInspection */
-        $entry->run($runtime);
+        $this->assertEquals('2', $entry->run($runtime));
 
         $this->assertEquals(2, $runtime->getRunsCount(), 'runs count');
     }
 
     protected function setUp()
     {
+        /** @uses RuntimeEntryDummyInterface::run() */
+        /** @uses RuntimeCounter::didRun() */
         $this->code =
             "<?php\n" .
             "namespace " . self::NS . ";\n" .
             "class " . self::NAME . " {\n" .
-            "    public static function run(\$runtime): void {\n" .
-            "        \$runtime->didRun();\n" .
+            "    public static function run(\$runtime): string {\n" .
+            "        return (string)\$runtime->didRun();\n" .
             "    }\n" .
             "}";
         $this->meta = "Temp class build by " . __CLASS__ . "\n";
