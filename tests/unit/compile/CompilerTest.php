@@ -7,6 +7,7 @@ use VovanVE\HtmlTemplate\compile\SyntaxException;
 use VovanVE\HtmlTemplate\source\memory\TemplateString;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
 use VovanVE\HtmlTemplate\tests\helpers\conversion\Expect;
+use VovanVE\HtmlTemplate\tests\helpers\CounterStepperComponent;
 use VovanVE\HtmlTemplate\tests\helpers\RuntimeCounter;
 use VovanVE\HtmlTemplate\tests\helpers\StringConversionTestTrait;
 use VovanVE\HtmlTemplate\tests\helpers\TestComponent;
@@ -41,6 +42,7 @@ class CompilerTest extends BaseTestCase
         $runtime = (new RuntimeCounter)
             ->setComponents([
                 'TestComponent' => TestComponent::class,
+                'Step' => new CounterStepperComponent(),
             ]);
 
         try {
