@@ -1,8 +1,10 @@
 <?php
 namespace VovanVE\HtmlTemplate\tests\unit\runtime;
 
+use VovanVE\HtmlTemplate\components\BaseComponent;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
+use VovanVE\HtmlTemplate\tests\helpers\TestComponent;
 
 class RuntimeHelperTest extends BaseTestCase
 {
@@ -149,6 +151,57 @@ class RuntimeHelperTest extends BaseTestCase
                 '<div id="foo" foo="42" bar></div>'],
             ['foo:bar', [], null, '<foo:bar/>'],
             ['foo:bar', [], [], '<foo:bar></foo:bar>'],
+        ];
+    }
+
+    /**
+     * @param string $name
+     * @param array $props
+     * @param array|null $content
+     * @param string $expected
+     * @dataProvider createComponentDataProvider
+     */
+    public function testCreateComponent(string $name, array $props, ?array $content, string $expected)
+    {
+        $runtime = (new RuntimeHelper)
+            ->setComponents([
+                'Test' => TestComponent::class,
+                'Boo' => new class() extends BaseComponent {
+                    public function render(?array $content = null): string
+                    {
+                        if (null === $content) {
+                            return '<test:foo/>';
+                        }
+                        return '<test:foo>' . join('', $content) . '</test:foo>';
+                    }
+                },
+            ]);
+
+        $this->assertEquals($expected, $runtime->createComponent($name, $props, $content));
+    }
+
+    public function createComponentDataProvider()
+    {
+        return [
+            ['Test', [], null,
+                '<!-- Test Component: foo=null bar=null /-->'],
+            ['Test', [], [],
+                '<!-- Test Component: foo=null bar=null --><!-- /Test Component -->'],
+            ['Test', [], ['text', '<br/>', '&lt;&gt;'],
+                '<!-- Test Component: foo=null bar=null -->text<br/>&lt;&gt;<!-- /Test Component -->'],
+            ['Test', ['foo' => 42], null,
+                '<!-- Test Component: foo=42 bar=null /-->'],
+            ['Test', ['foo' => '42'], null,
+                '<!-- Test Component: foo="42" bar=null /-->'],
+            ['Test', ['foo' => true, 'bar' => [10, '20', null]], null,
+                '<!-- Test Component: foo=true bar=[10,"20",null] /-->'],
+
+            ['Boo', [], null,
+                '<test:foo/>'],
+            ['Boo', [], [],
+                '<test:foo></test:foo>'],
+            ['Boo', [], ['text', '<br/>', '&lt;&gt;'],
+                '<test:foo>text<br/>&lt;&gt;</test:foo>'],
         ];
     }
 }

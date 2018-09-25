@@ -1,6 +1,12 @@
 HTML Template Changelog
 =======================
 
+0.1.1
+-----
+
+*   Add: Component definition now can be instance of
+    `\VovanVE\HtmlTemplate\components\ComponentInterface` too.
+
 0.1.0
 -----
 

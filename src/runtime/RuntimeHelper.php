@@ -9,7 +9,7 @@ class RuntimeHelper implements RuntimeHelperInterface
     /** @var array */
     private $params;
     /**
-     * @var array
+     * @var string[]|ComponentInterface[]
      * @since 0.1.0
      */
     private $components = [];
@@ -128,17 +128,27 @@ class RuntimeHelper implements RuntimeHelperInterface
      */
     public function createComponent(string $name, array $properties = [], ?array $content = null): string
     {
-        /** @var string $component_class */
-        $component_class = $this->components[$name] ?? null;
-        if (null === $component_class) {
+        /** @var string $component_class_ */
+        $component_definition = $this->components[$name] ?? null;
+        if (null === $component_definition) {
             throw new ConfigException("Unknown component `$name`");
         }
-        if (!is_subclass_of($component_class, ComponentInterface::class)) {
+
+        if (is_string($component_definition)) {
+            if (!class_exists($component_definition)) {
+                throw new ConfigException("Component definition `$name` refers to unknown class");
+            }
+            $component = new $component_definition($properties);
+        } elseif (is_object($component_definition)) {
+            $component = $component_definition;
+        } else {
+            throw new ConfigException("Component definition `$name` has unsupported type");
+        }
+
+        if (!$component instanceof ComponentInterface) {
             throw new ConfigException("Component `$name` does not implement `ComponentInterface`");
         }
 
-        /** @var ComponentInterface $component */
-        $component = new $component_class($properties);
         return $component->render($content);
     }
 
