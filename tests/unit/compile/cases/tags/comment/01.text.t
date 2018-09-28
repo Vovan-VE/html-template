@@ -3,6 +3,6 @@ Lorem {# comment #} ipsum
 {# ... { ... {{ ... # ... } ... }} ... #} sit
 {# comment {# comment #} amet
 ---- CODE ----
-('Lorem ' . ' ipsum' . ' dolor' . ' sit' . ' amet')
+'Lorem  ipsum dolor sit amet'
 ---- RESULT ----
 Lorem  ipsum dolor sit amet

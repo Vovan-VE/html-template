@@ -1,13 +1,26 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile;
 
+use VovanVE\HtmlTemplate\compile\chunks\ComponentElement;
+use VovanVE\HtmlTemplate\compile\chunks\DoctypeElement;
+use VovanVE\HtmlTemplate\compile\chunks\HtmlElement;
+use VovanVE\HtmlTemplate\compile\chunks\HtmlQuotedString;
+use VovanVE\HtmlTemplate\compile\chunks\NodesList;
+use VovanVE\HtmlTemplate\compile\chunks\PhpArray;
+use VovanVE\HtmlTemplate\compile\chunks\PhpArrayPair;
+use VovanVE\HtmlTemplate\compile\chunks\PhpBoolConst;
+use VovanVE\HtmlTemplate\compile\chunks\PhpConcatenation;
+use VovanVE\HtmlTemplate\compile\chunks\PhpList;
+use VovanVE\HtmlTemplate\compile\chunks\PhpStringConst;
+use VovanVE\HtmlTemplate\compile\chunks\PhpValueInterface;
+use VovanVE\HtmlTemplate\compile\chunks\TagPrintText;
+use VovanVE\HtmlTemplate\compile\chunks\Variable;
 use VovanVE\HtmlTemplate\helpers\CompilerHelper;
 use VovanVE\HtmlTemplate\report\Message;
 use VovanVE\HtmlTemplate\report\MessageInterface;
 use VovanVE\HtmlTemplate\report\Report;
 use VovanVE\HtmlTemplate\report\ReportInterface;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
-use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\source\TemplateInterface;
 use VovanVE\parser\actions\ActionAbortException;
 use VovanVE\parser\actions\ActionsMadeMap;
@@ -19,7 +32,7 @@ class Compiler implements CompilerInterface
 {
     private const A_BUBBLE = Parser::ACTION_BUBBLE_THE_ONLY;
 
-    private const VERSION = '0.1.0';
+    private const VERSION = '0.1.2';
 
     private const STRING_ESCAPE_LETTER = [
         'b' => "\x08",
@@ -283,19 +296,13 @@ class Compiler implements CompilerInterface
     {
         $contentAsIs = \Closure::fromCallable('strval');
         $hexToDec = \Closure::fromCallable('hexdec');
-        $toPhpString = function (string $content) {
-            return var_export($content, true);
-        };
-        $initArrayEmpty = function () {
+        $returnEmptyArray = function () {
             return [];
         };
-        $initArrayOfOne = function ($value) {
-            return [$value];
+        $returnEmptyString = function () {
+            return '';
         };
-        $initArrayOfOneNotNull = function ($value) {
-            if (null === $value) {
-                return [];
-            }
+        $initArrayOfOne = function ($value) {
             return [$value];
         };
         $listAppendItem = function (array $list, $item) {
@@ -303,154 +310,135 @@ class Compiler implements CompilerInterface
             $new_list[] = $item;
             return $new_list;
         };
-        $listAppendItemNotNull = function (array $list, $item) {
-            if (null === $item) {
-                return $list;
-            }
-            $new_list = $list;
-            $new_list[] = $item;
-            return $new_list;
-        };
-        $htmlEncodeAtRuntime = function (string $expr) {
-            /** @uses RuntimeHelper::htmlEncode() */
-            return "(\$runtime::htmlEncode($expr))";
-        };
         $htmlDecodeNow = function (string $content) {
             return RuntimeHelper::htmlDecodeEntity($content);
         };
         $concatTwoFragments = function (string $a, string $b) {
             return $a . $b;
         };
-        $emptyStringAtRuntime = function () {
-            return "''";
-        };
-        $concatStringsArrayAtRuntime = function (array $strings) {
-            if (1 === count($strings)) {
-                return $strings[0];
-            }
-            return '(' . join(' . ', $strings) . ')';
-        };
-        $concatTextChunksArrayToPhpString = function (array $texts) {
-            return var_export(join('', $texts), true);
-        };
-        $stringWithDollarAtRuntime = function () {
-            return "'\$'";
-        };
-        $stringWithApostrophNow = function () {
-            return "'";
-        };
-        $stringWithQuotNow = function () {
-            return '"';
-        };
 
-        $toHtmlStringNow = function (string $string) {
-            return '"' . RuntimeHelper::htmlEncode($string) . '"';
-        };
-        $makeNull = function () {
-            return null;
-        };
-        $makeEmptyCode = function () {
-            return '';
-        };
+        // ===================
 
-        $charFromCode = function ($code) {
+        $makeStringConst = function (string $text) {
+            return new PhpStringConst($text);
+        };
+        $makeCharFromCode = function ($code) {
             if ($code > 0x10FFFF) {
                 throw new ActionAbortException("Too big code - max is `10FFFF`");
             }
-            return CompilerHelper::utf8CharFromCode($code);
+            return new PhpStringConst(CompilerHelper::utf8CharFromCode($code));
         };
+        $makeStringWithApostrophNow = function () {
+            return new PhpStringConst("'");
+        };
+        $makeStringWithQuotNow = function () {
+            return new PhpStringConst('"');
+        };
+        $makeStringWithDollar = function () {
+            return new PhpStringConst('$');
+        };
+        $makeStringConcat = function (array $values) {
+            return new PhpConcatenation(...$values);
+        };
+        $makeStringEmpty = function () {
+            return new PhpStringConst('');
+        };
+
+        $makeArrayEmpty = function () {
+            return new PhpArray();
+        };
+        $makeArrayOfOne = function (PhpArrayPair $pair) {
+            return new PhpArray($pair);
+        };
+        $makeArrayAppend = function (PhpArray $array, PhpArrayPair $pair) {
+            return $array->append($pair);
+        };
+
+        $makeListOfOne = function (PhpValueInterface $value) {
+            return new PhpList($value);
+        };
+        $makeListAppend = function (PhpList $list, PhpValueInterface $value) {
+            return $list->append($value);
+        };
+
+        $makeNodesListOfOneNotNull = function (?PhpValueInterface $value) {
+            if (null === $value) {
+                return new NodesList();
+            }
+            return new NodesList($value);
+        };
+        $makeNodesListAppendNotNull = function (NodesList $list, ?PhpValueInterface $value) {
+            return $value ? $list->append($value) : $list;
+        };
+
+        $makeNull = function () {
+            return null;
+        };
+
         $map = new ActionsMadeMap([
-            'RootContent' => function (array $nodes) {
-                switch (count($nodes)) {
-                    case 0:
-                        return "''";
-
-                    case 1:
-                        return $nodes[0];
-
-                    default:
-                        return '(' . join(' . ', $nodes) . ')';
+            'RootContent' => function (NodesList $content) {
+                $result = new PhpConcatenation(...$content->getValues());
+                if ($result->isConstant()) {
+                    $result = new PhpStringConst($result->getConstValue());
                 }
+                return $result->getPhpCode();
             },
-            'Content(next)' => $listAppendItemNotNull,
-            'Content(first)' => $initArrayOfOneNotNull,
+            'Content(next)' => $makeNodesListAppendNotNull,
+            'Content(first)' => $makeNodesListOfOneNotNull,
 
             'Node' => self::A_BUBBLE,
 
             'Element' => self::A_BUBBLE,
             'ElementCode(begin)' => function (array $elementData, array $elementEnd) {
+                /** @var string $elementBegin */
+                /** @var PhpArray $attributes */
                 [$elementBegin, $attributes] = $elementData;
-                $add_attributes = ',[' . join(',', $attributes) . ']';
-                $result = var_export($elementBegin, true);
+                /** @var NodesList|null $content */
                 if ($elementEnd) {
-                    [$content, $elementEnd] = $elementEnd;
-                    if ($elementBegin !== $elementEnd) {
+                    /** @var string $elementEndName */
+                    [$content, $elementEndName] = $elementEnd;
+                    if ($elementBegin !== $elementEndName) {
                         throw new ActionAbortException(
-                            "Unexpected closing tag `</$elementEnd>` instead of expected `</$elementBegin>`"
+                            "Unexpected closing tag `</$elementEndName>` instead of expected `</$elementBegin>`"
                         );
                     }
-                    $children = '[' . join(',', $content) . ']';
                 } else {
-                    $children = '';
-                }
-
-                if ($attributes || '' !== $children) {
-                    $result .= $add_attributes;
+                    $content = null;
                 }
 
                 if (CompilerHelper::isComponentName($elementBegin)) {
-                    /** @uses RuntimeHelperInterface::createComponent() */
-                    $method = '->createComponent';
-                    if ($children) {
-                        $result .= ",$children";
-                    }
-                } elseif (CompilerHelper::isElementName($elementBegin)) {
-                    /** @uses RuntimeHelperInterface::createElement() */
-                    $method = '::createElement';
-                    if ($children) {
-                        $result .= ",$children";
-                    }
-                } else {
-                    throw new ActionAbortException(
-                        "Bad name <$elementBegin>"
-                        . ", Component name must start with uppercase letter"
-                        . " and HTML element name must be lowercase"
-                    );
+                    return new ComponentElement($elementBegin, $attributes, $content);
                 }
-                return "(\$runtime$method($result))";
+                if (CompilerHelper::isElementName($elementBegin)) {
+                    return new HtmlElement($elementBegin, $attributes, $content);
+                }
+                throw new ActionAbortException(
+                    "Bad name <$elementBegin>"
+                    . ", Component name must start with uppercase letter"
+                    . " and HTML element name must be lowercase"
+                );
             },
-            'ElementCode(doctype)' => function (array $list) {
-                return var_export('<!DOCTYPE ' . join(' ', $list) . '>', true);
+            'ElementCode(doctype)' => function (PhpList $list) {
+                return new DoctypeElement(...$list->getValues());
             },
-            'ElementEnd(single)' => $initArrayEmpty,
+            'ElementEnd(single)' => $returnEmptyArray,
             'ElementEnd(block)' => self::A_BUBBLE,
-            'ElementBeginContent(attr)' => function (string $element, array $attributes) {
-                $map = [];
-                $names = [];
-                foreach ($attributes as [$attribute, $valueInCode]) {
-                    if (isset($map[$attribute])) {
-                        throw new ActionAbortException(
-                            "HTML attribute `$attribute` is duplicated in element `<$element>`"
-                        );
-                    }
-                    $map[$attribute] = var_export($attribute, true) . '=>' . $valueInCode;
-                    $names[$attribute] = $attribute;
-                }
-                if (!$this->areElementAttributesEnabled($element, $names, $blockedAttribute)) {
+            'ElementBeginContent(attr)' => function (string $element, PhpArray $attributes) {
+                if (!$this->areElementAttributesEnabled($element, $attributes->getKeysConst(), $blockedAttribute)) {
                     throw new ActionAbortException(
                         "HTML attribute `$blockedAttribute` is not allowed in element `<$element>`"
                     );
                 }
-                return [$element, $map];
+                return [$element, $attributes];
             },
             'ElementBeginContent' => function (string $element) {
-                return [$element, []];
+                return [$element, new PhpArray()];
             },
-            'BlockElementContinue' => function (array $content, string $element) {
+            'BlockElementContinue' => function (NodesList $content, string $element) {
                 return [$content, $element];
             },
             'BlockElementContinue(empty)' => function (string $element) {
-                return [[], $element];
+                return [new NodesList(), $element];
             },
             'BlockElementClose' => self::A_BUBBLE,
             'ElementNameWS' => self::A_BUBBLE,
@@ -463,26 +451,36 @@ class Compiler implements CompilerInterface
                 }
                 : self::A_BUBBLE,
 
-            'DoctypeContent(list)' => $listAppendItem,
-            'DoctypeContent(first)' => $initArrayOfOne,
+            'DoctypeContent(list)' => $makeListAppend,
+            'DoctypeContent(first)' => $makeListOfOne,
             'DoctypeContentItemWs' => self::A_BUBBLE,
-            'DoctypeContentItem(name)' => self::A_BUBBLE,
-            'DoctypeContentItem' => $toHtmlStringNow,
+            'DoctypeContentItem(name)' => $makeStringConst,
+            'DoctypeContentItem' => function (string $value) {
+                return new HtmlQuotedString(new PhpStringConst($value));
+            },
 
-            'HtmlAttributes(list)' => $listAppendItem,
-            'HtmlAttributes(first)' => $initArrayOfOne,
-            'HtmlAttributes(init)' => $initArrayEmpty,
+            'HtmlAttributes(list)' => function (PhpArray $array, PhpArrayPair $pair) use ($makeArrayAppend) {
+                $attribute = $pair->getKey()->getConstValue();
+                if ($array->hasKey($attribute)) {
+                    throw new ActionAbortException(
+                        "HTML attribute `$attribute` is duplicated"
+                    );
+                }
+                return $array->append($pair);
+            },
+            'HtmlAttributes(first)' => $makeArrayOfOne,
+            'HtmlAttributes(init)' => $makeArrayEmpty,
             'HtmlAttributeWS' => self::A_BUBBLE,
-            'HtmlAttribute(Value)' => function (string $name, string $value) {
-                return [$name, $value];
+            'HtmlAttribute(Value)' => function (string $name, PhpValueInterface $value) {
+                return new PhpArrayPair(new PhpStringConst($name), $value);
             },
             'HtmlAttribute(Bool)' => function (string $name) {
-                return [$name, 'true'];
+                return new PhpArrayPair(new PhpStringConst($name), new PhpBoolConst(true));
             },
             'HtmlAttributeEqValue' => self::A_BUBBLE,
             'HtmlAttributeValue(Expr)' => self::A_BUBBLE,
-            'HtmlAttributeValue(String)' => $toPhpString,
-            'HtmlAttributeValue(Plain)' => $toPhpString,
+            'HtmlAttributeValue(String)' => $makeStringConst,
+            'HtmlAttributeValue(Plain)' => $makeStringConst,
 
             'HtmlName(ns)' => function (string $a, string $b) {
                 return "$a:$b";
@@ -497,7 +495,7 @@ class Compiler implements CompilerInterface
             'HtmlQuotedConst' => self::A_BUBBLE,
 
             'HtmlQQConst' => self::A_BUBBLE,
-            'HtmlQQConst(empty)' => $makeEmptyCode,
+            'HtmlQQConst(empty)' => $returnEmptyString,
             'HtmlQQText(loop)' => $concatTwoFragments,
             'HtmlQQText(first)' => self::A_BUBBLE,
             'HtmlQQTextPart(flow)' => $htmlDecodeNow,
@@ -505,7 +503,7 @@ class Compiler implements CompilerInterface
             'HtmlQQTextPartSpec' => $contentAsIs,
 
             'HtmlQConst' => self::A_BUBBLE,
-            'HtmlQConst(empty)' => $makeEmptyCode,
+            'HtmlQConst(empty)' => $returnEmptyString,
             'HtmlQText(loop)' => $concatTwoFragments,
             'HtmlQText(first)' => self::A_BUBBLE,
             'HtmlQTextPart(flow)' => $htmlDecodeNow,
@@ -515,7 +513,7 @@ class Compiler implements CompilerInterface
             'HtmlPlainValue' => $contentAsIs,
             'HtmlQuotedContentSafe' => $contentAsIs,
 
-            'Text' => $toPhpString,
+            'Text' => $makeStringConst,
             'Text(empty)' => $makeNull,
             'InlineTextWithEolWs' => self::A_BUBBLE,
             'InlineText' => $contentAsIs,
@@ -526,7 +524,9 @@ class Compiler implements CompilerInterface
             'TagContinueAny' => self::A_BUBBLE,
             'WsTagContinue' => self::A_BUBBLE,
             'TagContinue(Empty)' => $makeNull,
-            'TagContinue(Expr)' => $htmlEncodeAtRuntime,
+            'TagContinue(Expr)' => function (PhpValueInterface $value) {
+                return new TagPrintText($value);
+            },
             'TagContinue(St)' => self::A_BUBBLE,
             'WsTagExpressionContinue' => self::A_BUBBLE,
             'TagExpressionContinue' => self::A_BUBBLE,
@@ -540,54 +540,53 @@ class Compiler implements CompilerInterface
             'Expression' => self::A_BUBBLE,
 
             'Variable' => function (string $name) {
-                /** @uses RuntimeHelperInterface::param() */
-                return '($runtime->param(' . var_export($name, true) . '))';
+                return new Variable($name);
             },
 
             'StringLiteral' => self::A_BUBBLE,
 
-            'StringLiteralQQ' => $concatStringsArrayAtRuntime,
-            'StringLiteralQQ(empty)' => $emptyStringAtRuntime,
+            'StringLiteralQQ' => $makeStringConcat,
+            'StringLiteralQQ(empty)' => $makeStringEmpty,
             'StringLiteralQQContent(list)' => $listAppendItem,
             'StringLiteralQQContent(first)' => $initArrayOfOne,
-            'StringLiteralQQPart(text)' => $concatTextChunksArrayToPhpString,
+            'StringLiteralQQPart(text)' => $makeStringConcat,
             'StringLiteralQQPart(expr)' => self::A_BUBBLE,
-            'StringLiteralQQPart(dollar)' => $stringWithDollarAtRuntime,
+            'StringLiteralQQPart(dollar)' => $makeStringWithDollar,
             'StringLiteralQQPartText(list)' => $listAppendItem,
             'StringLiteralQQPartText(first)' => $initArrayOfOne,
             'StringLiteralQQPartTextChunk' => self::A_BUBBLE,
-            'StringLiteralQQPartTextChunk(q)' => $stringWithApostrophNow,
+            'StringLiteralQQPartTextChunk(q)' => $makeStringWithApostrophNow,
 
-            'StringLiteralQ' => $concatStringsArrayAtRuntime,
-            'StringLiteralQ(empty)' => $emptyStringAtRuntime,
+            'StringLiteralQ' => $makeStringConcat,
+            'StringLiteralQ(empty)' => $makeStringEmpty,
             'StringLiteralQContent(list)' => $listAppendItem,
             'StringLiteralQContent(first)' => $initArrayOfOne,
-            'StringLiteralQPart(text)' => $concatTextChunksArrayToPhpString,
+            'StringLiteralQPart(text)' => $makeStringConcat,
             'StringLiteralQPart(expr)' => self::A_BUBBLE,
-            'StringLiteralQPart(dollar)' => $stringWithDollarAtRuntime,
+            'StringLiteralQPart(dollar)' => $makeStringWithDollar,
             'StringLiteralQPartText(list)' => $listAppendItem,
             'StringLiteralQPartText(first)' => $initArrayOfOne,
             'StringLiteralQPartTextChunk' => self::A_BUBBLE,
-            'StringLiteralQPartTextChunk(qq)' => $stringWithQuotNow,
+            'StringLiteralQPartTextChunk(qq)' => $makeStringWithQuotNow,
 
             'StringLiteralEscape' => self::A_BUBBLE,
             'StringLiteralEscapeCode' => self::A_BUBBLE,
 
-            'EscapeCodeX' => $charFromCode,
-            'EscapeCodeU' => $charFromCode,
+            'EscapeCodeX' => $makeCharFromCode,
+            'EscapeCodeU' => $makeCharFromCode,
             'EscapeCodeUCode' => self::A_BUBBLE,
             'EscapeCodeHex2' => $hexToDec,
             'EscapeCodeHex4' => $hexToDec,
             'EscapeCodeHex' => $hexToDec,
 
             'EscapeCodeSingleLetter' => function ($letter) {
-                if (isset(self::STRING_ESCAPE_LETTER[$letter])) {
-                    return self::STRING_ESCAPE_LETTER[$letter];
+                if (!isset(self::STRING_ESCAPE_LETTER[$letter])) {
+                    throw new ActionAbortException("Unknown escape-letter code `\\$letter`");
                 }
-                throw new ActionAbortException("Unknown escape-letter code `\\$letter`");
+                return new PhpStringConst(self::STRING_ESCAPE_LETTER[$letter]);
             },
-            'StringLiteralTextSafe' => $contentAsIs,
-            'EscapeCodePunctuation' => $contentAsIs,
+            'StringLiteralTextSafe' => $makeStringConst,
+            'EscapeCodePunctuation' => $makeStringConst,
 
             'name' => $contentAsIs,
         ]);

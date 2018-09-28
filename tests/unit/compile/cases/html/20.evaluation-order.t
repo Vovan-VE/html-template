@@ -32,39 +32,39 @@
 {}</Step>{'\n'}
 {}r
 ---- CODE ----
-('a' . ($runtime::htmlEncode('
-')) . ($runtime->createComponent('Step',[],[($runtime::htmlEncode('
-')),'    b',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step',[],[($runtime::htmlEncode('
-')),'        c',($runtime::htmlEncode('
-')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'        d',($runtime::htmlEncode('
-')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'        e',($runtime::htmlEncode('
-')),'    '])),($runtime::htmlEncode('
-')),'    f',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'    g',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step',[],[($runtime::htmlEncode('
-')),'        h',($runtime::htmlEncode('
-')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'        i',($runtime::htmlEncode('
-')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'        j',($runtime::htmlEncode('
-')),'    '])),($runtime::htmlEncode('
-')),'    k',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'    l',($runtime::htmlEncode('
-'))])) . ($runtime::htmlEncode('
-')) . 'm' . ($runtime::htmlEncode('
-')) . ($runtime->createComponent('Step')) . ($runtime::htmlEncode('
-')) . 'o' . ($runtime::htmlEncode('
-')) . ($runtime->createComponent('Step',[],[($runtime::htmlEncode('
-')),'    p',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'    q',($runtime::htmlEncode('
-'))])) . ($runtime::htmlEncode('
-')) . 'r')
+('a
+'.($runtime->createComponent('Step',[],['
+    b
+    ',($runtime->createComponent('Step',[],['
+        c
+        ',($runtime->createComponent('Step')),'
+        d
+        ',($runtime->createComponent('Step')),'
+        e
+    '])),'
+    f
+    ',($runtime->createComponent('Step')),'
+    g
+    ',($runtime->createComponent('Step',[],['
+        h
+        ',($runtime->createComponent('Step')),'
+        i
+        ',($runtime->createComponent('Step')),'
+        j
+    '])),'
+    k
+    ',($runtime->createComponent('Step')),'
+    l
+'])).'
+m
+'.($runtime->createComponent('Step')).'
+o
+'.($runtime->createComponent('Step',[],['
+    p
+    ',($runtime->createComponent('Step')),'
+    q
+'])).'
+r')
 ---- RESULT ----
 a
 <!-- step: 9 -->
