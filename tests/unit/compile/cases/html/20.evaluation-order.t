@@ -32,39 +32,39 @@
 {}</Step>{'\n'}
 {}r
 ---- CODE ----
-('a' . ($runtime::htmlEncode('
-')) . ($runtime->createComponent('Step',[],function()use($runtime){return [($runtime::htmlEncode('
-')),'    b',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step',[],function()use($runtime){return [($runtime::htmlEncode('
-')),'        c',($runtime::htmlEncode('
-')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'        d',($runtime::htmlEncode('
-')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'        e',($runtime::htmlEncode('
-')),'    '];})),($runtime::htmlEncode('
-')),'    f',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'    g',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step',[],function()use($runtime){return [($runtime::htmlEncode('
-')),'        h',($runtime::htmlEncode('
-')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'        i',($runtime::htmlEncode('
-')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'        j',($runtime::htmlEncode('
-')),'    '];})),($runtime::htmlEncode('
-')),'    k',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'    l',($runtime::htmlEncode('
-'))];})) . ($runtime::htmlEncode('
-')) . 'm' . ($runtime::htmlEncode('
-')) . ($runtime->createComponent('Step')) . ($runtime::htmlEncode('
-')) . 'o' . ($runtime::htmlEncode('
-')) . ($runtime->createComponent('Step',[],function()use($runtime){return [($runtime::htmlEncode('
-')),'    p',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step')),($runtime::htmlEncode('
-')),'    q',($runtime::htmlEncode('
-'))];})) . ($runtime::htmlEncode('
-')) . 'r')
+('a
+'.($runtime->createComponent('Step',[],function()use($runtime){return ['
+    b
+    ',($runtime->createComponent('Step',[],function()use($runtime){return ['
+        c
+        ',($runtime->createComponent('Step')),'
+        d
+        ',($runtime->createComponent('Step')),'
+        e
+    '];})),'
+    f
+    ',($runtime->createComponent('Step')),'
+    g
+    ',($runtime->createComponent('Step',[],function()use($runtime){return ['
+        h
+        ',($runtime->createComponent('Step')),'
+        i
+        ',($runtime->createComponent('Step')),'
+        j
+    '];})),'
+    k
+    ',($runtime->createComponent('Step')),'
+    l
+'];})).'
+m
+'.($runtime->createComponent('Step')).'
+o
+'.($runtime->createComponent('Step',[],function()use($runtime){return ['
+    p
+    ',($runtime->createComponent('Step')),'
+    q
+'];})).'
+r')
 ---- RESULT ----
 a
 <!-- step: 1 -->

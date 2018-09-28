@@ -95,7 +95,7 @@ class CompilerTest extends BaseTestCase
         $result = $compiler->compile($template);
 
         $this->assertEquals(
-            "('lorem,' . 'ipsum,' . 'dolor,' . 'sit,' . 'amet,' . 'consectepture.')",
+            "'lorem,ipsum,dolor,sit,amet,consectepture.'",
             $result->getContent()
         );
     }
@@ -133,7 +133,7 @@ TEXT
 
         $this->assertEquals(
             json_encode(<<<CODE
-(\$runtime::htmlEncode('b: \x08.
+'b: \x08.
 e: \x1B.
 f: \x0C.
 n: \x0A.
@@ -147,7 +147,7 @@ u7FF: \u{7FF}.
 u800: \u{800}.
 uFFFF: \u{FFFF}.
 u10000: \u{10000}.
-u10FFF0: \u{10FFF0}.'))
+u10FFF0: \u{10FFF0}.'
 CODE
             , JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             json_encode($result->getContent(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)

@@ -6,10 +6,10 @@ dolor sit amet
         adipisicing"
 />
 ---- CODE ----
-($runtime::createElement('foo',['id'=>'bar','title'=>'Lorem ipsum
+'<foo id="bar" title="Lorem ipsum
 dolor sit amet
     consectepture
-        adipisicing']))
+        adipisicing"/>'
 ---- RESULT ----
 <foo id="bar" title="Lorem ipsum
 dolor sit amet
