@@ -402,7 +402,7 @@ class Compiler implements CompilerInterface
                     /** @uses RuntimeHelperInterface::createComponent() */
                     $method = '->createComponent';
                     if ($children) {
-                        $result .= ",$children";
+                        $result .= ",function()use(\$runtime){return $children;}";
                     }
                 } elseif (CompilerHelper::isElementName($elementBegin)) {
                     /** @uses RuntimeHelperInterface::createElement() */

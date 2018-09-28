@@ -4,7 +4,15 @@ HTML Template Changelog
 0.2.0 (dev)
 -----
 
-_No changes yet_.
+*   **BC break**:
+    *   Usage:
+        *   Change: execution order with components. Component's children now wrapped in closure
+            and will be evaluated only when component will do it. This allows you to use
+            components for conditions and loops like `<IfSomething>...</IfSomething>`.
+    *   API:
+        *   Change: argument `$content` changed its type to `?\Closure` from `?array` in methods:
+            *   `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::createComponent()`;
+            *   `\VovanVE\HtmlTemplate\components\ComponentInterface::render()`.
 
 0.1.1
 -----

@@ -9,10 +9,10 @@ class TestComponent extends BaseComponent
     public $bar;
 
     /**
-     * @param array|null $content
+     * @param \Closure|null $content
      * @return string
      */
-    public function render(?array $content = null): string
+    public function render(?\Closure $content = null): string
     {
         $head = "Test Component";
         $props = "foo=" . json_encode($this->foo) . " bar=" . json_encode($this->bar);
@@ -20,6 +20,6 @@ class TestComponent extends BaseComponent
         if (null === $content) {
             return "<!-- $head: $props /-->";
         }
-        return "<!-- $head: $props -->" . join('', $content) . "<!-- /$head -->";
+        return "<!-- $head: $props -->" . join('', $content()) . "<!-- /$head -->";
     }
 }

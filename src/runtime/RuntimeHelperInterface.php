@@ -36,10 +36,10 @@ interface RuntimeHelperInterface
     /**
      * @param string $name
      * @param array $properties
-     * @param array|null $content
+     * @param \Closure|null $content
      * @return string
      * @throws ConfigException
      * @since 0.1.0
      */
-    public function createComponent(string $name, array $properties = [], ?array $content = null): string;
+    public function createComponent(string $name, array $properties = [], ?\Closure $content = null): string;
 }

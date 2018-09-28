@@ -170,12 +170,12 @@ class RuntimeHelperTest extends BaseTestCase
             ->setComponents([
                 'Test' => TestComponent::class,
                 'Boo' => new class() extends BaseComponent {
-                    public function render(?array $content = null): string
+                    public function render(?\Closure $content = null): string
                     {
                         if (null === $content) {
                             return '<test:foo/>';
                         }
-                        return '<test:foo>' . join('', $content) . '</test:foo>';
+                        return '<test:foo>' . join('', $content()) . '</test:foo>';
                     }
                 },
                 'Factory' => new class(97) implements ComponentSpawnerInterface {
@@ -197,7 +197,12 @@ class RuntimeHelperTest extends BaseTestCase
                 },
             ]);
 
-        $this->assertEquals($expected, $runtime->createComponent($name, $props, $content));
+        $content_closure = null !== $content
+            ? function () use ($content) {
+                return $content;
+            }
+            : null;
+        $this->assertEquals($expected, $runtime->createComponent($name, $props, $content_closure));
     }
 
     public function createComponentDataProvider()

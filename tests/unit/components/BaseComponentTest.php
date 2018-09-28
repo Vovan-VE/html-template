@@ -10,7 +10,7 @@ class BaseComponentTest extends BaseTestCase
     public function testInheritance()
     {
         $o = new class extends BaseComponent {
-            public function render(?array $content = null): string
+            public function render(?\Closure $content = null): string
             {
                 return '';
             }

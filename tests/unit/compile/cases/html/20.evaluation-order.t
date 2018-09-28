@@ -33,69 +33,69 @@
 {}r
 ---- CODE ----
 ('a' . ($runtime::htmlEncode('
-')) . ($runtime->createComponent('Step',[],[($runtime::htmlEncode('
+')) . ($runtime->createComponent('Step',[],function()use($runtime){return [($runtime::htmlEncode('
 ')),'    b',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step',[],[($runtime::htmlEncode('
+')),'    ',($runtime->createComponent('Step',[],function()use($runtime){return [($runtime::htmlEncode('
 ')),'        c',($runtime::htmlEncode('
 ')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
 ')),'        d',($runtime::htmlEncode('
 ')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
 ')),'        e',($runtime::htmlEncode('
-')),'    '])),($runtime::htmlEncode('
+')),'    '];})),($runtime::htmlEncode('
 ')),'    f',($runtime::htmlEncode('
 ')),'    ',($runtime->createComponent('Step')),($runtime::htmlEncode('
 ')),'    g',($runtime::htmlEncode('
-')),'    ',($runtime->createComponent('Step',[],[($runtime::htmlEncode('
+')),'    ',($runtime->createComponent('Step',[],function()use($runtime){return [($runtime::htmlEncode('
 ')),'        h',($runtime::htmlEncode('
 ')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
 ')),'        i',($runtime::htmlEncode('
 ')),'        ',($runtime->createComponent('Step')),($runtime::htmlEncode('
 ')),'        j',($runtime::htmlEncode('
-')),'    '])),($runtime::htmlEncode('
+')),'    '];})),($runtime::htmlEncode('
 ')),'    k',($runtime::htmlEncode('
 ')),'    ',($runtime->createComponent('Step')),($runtime::htmlEncode('
 ')),'    l',($runtime::htmlEncode('
-'))])) . ($runtime::htmlEncode('
+'))];})) . ($runtime::htmlEncode('
 ')) . 'm' . ($runtime::htmlEncode('
 ')) . ($runtime->createComponent('Step')) . ($runtime::htmlEncode('
 ')) . 'o' . ($runtime::htmlEncode('
-')) . ($runtime->createComponent('Step',[],[($runtime::htmlEncode('
+')) . ($runtime->createComponent('Step',[],function()use($runtime){return [($runtime::htmlEncode('
 ')),'    p',($runtime::htmlEncode('
 ')),'    ',($runtime->createComponent('Step')),($runtime::htmlEncode('
 ')),'    q',($runtime::htmlEncode('
-'))])) . ($runtime::htmlEncode('
+'))];})) . ($runtime::htmlEncode('
 ')) . 'r')
 ---- RESULT ----
 a
-<!-- step: 9 -->
+<!-- step: 1 -->
     b
-    <!-- step: 3 -->
+    <!-- step: 2 -->
         c
-        <!-- step: 1 /-->
+        <!-- step: 3 /-->
         d
-        <!-- step: 2 /-->
+        <!-- step: 4 /-->
         e
-    <!-- /step: 3 -->
+    <!-- /step: 2 -->
     f
-    <!-- step: 4 /-->
+    <!-- step: 5 /-->
     g
-    <!-- step: 7 -->
+    <!-- step: 6 -->
         h
-        <!-- step: 5 /-->
+        <!-- step: 7 /-->
         i
-        <!-- step: 6 /-->
+        <!-- step: 8 /-->
         j
-    <!-- /step: 7 -->
+    <!-- /step: 6 -->
     k
-    <!-- step: 8 /-->
+    <!-- step: 9 /-->
     l
-<!-- /step: 9 -->
+<!-- /step: 1 -->
 m
 <!-- step: 10 /-->
 o
-<!-- step: 12 -->
+<!-- step: 11 -->
     p
-    <!-- step: 11 /-->
+    <!-- step: 12 /-->
     q
-<!-- /step: 12 -->
+<!-- /step: 11 -->
 r
