@@ -389,22 +389,27 @@ class Compiler implements CompilerInterface
                             "Unexpected closing tag `</$elementEnd>` instead of expected `</$elementBegin>`"
                         );
                     }
-                    $add_content = ',[' . join(',', $content) . ']';
+                    $children = '[' . join(',', $content) . ']';
                 } else {
-                    $add_content = '';
+                    $children = '';
                 }
 
-                if ($attributes || '' !== $add_content) {
+                if ($attributes || '' !== $children) {
                     $result .= $add_attributes;
                 }
-                $result .= $add_content;
 
                 if (CompilerHelper::isComponentName($elementBegin)) {
                     /** @uses RuntimeHelperInterface::createComponent() */
                     $method = '->createComponent';
+                    if ($children) {
+                        $result .= ",$children";
+                    }
                 } elseif (CompilerHelper::isElementName($elementBegin)) {
                     /** @uses RuntimeHelperInterface::createElement() */
                     $method = '::createElement';
+                    if ($children) {
+                        $result .= ",$children";
+                    }
                 } else {
                     throw new ActionAbortException(
                         "Bad name <$elementBegin>"
