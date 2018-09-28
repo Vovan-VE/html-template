@@ -1,6 +1,13 @@
 HTML Template Changelog
 =======================
 
+0.1.2
+-----
+
+*   Change: attribute duplication now detected just after attribute instead of
+    after all attributes. Error message now will not contain element's name.
+*   Enh: optimize generated code with constant evaluation at compile time.
+
 0.1.1
 -----
 

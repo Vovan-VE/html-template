@@ -39,7 +39,7 @@ Compiled code (formatted manually only here for demonstration):
     ], [
         ($runtime::htmlEncode(($runtime->param('description'))))
     ])),
-    ($runtime::createElement('span', [], []))
+    '<span></span>'
 ]))
 ```
 

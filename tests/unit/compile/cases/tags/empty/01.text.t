@@ -3,6 +3,6 @@ Lorem { } ipsum{}dolor {
 {}  {}
 amet
 ---- CODE ----
-('Lorem ' . ' ipsum' . 'dolor ' . ' sit' . '  ' . 'amet')
+'Lorem  ipsumdolor  sit  amet'
 ---- RESULT ----
 Lorem  ipsumdolor  sit  amet
