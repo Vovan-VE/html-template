@@ -1,7 +1,7 @@
 HTML Template Changelog
 =======================
 
-0.1.2 (dev)
+0.1.2
 -----
 
 *   Change: attribute duplication now detected just after attribute instead of
