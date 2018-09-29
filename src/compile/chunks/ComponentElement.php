@@ -7,7 +7,7 @@ class ComponentElement extends Element implements PhpValueInterface
     {
         $arguments = $this->getArgumentsCode();
         if (isset($arguments[2])) {
-            $arguments[2] = "function()use(\$runtime){return {$arguments[2]};}";
+            $arguments[2] = "function(\$runtime){return {$arguments[2]};}";
         }
 
         $arguments = join(',', $arguments);

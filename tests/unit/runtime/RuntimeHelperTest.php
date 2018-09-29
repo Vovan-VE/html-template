@@ -6,6 +6,7 @@ use VovanVE\HtmlTemplate\components\ComponentInterface;
 use VovanVE\HtmlTemplate\components\ComponentSpawnerInterface;
 use VovanVE\HtmlTemplate\helpers\ObjectHelper;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
+use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
 use VovanVE\HtmlTemplate\tests\helpers\TestComponent;
 
@@ -170,12 +171,14 @@ class RuntimeHelperTest extends BaseTestCase
             ->setComponents([
                 'Test' => TestComponent::class,
                 'Boo' => new class() extends BaseComponent {
-                    public function render(?\Closure $content = null): string
-                    {
+                    public function render(
+                        RuntimeHelperInterface $runtime,
+                        ?\Closure $content = null
+                    ): string {
                         if (null === $content) {
                             return '<test:foo/>';
                         }
-                        return '<test:foo>' . join('', $content()) . '</test:foo>';
+                        return '<test:foo>' . join('', $content($runtime)) . '</test:foo>';
                     }
                 },
                 'Factory' => new class(97) implements ComponentSpawnerInterface {

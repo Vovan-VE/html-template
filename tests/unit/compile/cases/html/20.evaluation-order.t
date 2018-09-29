@@ -33,9 +33,9 @@
 {}r
 ---- CODE ----
 ('a
-'.($runtime->createComponent('Step',[],function()use($runtime){return ['
+'.($runtime->createComponent('Step',[],function($runtime){return ['
     b
-    ',($runtime->createComponent('Step',[],function()use($runtime){return ['
+    ',($runtime->createComponent('Step',[],function($runtime){return ['
         c
         ',($runtime->createComponent('Step')),'
         d
@@ -45,7 +45,7 @@
     f
     ',($runtime->createComponent('Step')),'
     g
-    ',($runtime->createComponent('Step',[],function()use($runtime){return ['
+    ',($runtime->createComponent('Step',[],function($runtime){return ['
         h
         ',($runtime->createComponent('Step')),'
         i
@@ -59,7 +59,7 @@
 m
 '.($runtime->createComponent('Step')).'
 o
-'.($runtime->createComponent('Step',[],function()use($runtime){return ['
+'.($runtime->createComponent('Step',[],function($runtime){return ['
     p
     ',($runtime->createComponent('Step')),'
     q

@@ -6,13 +6,17 @@ HTML Template Changelog
 
 *   **BC break**:
     *   Usage:
-        *   Change: execution order with components. Component's children now wrapped in closure
-            and will be evaluated only when component will do it. This allows you to use
-            components for conditions and loops like `<IfSomething>...</IfSomething>`.
+        *   Change: execution order with components. Component's children now wrapped in
+            a closure and will be evaluated only when component will do it. This allows
+            you to use components for conditions and loops like `<IfSomething>...</IfSomething>`.
     *   API:
-        *   Change: argument `$content` changed its type to `?\Closure` from `?array` in methods:
-            *   `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::createComponent()`;
-            *   `\VovanVE\HtmlTemplate\components\ComponentInterface::render()`.
+        *   Method `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::createComponent()`
+            changed its argument `$content` to `?\Closure` from `?array`;
+        *   Method `\VovanVE\HtmlTemplate\components\ComponentInterface::render()`
+            changed its arguments to `(RuntimeHelperInterface $runtime, ?\Closure $content = null)`
+            from `(?array $content = null)`;
+*   Add: component now can override `RuntimeHelperInterface` instance to render its content.
+*   Enh: component now controls whether to render its content or not.
 
 0.1.2
 -----

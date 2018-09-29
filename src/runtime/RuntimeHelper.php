@@ -157,7 +157,7 @@ class RuntimeHelper implements RuntimeHelperInterface
         }
 
         /** @var ComponentInterface $component */
-        return $component->render($content);
+        return $component->render($this, $content);
     }
 
     /**

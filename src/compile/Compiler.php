@@ -21,7 +21,6 @@ use VovanVE\HtmlTemplate\report\MessageInterface;
 use VovanVE\HtmlTemplate\report\Report;
 use VovanVE\HtmlTemplate\report\ReportInterface;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
-use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\source\TemplateInterface;
 use VovanVE\parser\actions\ActionAbortException;
 use VovanVE\parser\actions\ActionsMadeMap;
@@ -33,7 +32,7 @@ class Compiler implements CompilerInterface
 {
     private const A_BUBBLE = Parser::ACTION_BUBBLE_THE_ONLY;
 
-    private const VERSION = '0.1.2';
+    private const VERSION = '0.2.0-dev.1';
 
     private const STRING_ESCAPE_LETTER = [
         'b' => "\x08",

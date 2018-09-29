@@ -6,6 +6,7 @@ use VovanVE\HtmlTemplate\caching\memory\CacheStrings;
 use VovanVE\HtmlTemplate\compile\Compiler;
 use VovanVE\HtmlTemplate\Engine;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
+use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\source\memory\TemplateStringProvider;
 
 class FooComponent extends \VovanVE\HtmlTemplate\components\BaseComponent
@@ -14,15 +15,16 @@ class FooComponent extends \VovanVE\HtmlTemplate\components\BaseComponent
     public $level;
 
     /**
+     * @param RuntimeHelperInterface $runtime
      * @param \Closure|null $content
      * @return string
      */
-    public function render(?\Closure $content = null): string
+    public function render(RuntimeHelperInterface $runtime, ?\Closure $content = null): string
     {
         if (null === $content) {
             return "";
         }
-        return join('', $content());
+        return join('', $content($runtime));
     }
 }
 
