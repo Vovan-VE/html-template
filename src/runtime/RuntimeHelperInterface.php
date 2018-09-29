@@ -21,6 +21,7 @@ interface RuntimeHelperInterface
      * @param string $html
      * @return string
      * @since 0.1.0
+     * @deprecated >= 0.2.0: use `CompilerHelper::htmlDecodeEntity()`
      */
     public static function htmlDecodeEntity(string $html): string;
 

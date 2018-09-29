@@ -4,6 +4,7 @@ namespace VovanVE\HtmlTemplate\runtime;
 use VovanVE\HtmlTemplate\components\ComponentInterface;
 use VovanVE\HtmlTemplate\components\ComponentSpawnerInterface;
 use VovanVE\HtmlTemplate\ConfigException;
+use VovanVE\HtmlTemplate\helpers\CompilerHelper;
 
 class RuntimeHelper implements RuntimeHelperInterface
 {
@@ -14,8 +15,6 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @since 0.1.0
      */
     private $components = [];
-
-    private const CHARSET = 'UTF-8';
 
     /**
      * @param array $params
@@ -73,17 +72,18 @@ class RuntimeHelper implements RuntimeHelperInterface
      */
     public static function htmlEncode(string $content): string
     {
-        return htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, self::CHARSET);
+        return CompilerHelper::htmlEncode($content);
     }
 
     /**
      * @param string $html
      * @return string
      * @since 0.1.0
+     * @deprecated >= 0.2.0: use `CompilerHelper::htmlDecodeEntity()`
      */
     public static function htmlDecodeEntity(string $html): string
     {
-        return html_entity_decode($html, ENT_QUOTES | ENT_HTML5, self::CHARSET);
+        return CompilerHelper::htmlDecodeEntity($html);
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
-use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
+use VovanVE\HtmlTemplate\helpers\CompilerHelper;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 
 class HtmlQuotedString implements PhpValueInterface
@@ -28,6 +28,6 @@ class HtmlQuotedString implements PhpValueInterface
 
     public function getConstValue()
     {
-        return '"' . RuntimeHelper::htmlEncode($this->value->getConstValue()) . '"';
+        return '"' . CompilerHelper::htmlEncode($this->value->getConstValue()) . '"';
     }
 }

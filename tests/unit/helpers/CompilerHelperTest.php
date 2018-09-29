@@ -70,6 +70,42 @@ class CompilerHelperTest extends BaseTestCase
         }
     }
 
+    public function testHtmlEncode()
+    {
+        foreach (
+            [
+                '' => '',
+                'a' => 'a',
+                'a<b' => 'a&lt;b',
+                'a>b' => 'a&gt;b',
+                'a"&\'b' => 'a&quot;&amp;&#039;b',
+                'a&amp;b' => 'a&amp;amp;b',
+            ]
+            as $source => $encoded
+        ) {
+            $this->assertEquals($encoded, CompilerHelper::htmlEncode($source), "at `$source`");
+        }
+    }
+
+    public function testHtmlDecodeEntity()
+    {
+        foreach (
+            [
+                '' => '',
+                'a' => 'a',
+                'a&lt;b' => 'a<b',
+                'a&gt;b' => 'a>b',
+                'a&quot;&amp;&#039;b' => 'a"&\'b',
+                'a&amp;amp;b' => 'a&amp;b',
+                'a&nbsp;b' => "a\u{A0}b",
+                'a&rarr;b' => 'a→b',
+            ]
+            as $source => $encoded
+        ) {
+            $this->assertEquals($encoded, CompilerHelper::htmlDecodeEntity($source), "at `$source`");
+        }
+    }
+
     /**
      * @param int $code
      * @param string $hex

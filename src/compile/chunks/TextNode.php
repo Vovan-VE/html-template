@@ -1,7 +1,7 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
-use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
+use VovanVE\HtmlTemplate\helpers\CompilerHelper;
 
 class TextNode extends PhpStringConst
 {
@@ -12,6 +12,6 @@ class TextNode extends PhpStringConst
 
     public static function createFromTextPlain(string $text): self
     {
-        return new static(RuntimeHelper::htmlEncode($text));
+        return new static(CompilerHelper::htmlEncode($text));
     }
 }
