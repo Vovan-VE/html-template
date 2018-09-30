@@ -1,7 +1,7 @@
 HTML Template Changelog
 =======================
 
-0.2.0 (dev)
+0.2.0
 -----
 
 *   **BC break**:
