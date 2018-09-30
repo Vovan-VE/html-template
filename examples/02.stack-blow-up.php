@@ -42,7 +42,7 @@ $engine = (new Engine)
     ->setCompiler(new Compiler());
 
 $runtime = (new RuntimeHelper)
-    ->setComponents([
+    ->addComponents([
         'Foo' => FooComponent::class,
     ]);
 

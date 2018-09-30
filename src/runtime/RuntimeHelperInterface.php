@@ -12,6 +12,20 @@ interface RuntimeHelperInterface
     public function param(string $name);
 
     /**
+     * @param array $params
+     * @return self
+     * @since 0.2.0
+     */
+    public function addParams(array $params): self;
+
+    /**
+     * @param array $components
+     * @return self
+     * @since 0.2.0
+     */
+    public function addComponents(array $components): self;
+
+    /**
      * @param string $content
      * @return string
      */

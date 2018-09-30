@@ -15,10 +15,17 @@ HTML Template Changelog
         *   Method `\VovanVE\HtmlTemplate\components\ComponentInterface::render()`
             changed its arguments to `(RuntimeHelperInterface $runtime, ?\Closure $content = null)`
             from `(?array $content = null)`;
+        *   Add methods to `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface` to create
+            overridden copy:
+            *   `addParams(array $params): RuntimeHelperInterface`
+            *   `addComponents(array $components): RuntimeHelperInterface`
 *   Deprecated:
     *   Method `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::htmlDecodeEntity()`
         moved to internal `\VovanVE\HtmlTemplate\helpers\CompilerHelper::htmlDecodeEntity()`
         since its useless at runtime.
+    *   Methods in `\VovanVE\HtmlTemplate\runtime\RuntimeHelper`:
+        *   `setComponents()`.
+        *   `setParams()`;
 *   Add: component now can override `RuntimeHelperInterface` instance to render its content.
 *   Enh: component now controls whether to render its content or not.
 

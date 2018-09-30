@@ -26,7 +26,20 @@ class RuntimeHelper implements RuntimeHelperInterface
 
     /**
      * @param array $params
+     * @return self
+     * @since 0.2.0
+     */
+    public function addParams(array $params): RuntimeHelperInterface
+    {
+        $new = clone $this;
+        $new->params = $params + $new->params;
+        return $new;
+    }
+
+    /**
+     * @param array $params
      * @return $this
+     * @deprecated >= 0.2.0: Use `addParams()` instead
      */
     public function setParams(array $params): self
     {
@@ -36,8 +49,21 @@ class RuntimeHelper implements RuntimeHelperInterface
 
     /**
      * @param array $components
+     * @return self
+     * @since 0.2.0
+     */
+    public function addComponents(array $components): RuntimeHelperInterface
+    {
+        $new = clone $this;
+        $new->components = $components + $new->components;
+        return $new;
+    }
+
+    /**
+     * @param array $components
      * @return $this
      * @since 0.1.0
+     * @deprecated >= 0.2.0: Use `addComponents()` instead
      */
     public function setComponents(array $components): self
     {
@@ -50,6 +76,7 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @param string $class
      * @return $this
      * @since 0.1.0
+     * @deprecated >= 0.2.0: Use `addComponents()` instead
      */
     public function setComponent(string $name, string $class): self
     {

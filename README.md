@@ -48,16 +48,13 @@ Creating data for the example template above:
 ```php
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 
-$runtime = (new RuntimeHelper)
-    // params are always text/plain
-    ->setParams([
-        'link' => 'http://example.com?foo=bar&lorem=ipsum#hash',
-        'title' => 'Lorem <ipsum> "dolor" sit amet',
-        // Closure will execute only once to obtain its return value
-        'description' => function () {
-            return 'Some <text/plain> content';
-        },
-    ]);
+$runtime = new RuntimeHelper([
+    'link' => 'http://example.com?foo=bar&lorem=ipsum#hash',
+    'title' => 'Lorem <ipsum> "dolor" sit amet',
+    'description' => function () {
+        return 'Some <text/plain> content';
+    },
+]);
 ```
 
 Run a template when everything is prepared. Here `foobar` is a template's name

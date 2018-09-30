@@ -40,7 +40,7 @@ class CompilerTest extends BaseTestCase
         $template = new TemplateString($expect->getSource(), $filename);
         $cache = new CacheStrings(__FUNCTION__ . '_%{hash}', __CLASS__);
         $runtime = (new RuntimeCounter)
-            ->setComponents([
+            ->addComponents([
                 'TestComponent' => TestComponent::class,
                 'Step' => new CounterStepperComponent(),
             ]);

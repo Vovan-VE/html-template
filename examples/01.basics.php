@@ -28,14 +28,13 @@ TPL
     )
     ->setCompiler(new Compiler());
 
-$runtime = (new RuntimeHelper)
-    ->setParams([
-        'link' => 'http://example.com?foo=bar&lorem=ipsum#hash',
-        'title' => 'Lorem <ipsum> "dolor" sit amet',
-        'description' => function () {
-            return 'Some <text/plain> content';
-        },
-    ]);
+$runtime = new RuntimeHelper([
+    'link' => 'http://example.com?foo=bar&lorem=ipsum#hash',
+    'title' => 'Lorem <ipsum> "dolor" sit amet',
+    'description' => function () {
+        return 'Some <text/plain> content';
+    },
+]);
 
 $compiled = $engine->compileTemplate('foo');
 
