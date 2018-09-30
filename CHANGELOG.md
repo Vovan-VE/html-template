@@ -24,6 +24,7 @@ HTML Template Changelog
         moved to internal `\VovanVE\HtmlTemplate\helpers\CompilerHelper::htmlDecodeEntity()`
         since its useless at runtime.
     *   Methods in `\VovanVE\HtmlTemplate\runtime\RuntimeHelper`:
+        *   `setComponent()`.
         *   `setComponents()`.
         *   `setParams()`;
 *   Add: component now can override `RuntimeHelperInterface` instance to render its content.
