@@ -11,7 +11,7 @@ Simple context sensitive HTML template engine. Yes, yet another one.
 Synopsis
 --------
 
-See [an example](./examples/01.basics.php).
+See [an examples](./examples/).
 
 Template example:
 
