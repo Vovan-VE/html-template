@@ -91,7 +91,7 @@ Install through [composer][]:
 
 or add to `require` section in your composer.json:
 
-    "vovan-ve/html-template": "~0.1.0"
+    "vovan-ve/html-template": "~0.2.0"
 
 License
 -------
