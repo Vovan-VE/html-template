@@ -29,7 +29,7 @@ interface RuntimeHelperInterface
      * @param string $content
      * @return string
      */
-    public static function htmlEncode(string $content): string;
+    public static function htmlEncode($content): string;
 
     /**
      * @param string $html

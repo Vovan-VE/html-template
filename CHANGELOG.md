@@ -15,6 +15,8 @@ HTML Template Changelog
         *   Method `\VovanVE\HtmlTemplate\components\ComponentInterface::render()`
             changed its arguments to `(RuntimeHelperInterface $runtime, ?\Closure $content = null)`
             from `(?array $content = null)`;
+        *   Method `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::htmlEncode()`
+            remove `string` type hint for the only argument `$content`.
         *   Add methods to `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface` to create
             overridden copy:
             *   `addParams(array $params): RuntimeHelperInterface`
