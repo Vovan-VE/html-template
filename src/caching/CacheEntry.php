@@ -4,6 +4,7 @@ namespace VovanVE\HtmlTemplate\caching;
 use VovanVE\HtmlTemplate\base\CodeFragment;
 use VovanVE\HtmlTemplate\runtime\RuntimeEntryDummyInterface;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
+use VovanVE\HtmlTemplate\runtime\RuntimeTemplateException;
 
 abstract class CacheEntry extends CodeFragment implements CachedEntryInterface
 {
@@ -32,6 +33,7 @@ abstract class CacheEntry extends CodeFragment implements CachedEntryInterface
      * @param RuntimeHelperInterface $runtime
      * @return string
      * @throws CacheConsistencyException
+     * @throws RuntimeTemplateException
      */
     public function run(RuntimeHelperInterface $runtime): string
     {
@@ -48,7 +50,11 @@ abstract class CacheEntry extends CodeFragment implements CachedEntryInterface
 
         /** @var RuntimeEntryDummyInterface|string $dummy */
         $dummy = $class;
-        return $dummy::run($runtime);
+        try {
+            return $dummy::run($runtime);
+        } catch (\Throwable $e) {
+            throw new RuntimeTemplateException('An error occurred while executing template', 0, $e);
+        }
     }
 
     /**

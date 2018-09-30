@@ -9,6 +9,7 @@ use VovanVE\HtmlTemplate\compile\CompilerInterface;
 use VovanVE\HtmlTemplate\report\ReportInterface;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
+use VovanVE\HtmlTemplate\runtime\RuntimeTemplateException;
 use VovanVE\HtmlTemplate\source\TemplateNotFoundException;
 use VovanVE\HtmlTemplate\source\TemplateProviderInterface;
 use VovanVE\HtmlTemplate\source\TemplateReadException;
@@ -134,9 +135,16 @@ class Engine implements EngineInterface
      */
     public function runTemplate(string $name, ?RuntimeHelperInterface $runtime = null): string
     {
-        return $this
-            ->compileTemplate($name)
-            ->run($runtime ?? new RuntimeHelper());
+        $entry = $this->compileTemplate($name);
+        try {
+            return $entry->run($runtime ?? new RuntimeHelper());
+        } catch (RuntimeTemplateException $e) {
+            throw new RuntimeTemplateException(
+                $e->getMessage() . "; template `$name`",
+                $e->getCode(),
+                $e->getPrevious()
+            );
+        }
     }
 
     /**

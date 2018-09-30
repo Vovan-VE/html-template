@@ -3,6 +3,7 @@ namespace VovanVE\HtmlTemplate\caching;
 
 use VovanVE\HtmlTemplate\base\CodeFragmentInterface;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
+use VovanVE\HtmlTemplate\runtime\RuntimeTemplateException;
 
 interface CachedEntryInterface extends CodeFragmentInterface
 {
@@ -14,6 +15,7 @@ interface CachedEntryInterface extends CodeFragmentInterface
     /**
      * @param RuntimeHelperInterface $runtime
      * @return string
+     * @throws RuntimeTemplateException
      */
     public function run(RuntimeHelperInterface $runtime): string;
 }
