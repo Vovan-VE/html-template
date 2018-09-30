@@ -11,7 +11,7 @@ Simple context sensitive HTML template engine. Yes, yet another one.
 Synopsis
 --------
 
-See [an example](./examples/01.basics.php).
+See [an examples](./examples/).
 
 Template example:
 
@@ -48,16 +48,13 @@ Creating data for the example template above:
 ```php
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 
-$runtime = (new RuntimeHelper)
-    // params are always text/plain
-    ->setParams([
-        'link' => 'http://example.com?foo=bar&lorem=ipsum#hash',
-        'title' => 'Lorem <ipsum> "dolor" sit amet',
-        // Closure will execute only once to obtain its return value
-        'description' => function () {
-            return 'Some <text/plain> content';
-        },
-    ]);
+$runtime = new RuntimeHelper([
+    'link' => 'http://example.com?foo=bar&lorem=ipsum#hash',
+    'title' => 'Lorem <ipsum> "dolor" sit amet',
+    'description' => function () {
+        return 'Some <text/plain> content';
+    },
+]);
 ```
 
 Run a template when everything is prepared. Here `foobar` is a template's name
@@ -94,7 +91,7 @@ Install through [composer][]:
 
 or add to `require` section in your composer.json:
 
-    "vovan-ve/html-template": "~0.1.0"
+    "vovan-ve/html-template": "~0.2.0"
 
 License
 -------

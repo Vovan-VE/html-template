@@ -32,6 +32,6 @@ class Variable implements PhpValueInterface
 
     public function getConstValue()
     {
-        throw new \RuntimeException('');
+        throw new \RuntimeException('Not a constant');
     }
 }

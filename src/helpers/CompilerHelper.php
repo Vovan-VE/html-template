@@ -8,6 +8,8 @@ class CompilerHelper
 {
     const CONTEXT_CHARS = 30;
 
+    private const CHARSET = 'UTF-8';
+
     /**
      * @param TemplateInterface $template
      * @param \VovanVE\parser\SyntaxException $e
@@ -71,6 +73,26 @@ class CompilerHelper
         }
 
         return -1;
+    }
+
+    /**
+     * @param string $content
+     * @return string
+     * @since 0.2.0
+     */
+    public static function htmlEncode(string $content): string
+    {
+        return htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, self::CHARSET);
+    }
+
+    /**
+     * @param string $html
+     * @return string
+     * @since 0.2.0
+     */
+    public static function htmlDecodeEntity(string $html): string
+    {
+        return html_entity_decode($html, ENT_QUOTES | ENT_HTML5, self::CHARSET);
     }
 
     /**

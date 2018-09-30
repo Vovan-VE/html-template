@@ -5,8 +5,14 @@ class ComponentElement extends Element implements PhpValueInterface
 {
     public function getPhpCode(): string
     {
+        $arguments = $this->getArgumentsCode();
+        if (isset($arguments[2])) {
+            $arguments[2] = "function(\$runtime){return {$arguments[2]};}";
+        }
+
+        $arguments = join(',', $arguments);
         /** @uses RuntimeHelperInterface::createComponent() */
-        return "(\$runtime->createComponent({$this->getArgumentsCode()}))";
+        return "(\$runtime->createComponent($arguments))";
     }
 
     public function isConstant(): bool

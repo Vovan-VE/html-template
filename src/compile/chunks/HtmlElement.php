@@ -17,8 +17,9 @@ class HtmlElement extends Element implements PhpValueInterface
 
     public function getPhpCode(): string
     {
+        $arguments = join(',', $this->getArgumentsCode());
         /** @uses RuntimeHelperInterface::createElement() */
-        return "(\$runtime::createElement({$this->getArgumentsCode()}))";
+        return "(\$runtime::createElement($arguments))";
     }
 
     public function isConstant(): bool

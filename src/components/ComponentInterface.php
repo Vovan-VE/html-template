@@ -1,6 +1,8 @@
 <?php
 namespace VovanVE\HtmlTemplate\components;
 
+use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
+
 /**
  * Component to render custom markup
  * @since 0.1.0
@@ -8,8 +10,9 @@ namespace VovanVE\HtmlTemplate\components;
 interface ComponentInterface
 {
     /**
-     * @param array|null $content
+     * @param RuntimeHelperInterface $runtime
+     * @param \Closure|null $content
      * @return string
      */
-    public function render(?array $content = null): string;
+    public function render(RuntimeHelperInterface $runtime, ?\Closure $content = null): string;
 }

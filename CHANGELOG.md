@@ -1,6 +1,37 @@
 HTML Template Changelog
 =======================
 
+0.2.0
+-----
+
+*   **BC break**:
+    *   Usage:
+        *   Change: execution order with components. Component's children now wrapped in
+            a closure and will be evaluated only when component will do it. This allows
+            you to use components for conditions and loops like `<IfSomething>...</IfSomething>`.
+    *   API:
+        *   Method `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::createComponent()`
+            changed its argument `$content` to `?\Closure` from `?array`;
+        *   Method `\VovanVE\HtmlTemplate\components\ComponentInterface::render()`
+            changed its arguments to `(RuntimeHelperInterface $runtime, ?\Closure $content = null)`
+            from `(?array $content = null)`;
+        *   Method `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::htmlEncode()`
+            remove `string` type hint for the only argument `$content`.
+        *   Add methods to `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface` to create
+            overridden copy:
+            *   `addParams(array $params): RuntimeHelperInterface`
+            *   `addComponents(array $components): RuntimeHelperInterface`
+*   Deprecated:
+    *   Method `\VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::htmlDecodeEntity()`
+        moved to internal `\VovanVE\HtmlTemplate\helpers\CompilerHelper::htmlDecodeEntity()`
+        since its useless at runtime.
+    *   Methods in `\VovanVE\HtmlTemplate\runtime\RuntimeHelper`:
+        *   `setComponent()`.
+        *   `setComponents()`.
+        *   `setParams()`;
+*   Add: component now can override `RuntimeHelperInterface` instance to render its content.
+*   Enh: component now controls whether to render its content or not.
+
 0.1.2
 -----
 

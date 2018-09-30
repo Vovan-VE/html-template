@@ -12,15 +12,30 @@ interface RuntimeHelperInterface
     public function param(string $name);
 
     /**
+     * @param array $params
+     * @return self
+     * @since 0.2.0
+     */
+    public function addParams(array $params): self;
+
+    /**
+     * @param array $components
+     * @return self
+     * @since 0.2.0
+     */
+    public function addComponents(array $components): self;
+
+    /**
      * @param string $content
      * @return string
      */
-    public static function htmlEncode(string $content): string;
+    public static function htmlEncode($content): string;
 
     /**
      * @param string $html
      * @return string
      * @since 0.1.0
+     * @deprecated >= 0.2.0: use `CompilerHelper::htmlDecodeEntity()`
      */
     public static function htmlDecodeEntity(string $html): string;
 
@@ -36,10 +51,10 @@ interface RuntimeHelperInterface
     /**
      * @param string $name
      * @param array $properties
-     * @param array|null $content
+     * @param \Closure|null $content
      * @return string
      * @throws ConfigException
      * @since 0.1.0
      */
-    public function createComponent(string $name, array $properties = [], ?array $content = null): string;
+    public function createComponent(string $name, array $properties = [], ?\Closure $content = null): string;
 }

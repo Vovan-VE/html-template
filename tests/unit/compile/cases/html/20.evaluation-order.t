@@ -33,69 +33,69 @@
 {}r
 ---- CODE ----
 ('a
-'.($runtime->createComponent('Step',[],['
+'.($runtime->createComponent('Step',[],function($runtime){return ['
     b
-    ',($runtime->createComponent('Step',[],['
+    ',($runtime->createComponent('Step',[],function($runtime){return ['
         c
         ',($runtime->createComponent('Step')),'
         d
         ',($runtime->createComponent('Step')),'
         e
-    '])),'
+    '];})),'
     f
     ',($runtime->createComponent('Step')),'
     g
-    ',($runtime->createComponent('Step',[],['
+    ',($runtime->createComponent('Step',[],function($runtime){return ['
         h
         ',($runtime->createComponent('Step')),'
         i
         ',($runtime->createComponent('Step')),'
         j
-    '])),'
+    '];})),'
     k
     ',($runtime->createComponent('Step')),'
     l
-'])).'
+'];})).'
 m
 '.($runtime->createComponent('Step')).'
 o
-'.($runtime->createComponent('Step',[],['
+'.($runtime->createComponent('Step',[],function($runtime){return ['
     p
     ',($runtime->createComponent('Step')),'
     q
-'])).'
+'];})).'
 r')
 ---- RESULT ----
 a
-<!-- step: 9 -->
+<!-- step: 1 -->
     b
-    <!-- step: 3 -->
+    <!-- step: 2 -->
         c
-        <!-- step: 1 /-->
+        <!-- step: 3 /-->
         d
-        <!-- step: 2 /-->
+        <!-- step: 4 /-->
         e
-    <!-- /step: 3 -->
+    <!-- /step: 2 -->
     f
-    <!-- step: 4 /-->
+    <!-- step: 5 /-->
     g
-    <!-- step: 7 -->
+    <!-- step: 6 -->
         h
-        <!-- step: 5 /-->
+        <!-- step: 7 /-->
         i
-        <!-- step: 6 /-->
+        <!-- step: 8 /-->
         j
-    <!-- /step: 7 -->
+    <!-- /step: 6 -->
     k
-    <!-- step: 8 /-->
+    <!-- step: 9 /-->
     l
-<!-- /step: 9 -->
+<!-- /step: 1 -->
 m
 <!-- step: 10 /-->
 o
-<!-- step: 12 -->
+<!-- step: 11 -->
     p
-    <!-- step: 11 /-->
+    <!-- step: 12 /-->
     q
-<!-- /step: 12 -->
+<!-- /step: 11 -->
 r

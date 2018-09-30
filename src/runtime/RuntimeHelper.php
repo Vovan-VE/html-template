@@ -4,6 +4,7 @@ namespace VovanVE\HtmlTemplate\runtime;
 use VovanVE\HtmlTemplate\components\ComponentInterface;
 use VovanVE\HtmlTemplate\components\ComponentSpawnerInterface;
 use VovanVE\HtmlTemplate\ConfigException;
+use VovanVE\HtmlTemplate\helpers\CompilerHelper;
 
 class RuntimeHelper implements RuntimeHelperInterface
 {
@@ -15,8 +16,6 @@ class RuntimeHelper implements RuntimeHelperInterface
      */
     private $components = [];
 
-    private const CHARSET = 'UTF-8';
-
     /**
      * @param array $params
      */
@@ -27,7 +26,20 @@ class RuntimeHelper implements RuntimeHelperInterface
 
     /**
      * @param array $params
+     * @return self
+     * @since 0.2.0
+     */
+    public function addParams(array $params): RuntimeHelperInterface
+    {
+        $new = clone $this;
+        $new->params = $params + $new->params;
+        return $new;
+    }
+
+    /**
+     * @param array $params
      * @return $this
+     * @deprecated >= 0.2.0: Use `addParams()` instead
      */
     public function setParams(array $params): self
     {
@@ -37,8 +49,21 @@ class RuntimeHelper implements RuntimeHelperInterface
 
     /**
      * @param array $components
+     * @return self
+     * @since 0.2.0
+     */
+    public function addComponents(array $components): RuntimeHelperInterface
+    {
+        $new = clone $this;
+        $new->components = $components + $new->components;
+        return $new;
+    }
+
+    /**
+     * @param array $components
      * @return $this
      * @since 0.1.0
+     * @deprecated >= 0.2.0: Use `addComponents()` instead
      */
     public function setComponents(array $components): self
     {
@@ -51,6 +76,7 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @param string $class
      * @return $this
      * @since 0.1.0
+     * @deprecated >= 0.2.0: Use `addComponents()` instead
      */
     public function setComponent(string $name, string $class): self
     {
@@ -68,22 +94,32 @@ class RuntimeHelper implements RuntimeHelperInterface
     }
 
     /**
-     * @param string $content
+     * @param mixed $content
      * @return string
      */
-    public static function htmlEncode(string $content): string
+    public static function htmlEncode($content): string
     {
-        return htmlspecialchars($content, ENT_QUOTES | ENT_SUBSTITUTE, self::CHARSET);
+        if (is_string($content)) {
+            return CompilerHelper::htmlEncode($content);
+        }
+        if (is_int($content) || is_bool($content) || is_float($content)) {
+            return (string)$content;
+        }
+        if (is_array($content)) {
+            return '[Array]';
+        }
+        throw new \InvalidArgumentException('Unsupported type');
     }
 
     /**
      * @param string $html
      * @return string
      * @since 0.1.0
+     * @deprecated >= 0.2.0: use `CompilerHelper::htmlDecodeEntity()`
      */
     public static function htmlDecodeEntity(string $html): string
     {
-        return html_entity_decode($html, ENT_QUOTES | ENT_HTML5, self::CHARSET);
+        return CompilerHelper::htmlDecodeEntity($html);
     }
 
     /**
@@ -122,12 +158,12 @@ class RuntimeHelper implements RuntimeHelperInterface
     /**
      * @param string $name
      * @param array $properties
-     * @param array|null $content
+     * @param \Closure|null $content
      * @return string
      * @throws ConfigException
      * @since 0.1.0
      */
-    public function createComponent(string $name, array $properties = [], ?array $content = null): string
+    public function createComponent(string $name, array $properties = [], ?\Closure $content = null): string
     {
         /** @var string $component_class_ */
         $component_definition = $this->components[$name] ?? null;
@@ -157,7 +193,7 @@ class RuntimeHelper implements RuntimeHelperInterface
         }
 
         /** @var ComponentInterface $component */
-        return $component->render($content);
+        return $component->render($this, $content);
     }
 
     /**

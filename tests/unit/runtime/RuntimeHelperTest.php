@@ -4,9 +4,12 @@ namespace VovanVE\HtmlTemplate\tests\unit\runtime;
 use VovanVE\HtmlTemplate\components\BaseComponent;
 use VovanVE\HtmlTemplate\components\ComponentInterface;
 use VovanVE\HtmlTemplate\components\ComponentSpawnerInterface;
+use VovanVE\HtmlTemplate\ConfigException;
 use VovanVE\HtmlTemplate\helpers\ObjectHelper;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
+use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
+use VovanVE\HtmlTemplate\tests\helpers\CounterStepComponent;
 use VovanVE\HtmlTemplate\tests\helpers\TestComponent;
 
 class RuntimeHelperTest extends BaseTestCase
@@ -52,8 +55,7 @@ class RuntimeHelperTest extends BaseTestCase
             },
         ];
 
-        $runtime = (new RuntimeHelper)
-            ->setParams($getters);
+        $runtime = new RuntimeHelper($getters);
 
         $this->assertSame(42, $runtime->param('foo'), 'get(foo) 1');
         $this->assertSame(42, $runtime->param('foo'), 'get(foo) 2');
@@ -70,6 +72,43 @@ class RuntimeHelperTest extends BaseTestCase
 
         $this->assertNull($runtime->param('foo'));
         $this->assertNull($runtime->param('bar'));
+    }
+
+    public function testAddParams()
+    {
+        $a = new RuntimeHelper(['foo' => 42]);
+        $b = $a->addParams(['bar' => 37]);
+        $c = $b->addParams(['foo' => 23]);
+
+        $this->assertNotSame($a, $b);
+        $this->assertNotSame($b, $c);
+
+        $this->assertEquals(42, $a->param('foo'));
+        $this->assertNull($a->param('bar'));
+
+        $this->assertEquals(42, $b->param('foo'));
+        $this->assertEquals(37, $b->param('bar'));
+
+        $this->assertEquals(23, $c->param('foo'));
+        $this->assertEquals(37, $c->param('bar'));
+    }
+
+    public function testAddComponents()
+    {
+        $a = new RuntimeHelper();
+        $b = $a->addComponents(['Test' => TestComponent::class]);
+        $c = $b->addComponents(['Test' => CounterStepComponent::class]);
+
+        $this->assertNotSame($a, $b);
+        $this->assertNotSame($b, $c);
+
+        $this->assertEquals((new TestComponent)->render($b), $b->createComponent('Test'));
+
+        $this->assertEquals((new CounterStepComponent)->render($c), $c->createComponent('Test'));
+
+        $this->expectException(ConfigException::class);
+        $this->expectExceptionMessage("Unknown component `Test`");
+        $a->createComponent('Test');
     }
 
     public function testHtmlEncode()
@@ -167,15 +206,17 @@ class RuntimeHelperTest extends BaseTestCase
     public function testCreateComponent(string $name, array $props, ?array $content, string $expected)
     {
         $runtime = (new RuntimeHelper)
-            ->setComponents([
+            ->addComponents([
                 'Test' => TestComponent::class,
                 'Boo' => new class() extends BaseComponent {
-                    public function render(?array $content = null): string
-                    {
+                    public function render(
+                        RuntimeHelperInterface $runtime,
+                        ?\Closure $content = null
+                    ): string {
                         if (null === $content) {
                             return '<test:foo/>';
                         }
-                        return '<test:foo>' . join('', $content) . '</test:foo>';
+                        return '<test:foo>' . join('', $content($runtime)) . '</test:foo>';
                     }
                 },
                 'Factory' => new class(97) implements ComponentSpawnerInterface {
@@ -197,7 +238,12 @@ class RuntimeHelperTest extends BaseTestCase
                 },
             ]);
 
-        $this->assertEquals($expected, $runtime->createComponent($name, $props, $content));
+        $content_closure = null !== $content
+            ? function () use ($content) {
+                return $content;
+            }
+            : null;
+        $this->assertEquals($expected, $runtime->createComponent($name, $props, $content_closure));
     }
 
     public function createComponentDataProvider()

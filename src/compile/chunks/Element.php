@@ -33,11 +33,11 @@ class Element
     }
 
     /**
-     * @return string
+     * @return string[]
      */
-    protected function getArgumentsCode(): string
+    protected function getArgumentsCode(): array
     {
-        $arguments = (new PhpStringConst($this->getName()))->getPhpCode();
+        $arguments = [(new PhpStringConst($this->getName()))->getPhpCode()];
 
         $attributes = $this->getAttributes();
         $content = $this->getContent();
@@ -46,10 +46,10 @@ class Element
         // $name, $attrs
         // $name
         if ($content || !$attributes->isEmpty()) {
-            $arguments .= ',' . $attributes->getPhpCode();
+            $arguments[] = $attributes->getPhpCode();
         }
         if ($content) {
-            $arguments .= ',' . $content->getPhpCode();
+            $arguments[] = $content->getPhpCode();
         }
         return $arguments;
     }
