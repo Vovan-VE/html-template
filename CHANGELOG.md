@@ -1,7 +1,7 @@
 HTML Template Changelog
 =======================
 
-0.2.1 (dev)
+0.2.1
 -----
 
 *   Add: constants `true`, `false` and `null` (case sensitive). Technically this is
