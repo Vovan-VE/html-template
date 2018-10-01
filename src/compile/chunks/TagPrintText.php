@@ -1,7 +1,7 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
-use VovanVE\HtmlTemplate\helpers\CompilerHelper;
+use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 
 class TagPrintText implements PhpValueInterface
@@ -50,6 +50,6 @@ class TagPrintText implements PhpValueInterface
 
     public function getConstValue()
     {
-        return CompilerHelper::htmlEncode($this->value->getConstValue());
+        return RuntimeHelper::htmlEncode($this->value->getConstValue());
     }
 }

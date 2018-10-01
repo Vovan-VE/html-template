@@ -11,6 +11,7 @@ use VovanVE\HtmlTemplate\compile\chunks\PhpArrayPair;
 use VovanVE\HtmlTemplate\compile\chunks\PhpBoolConst;
 use VovanVE\HtmlTemplate\compile\chunks\PhpConcatenation;
 use VovanVE\HtmlTemplate\compile\chunks\PhpList;
+use VovanVE\HtmlTemplate\compile\chunks\PhpNullConst;
 use VovanVE\HtmlTemplate\compile\chunks\PhpStringConst;
 use VovanVE\HtmlTemplate\compile\chunks\PhpValueInterface;
 use VovanVE\HtmlTemplate\compile\chunks\TagPrintText;
@@ -31,7 +32,7 @@ class Compiler implements CompilerInterface
 {
     private const A_BUBBLE = Parser::ACTION_BUBBLE_THE_ONLY;
 
-    private const VERSION = '0.2.0';
+    private const VERSION = '0.2.1-dev.1';
 
     private const STRING_ESCAPE_LETTER = [
         'b' => "\x08",
@@ -539,6 +540,17 @@ class Compiler implements CompilerInterface
             'Expression' => self::A_BUBBLE,
 
             'Variable' => function (string $name) {
+                $length = strlen($name);
+                if (4 === $length) {
+                    if (0 === strcmp('true', $name)) {
+                        return new PhpBoolConst(true);
+                    }
+                    if (0 === strcmp('null', $name)) {
+                        return new PhpNullConst();
+                    }
+                } elseif (5 === $length && 0 === strcmp('false', $name)) {
+                    return new PhpBoolConst(false);
+                }
                 return new Variable($name);
             },
 

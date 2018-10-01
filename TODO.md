@@ -11,7 +11,6 @@ TODO
     *   `? :`
     *   `&&`
     *   `||`
-*   Expression: boolean: `true`, `false`
 *   `RuntimeHelperInterface`:
     *   `removeParams()`
     *   `removeAllParams()`
