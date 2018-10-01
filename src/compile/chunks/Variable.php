@@ -1,6 +1,8 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
+use VovanVE\HtmlTemplate\compile\CompileScope;
+
 class Variable implements PhpValueInterface
 {
     /** * @var string */
@@ -19,7 +21,7 @@ class Variable implements PhpValueInterface
         return $this->name;
     }
 
-    public function getPhpCode(): string
+    public function getPhpCode(CompileScope $scope): string
     {
         /** @uses RuntimeHelperInterface::param() */
         return '($runtime->param(' . var_export($this->name, true) . '))';

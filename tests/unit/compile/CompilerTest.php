@@ -4,6 +4,7 @@ namespace VovanVE\HtmlTemplate\tests\unit\compile;
 use VovanVE\HtmlTemplate\caching\memory\CacheStrings;
 use VovanVE\HtmlTemplate\compile\Compiler;
 use VovanVE\HtmlTemplate\compile\SyntaxException;
+use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 use VovanVE\HtmlTemplate\source\memory\TemplateString;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
 use VovanVE\HtmlTemplate\tests\helpers\conversion\Expect;
@@ -151,6 +152,35 @@ u10FFF0: \u{10FFF0}.'
 CODE
             , JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             json_encode($result->getContent(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+        );
+    }
+
+    /**
+     * @param Compiler $compiler
+     * @depends testCreate
+     */
+    public function testBooleanExpression(Compiler $compiler)
+    {
+        $cache = new CacheStrings(__FUNCTION__ . '_%{hash}', __CLASS__);
+
+        $template = new TemplateString(
+            '<foo true={v_true} false={v_false}/><true>{v_true}</true><false>{v_false}</false>',
+            ''
+        );
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $code = $compiler->compile($template);
+
+        $cached = $cache->setEntry($template->getUniqueKey(), $code->getContent(), $template->getMeta());
+
+        $result = $cached->run(new RuntimeHelper([
+            'v_true' => true,
+            'v_false' => false,
+        ]));
+
+        $this->assertEquals(
+            '<foo true/><true></true><false></false>',
+            $result
         );
     }
 

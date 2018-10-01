@@ -1,6 +1,8 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
+use VovanVE\HtmlTemplate\compile\CompileScope;
+
 class PhpBoolConst extends PhpConst
 {
     public function __construct(bool $value)
@@ -18,7 +20,7 @@ class PhpBoolConst extends PhpConst
         return parent::getValue();
     }
 
-    public function getPhpCode(): string
+    public function getPhpCode(CompileScope $scope): string
     {
         return parent::getValue() ? 'true' : 'false';
     }

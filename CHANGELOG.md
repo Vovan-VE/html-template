@@ -1,6 +1,21 @@
 HTML Template Changelog
 =======================
 
+0.2.1
+-----
+
+*   Add: constants `true`, `false` and `null` (case sensitive). Technically this is
+    a BC break change, but in fact this is true only when you define params with such
+    names and different unrelated values like `'true' => 42`, `'false' = 'well, ...'`
+    or `'null' => "don't know"`.
+*   Add: operators:
+    *   `!A` - boolean NOT;
+    *   `(A)` - group expression;
+    *   `A && B` - logic AND, works like in EcmaScript;
+    *   `A || B` - logic OR, works like in EcmaScript;
+    *   `A ? B : C` - ternary.
+*   Fix: Did not render `true` and `null` values as empty string.
+
 0.2.0
 -----
 

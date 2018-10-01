@@ -102,7 +102,10 @@ class RuntimeHelper implements RuntimeHelperInterface
         if (is_string($content)) {
             return CompilerHelper::htmlEncode($content);
         }
-        if (is_int($content) || is_bool($content) || is_float($content)) {
+        if (null === $content || is_bool($content)) {
+            return '';
+        }
+        if (is_int($content) || is_float($content)) {
             return (string)$content;
         }
         if (is_array($content)) {

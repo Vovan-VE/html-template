@@ -1,6 +1,7 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
+use VovanVE\HtmlTemplate\compile\CompileScope;
 use VovanVE\HtmlTemplate\helpers\CompilerHelper;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 
@@ -14,11 +15,11 @@ class HtmlQuotedString implements PhpValueInterface
         $this->value = $value;
     }
 
-    public function getPhpCode(): string
+    public function getPhpCode(CompileScope $scope): string
     {
         $quot = '\'"\'';
         /** @uses RuntimeHelperInterface::htmlEncode() */
-        return "($quot.\$runtime::htmlEncode({$this->value->getPhpCode()}).$quot)";
+        return "($quot.\$runtime::htmlEncode({$this->value->getPhpCode($scope)}).$quot)";
     }
 
     public function isConstant(): bool

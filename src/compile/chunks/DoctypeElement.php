@@ -1,6 +1,8 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
+use VovanVE\HtmlTemplate\compile\CompileScope;
+
 class DoctypeElement implements PhpValueInterface
 {
     /** @var PhpValueInterface[] */
@@ -29,7 +31,7 @@ class DoctypeElement implements PhpValueInterface
         return $this->values;
     }
 
-    public function getPhpCode(): string
+    public function getPhpCode(CompileScope $scope): string
     {
         if (!$this->values) {
             return "''";
@@ -63,7 +65,7 @@ class DoctypeElement implements PhpValueInterface
             if ($value->isConstant() && '' === (string)$value->getConstValue()) {
                 continue;
             }
-            $code = $value->getPhpCode();
+            $code = $value->getPhpCode($scope);
             if (preg_match('/^[.\\d]/', $code)) {
                 $code = " $code";
             }

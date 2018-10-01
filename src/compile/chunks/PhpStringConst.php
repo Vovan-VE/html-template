@@ -1,6 +1,8 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
+use VovanVE\HtmlTemplate\compile\CompileScope;
+
 class PhpStringConst extends PhpConst
 {
     public function __construct(string $value)
@@ -8,7 +10,7 @@ class PhpStringConst extends PhpConst
         parent::__construct($value);
     }
 
-    public function getPhpCode(): string
+    public function getPhpCode(CompileScope $scope): string
     {
         return var_export($this->getValue(), true);
     }

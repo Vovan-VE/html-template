@@ -1,6 +1,8 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
+use VovanVE\HtmlTemplate\compile\CompileScope;
+
 class PhpArray implements PhpValueInterface
 {
     /** @var PhpArrayPair[] */
@@ -58,11 +60,11 @@ class PhpArray implements PhpValueInterface
         return array_keys($this->pairs);
     }
 
-    public function getPhpCode(): string
+    public function getPhpCode(CompileScope $scope): string
     {
         $pairs = [];
         foreach ($this->pairs as $pair) {
-            $pairs[] = $pair->getKey()->getPhpCode() . '=>' . $pair->getValue()->getPhpCode();
+            $pairs[] = $pair->getKey()->getPhpCode($scope) . '=>' . $pair->getValue()->getPhpCode($scope);
         }
         return '[' . join(',', $pairs) . ']';
     }
