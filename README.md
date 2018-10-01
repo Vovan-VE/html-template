@@ -15,7 +15,7 @@ See [an examples](./examples/).
 
 Template example:
 
-```jsx
+```
 <a href={ link } title={ "Foo bar: ${ title }" }>
     <span id=foobar class='it parses html'>
         { description }
