@@ -11,8 +11,12 @@ use VovanVE\HtmlTemplate\compile\chunks\PhpArrayPair;
 use VovanVE\HtmlTemplate\compile\chunks\PhpBoolConst;
 use VovanVE\HtmlTemplate\compile\chunks\PhpConcatenation;
 use VovanVE\HtmlTemplate\compile\chunks\PhpList;
+use VovanVE\HtmlTemplate\compile\chunks\PhpLogicAnd;
+use VovanVE\HtmlTemplate\compile\chunks\PhpLogicOr;
+use VovanVE\HtmlTemplate\compile\chunks\PhpNot;
 use VovanVE\HtmlTemplate\compile\chunks\PhpNullConst;
 use VovanVE\HtmlTemplate\compile\chunks\PhpStringConst;
+use VovanVE\HtmlTemplate\compile\chunks\PhpTernary;
 use VovanVE\HtmlTemplate\compile\chunks\PhpValueInterface;
 use VovanVE\HtmlTemplate\compile\chunks\TagPrintText;
 use VovanVE\HtmlTemplate\compile\chunks\Variable;
@@ -32,7 +36,7 @@ class Compiler implements CompilerInterface
 {
     private const A_BUBBLE = Parser::ACTION_BUBBLE_THE_ONLY;
 
-    private const VERSION = '0.2.1-dev.1';
+    private const VERSION = '0.2.1-dev.2';
 
     private const STRING_ESCAPE_LETTER = [
         'b' => "\x08",
@@ -381,7 +385,7 @@ class Compiler implements CompilerInterface
                 if ($result->isConstant()) {
                     $result = new PhpStringConst($result->getConstValue());
                 }
-                return $result->getPhpCode();
+                return $result->getPhpCode(new CompileScope);
             },
             'Content(next)' => $makeNodesListAppendNotNull,
             'Content(first)' => $makeNodesListOfOneNotNull,
@@ -537,7 +541,37 @@ class Compiler implements CompilerInterface
                 throw new ActionAbortException("Unknown instructions `$name`");
             },
 
-            'Expression' => self::A_BUBBLE,
+            'WsExpression' => self::A_BUBBLE,
+            'ExpressionWs' => self::A_BUBBLE,
+
+            'Ternary(then)' => function (PhpValueInterface $cond, array $thenElse) {
+                /** @var PhpValueInterface $then */
+                /** @var PhpValueInterface $else */
+                [$then, $else] = $thenElse;
+                return PhpTernary::create($cond, $then, $else);
+            },
+            'Ternary(empty)' => self::A_BUBBLE,
+            'TernaryThen' => self::A_BUBBLE,
+            'TernaryThenElse' => function (PhpValueInterface $then, PhpValueInterface $else) {
+                return [$then, $else];
+            },
+
+            'LogicOr(next)' => function (PhpValueInterface $a, PhpValueInterface $b) {
+                return PhpLogicOr::create($a, $b);
+            },
+            'LogicOr(first)' => self::A_BUBBLE,
+
+            'LogicAnd(next)' => function (PhpValueInterface $a, PhpValueInterface $b) {
+                return PhpLogicAnd::create($a, $b);
+            },
+            'LogicAnd(first)' => self::A_BUBBLE,
+
+            'ValueWs' => self::A_BUBBLE,
+            'Value' => self::A_BUBBLE,
+
+            'Value(not)' => function (PhpValueInterface $a) {
+                return PhpNot::create($a);
+            },
 
             'Variable' => function (string $name) {
                 $length = strlen($name);

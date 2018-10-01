@@ -1,6 +1,8 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
+use VovanVE\HtmlTemplate\compile\CompileScope;
+
 class PhpNullConst extends PhpConst
 {
     public function __construct()
@@ -18,7 +20,7 @@ class PhpNullConst extends PhpConst
         return null;
     }
 
-    public function getPhpCode(): string
+    public function getPhpCode(CompileScope $scope): string
     {
         return 'null';
     }

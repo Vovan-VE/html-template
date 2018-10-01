@@ -1,6 +1,8 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
+use VovanVE\HtmlTemplate\compile\CompileScope;
+
 class PhpList implements PhpValueInterface
 {
     /** @var PhpValueInterface[] */
@@ -48,7 +50,7 @@ class PhpList implements PhpValueInterface
         return $this->values;
     }
 
-    public function getPhpCode(): string
+    public function getPhpCode(CompileScope $scope): string
     {
         $result = [];
         foreach ($this->values as $value) {
@@ -57,7 +59,7 @@ class PhpList implements PhpValueInterface
                     ? new PhpStringConst($value->getConstValue())
                     : $value
             )
-                ->getPhpCode();
+                ->getPhpCode($scope);
         }
 
         return '[' . join(',', $result) . ']';

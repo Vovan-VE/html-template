@@ -16,7 +16,7 @@ See [an examples](./examples/).
 Template example:
 
 ```
-<a href={ link } title={ "Foo bar: ${ title }" }>
+<a href={ link } title={ title && "Foo bar: ${ title }" }>
     <span id=foobar class='it parses html'>
         { description }
     </span>
@@ -26,24 +26,7 @@ Template example:
 </a>
 ```
 
-Compiled code (formatted manually only here for demonstration):
-
-```php
-($runtime::createElement('a', [
-    'href'  => ($runtime->param('link')),
-    'title' => ('Foo bar: ' . ($runtime->param('title')))
-], [
-    ($runtime::createElement('span', [
-        'id'    => 'foobar',
-        'class' => 'it parses html'
-    ], [
-        ($runtime::htmlEncode(($runtime->param('description'))))
-    ])),
-    '<span></span>'
-]))
-```
-
-Creating data for the example template above:
+Creating data for the template above:
 
 ```php
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
@@ -71,6 +54,41 @@ The output for the example above (wrapped manually only here):
 title="Foo bar: Lorem &lt;ipsum&gt; &quot;dolor&quot; sit amet"
 ><span id="foobar" class="it parses html"
 >Some &lt;text/plain&gt; content</span><span></span></a>
+```
+
+Template code compiles to PHP code behind the scene. It may look
+something like so (formatted manually only here for demonstration):
+
+```php
+($runtime::createElement('a', [
+    'href'  => ($runtime->param('link')),
+    'title' => (!($_ta=($runtime->param('title')))
+        ? $_ta
+        :(('Foo bar: '.($runtime->param('title'))))
+    )
+], [
+    ($runtime::createElement('span', [
+        'id'    => 'foobar',
+        'class' => 'it parses html'
+    ], [
+        ($runtime::htmlEncode(($runtime->param('description'))))
+    ])),
+    '<span></span>'
+]))
+```
+
+Compiler will evaluate as much constant expressions as possible
+and as much as it learned to. For example, completely constant template
+like following:
+
+```
+<div>{true && 'Lorem < ipsum dolor'}</div>
+```
+
+will be compiled to:
+
+```php
+'<div>Lorem &lt; ipsum dolor</div>'
 ```
 
 Description

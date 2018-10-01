@@ -1,11 +1,13 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
+use VovanVE\HtmlTemplate\compile\CompileScope;
+
 class ComponentElement extends Element implements PhpValueInterface
 {
-    public function getPhpCode(): string
+    public function getPhpCode(CompileScope $scope): string
     {
-        $arguments = $this->getArgumentsCode();
+        $arguments = $this->getArgumentsCode($scope);
         if (isset($arguments[2])) {
             $arguments[2] = "function(\$runtime){return {$arguments[2]};}";
         }

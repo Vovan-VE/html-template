@@ -1,6 +1,7 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
+use VovanVE\HtmlTemplate\compile\CompileScope;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 
 class HtmlElement extends Element implements PhpValueInterface
@@ -15,9 +16,13 @@ class HtmlElement extends Element implements PhpValueInterface
         $this->isConst = $attributes->isConstant() && (!$content || $content->isConstant());
     }
 
-    public function getPhpCode(): string
+    /**
+     * @param CompileScope $scope
+     * @return string
+     */
+    public function getPhpCode(CompileScope $scope): string
     {
-        $arguments = join(',', $this->getArgumentsCode());
+        $arguments = join(',', $this->getArgumentsCode($scope));
         /** @uses RuntimeHelperInterface::createElement() */
         return "(\$runtime::createElement($arguments))";
     }

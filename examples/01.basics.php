@@ -15,7 +15,7 @@ $engine = (new Engine)
             ->setTemplate(
                 'foo',
                 <<<'TPL'
-<a href={ link } title={ "Foo bar: ${ title }" }>
+<a href={ link } title={ title && "Foo bar: ${ title }" }>
     <span id=foobar class='it parses html'>
         { description }
     </span>

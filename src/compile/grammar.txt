@@ -78,16 +78,41 @@ TagContinue(Expr)       : TagExpressionContinue
 TagContinue(St)         : "%" StatementContinue
 WsTagExpressionContinue : .ws TagExpressionContinue
 WsTagExpressionContinue : TagExpressionContinue
-TagExpressionContinue   : Expression .WsTagEnd
+TagExpressionContinue   : ExpressionWs .TagEnd
 StatementContinue(I)    : InlineStatementContinue
 InlineStatementContinue : InlineStatement .WsTagEnd
-WsTagEnd                : .ws "}"
-WsTagEnd                : "}"
+WsTagEnd                : .ws .TagEnd
+WsTagEnd                : .TagEnd
+TagEnd                  : "}"
 
 InlineStatement(unknown)    : name
 
-Expression      : Variable
-Expression      : StringLiteral
+WsExpression    : .ws ExpressionWs
+WsExpression    : ExpressionWs
+ExpressionWs    : Ternary
+
+Ternary(then)   : LogicOr TernaryThen
+Ternary(empty)  : LogicOr
+TernaryThen     : "?" .ws TernaryThenElse
+TernaryThen     : "?" TernaryThenElse
+TernaryThenElse : LogicOr ":" .ws LogicOr
+TernaryThenElse : LogicOr ":" LogicOr
+
+LogicOr(next)   : LogicOr "||" .ws LogicAnd
+LogicOr(next)   : LogicOr "||" LogicAnd
+LogicOr(first)  : LogicAnd
+
+LogicAnd(next)  : LogicAnd "&&" .ws ValueWs
+LogicAnd(next)  : LogicAnd "&&" ValueWs
+LogicAnd(first) : ValueWs
+
+ValueWs         : Value .ws
+ValueWs         : Value
+Value           : Variable
+Value           : StringLiteral
+Value           : "(" WsExpression ")"
+Value(not)      : "!" .ws Value
+Value(not)      : "!" Value
 
 Variable        : name
 

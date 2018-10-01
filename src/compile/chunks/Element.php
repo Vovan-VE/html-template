@@ -1,6 +1,8 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
+use VovanVE\HtmlTemplate\compile\CompileScope;
+
 class Element
 {
     /** @var string */
@@ -33,11 +35,12 @@ class Element
     }
 
     /**
+     * @param CompileScope $scope
      * @return string[]
      */
-    protected function getArgumentsCode(): array
+    protected function getArgumentsCode(CompileScope $scope): array
     {
-        $arguments = [(new PhpStringConst($this->getName()))->getPhpCode()];
+        $arguments = [(new PhpStringConst($this->getName()))->getPhpCode($scope)];
 
         $attributes = $this->getAttributes();
         $content = $this->getContent();
@@ -46,10 +49,10 @@ class Element
         // $name, $attrs
         // $name
         if ($content || !$attributes->isEmpty()) {
-            $arguments[] = $attributes->getPhpCode();
+            $arguments[] = $attributes->getPhpCode($scope);
         }
         if ($content) {
-            $arguments[] = $content->getPhpCode();
+            $arguments[] = $content->getPhpCode($scope);
         }
         return $arguments;
     }
