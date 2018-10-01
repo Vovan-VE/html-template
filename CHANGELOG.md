@@ -1,6 +1,11 @@
 HTML Template Changelog
 =======================
 
+0.2.1 (dev)
+-----
+
+*   Fix: Did not render `true` and `null` as empty string.
+
 0.2.0
 -----
 

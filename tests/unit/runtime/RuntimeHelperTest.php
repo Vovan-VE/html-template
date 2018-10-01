@@ -111,21 +111,14 @@ class RuntimeHelperTest extends BaseTestCase
         $a->createComponent('Test');
     }
 
-    public function testHtmlEncode()
+    /**
+     * @param mixed $source
+     * @param string $encoded
+     * @dataProvider getHtmlEncodeDataProvider
+     */
+    public function testHtmlEncode($source, string $encoded)
     {
-        foreach (
-            [
-                '' => '',
-                'a' => 'a',
-                'a<b' => 'a&lt;b',
-                'a>b' => 'a&gt;b',
-                'a"&\'b' => 'a&quot;&amp;&#039;b',
-                'a&amp;b' => 'a&amp;amp;b',
-            ]
-            as $source => $encoded
-        ) {
-            $this->assertEquals($encoded, RuntimeHelper::htmlEncode($source), "at `$source`");
-        }
+        $this->assertEquals($encoded, RuntimeHelper::htmlEncode($source));
     }
 
     public function testHtmlDecodeEntity()
@@ -281,6 +274,25 @@ class RuntimeHelperTest extends BaseTestCase
                 '<!-- Test Component: foo="42" bar=null /-->'],
             ['Factory', ['foo' => true, 'bar' => [10, '20', null]], null,
                 '<!-- Test Component: foo=true bar=[10,"20",null] /-->'],
+        ];
+    }
+
+    public function getHtmlEncodeDataProvider()
+    {
+        return [
+            ['', ''],
+            ['a', 'a'],
+            ['a<b', 'a&lt;b'],
+            ['a>b', 'a&gt;b'],
+            ['a"&\'b', 'a&quot;&amp;&#039;b'],
+            ['a&amp;b', 'a&amp;amp;b'],
+            [null, ''],
+            [true, ''],
+            [false, ''],
+            [42, '42'],
+            [42.37, '42.37'],
+            [[], '[Array]'],
+            [[42, 37, 'foo'], '[Array]'],
         ];
     }
 }
