@@ -1,6 +1,11 @@
 HTML Template Changelog
 =======================
 
+0.2.2
+-----
+
+*   Fix: cannot use h1...h6 elements.
+
 0.2.1
 -----
 
@@ -46,6 +51,11 @@ HTML Template Changelog
         *   `setParams()`;
 *   Add: component now can override `RuntimeHelperInterface` instance to render its content.
 *   Enh: component now controls whether to render its content or not.
+
+0.1.3
+-----
+
+*   Fix: cannot use h1...h6 elements.
 
 0.1.2
 -----
