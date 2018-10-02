@@ -114,6 +114,6 @@ class CompilerHelper
      */
     public static function isElementName(string $name): bool
     {
-        return (bool)preg_match('/^[-a-z:]++$/D', $name);
+        return (bool)preg_match('/^[a-z][-a-z0-9:]*+$/D', $name);
     }
 }

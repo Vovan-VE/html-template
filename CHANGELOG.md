@@ -1,6 +1,11 @@
 HTML Template Changelog
 =======================
 
+0.1.3
+-----
+
+*   Fix: cannot use h1...h6 elements.
+
 0.1.2
 -----
 
