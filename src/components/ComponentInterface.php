@@ -13,6 +13,7 @@ interface ComponentInterface
      * @param RuntimeHelperInterface $runtime
      * @param \Closure|null $content
      * @return string
+     * @throws ComponentTraceException
      */
     public function render(RuntimeHelperInterface $runtime, ?\Closure $content = null): string;
 }

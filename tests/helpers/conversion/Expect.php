@@ -52,9 +52,10 @@ abstract class Expect
     /**
      * @param BaseTestCase $test
      * @param \Exception $e
+     * @param string $filename
      * @return bool
      */
-    public function caught(BaseTestCase $test, \Exception $e): bool
+    public function caught(BaseTestCase $test, \Exception $e, string $filename): bool
     {
         return false;
     }

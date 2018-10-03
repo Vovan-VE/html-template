@@ -2,6 +2,7 @@
 namespace VovanVE\HtmlTemplate\tests\unit\base;
 
 use VovanVE\HtmlTemplate\base\BaseObject;
+use VovanVE\HtmlTemplate\base\UnknownPropertyException;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
 
 class BaseObjectTest extends BaseTestCase
@@ -9,28 +10,28 @@ class BaseObjectTest extends BaseTestCase
     public function testUndefinedGet()
     {
         $o = new BaseObject();
-        $this->expectException(\OutOfRangeException::class);
+        $this->expectException(UnknownPropertyException::class);
         $this->fail("got value: " . $o->undefined);
     }
 
     public function testUndefinedSet()
     {
         $o = new BaseObject();
-        $this->expectException(\OutOfRangeException::class);
+        $this->expectException(UnknownPropertyException::class);
         $o->undefined = 42;
     }
 
     public function testUndefinedIsset()
     {
         $o = new BaseObject();
-        $this->expectException(\OutOfRangeException::class);
+        $this->expectException(UnknownPropertyException::class);
         $this->fail('got value: ' . (int)isset($o->undefined));
     }
 
     public function testUndefinedUnset()
     {
         $o = new BaseObject();
-        $this->expectException(\OutOfRangeException::class);
+        $this->expectException(UnknownPropertyException::class);
         unset($o->undefined);
     }
 

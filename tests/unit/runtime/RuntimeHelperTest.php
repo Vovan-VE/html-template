@@ -4,8 +4,8 @@ namespace VovanVE\HtmlTemplate\tests\unit\runtime;
 use VovanVE\HtmlTemplate\components\BaseComponent;
 use VovanVE\HtmlTemplate\components\ComponentInterface;
 use VovanVE\HtmlTemplate\components\ComponentSpawnerInterface;
-use VovanVE\HtmlTemplate\ConfigException;
-use VovanVE\HtmlTemplate\helpers\ObjectHelper;
+use VovanVE\HtmlTemplate\components\ComponentTraceException;
+use VovanVE\HtmlTemplate\components\UnknownComponentException;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\tests\helpers\BaseTestCase;
@@ -106,9 +106,17 @@ class RuntimeHelperTest extends BaseTestCase
 
         $this->assertEquals((new CounterStepComponent)->render($c), $c->createComponent('Test'));
 
-        $this->expectException(ConfigException::class);
-        $this->expectExceptionMessage("Unknown component `Test`");
-        $a->createComponent('Test');
+        try {
+            $a->createComponent('Test');
+            $this->fail('did not throw exception ever');
+        } catch (ComponentTraceException $e) {
+            $this->assertEquals('An error from component `Test`', $e->getMessage());
+            $this->assertEquals(['Test'], $e->getComponentsStack());
+
+            $prev = $e->getPrevious();
+            $this->assertInstanceOf(UnknownComponentException::class, $prev);
+            return;
+        }
     }
 
     /**
@@ -224,9 +232,8 @@ class RuntimeHelperTest extends BaseTestCase
 
                     public function getComponent(array $properties = []): ComponentInterface
                     {
-                        $copy = clone $this->origin;
-                        ObjectHelper::setObjectProperties($copy, $properties);
-                        return $copy;
+                        return (clone $this->origin)
+                            ->setProperties($properties);
                     }
                 },
             ]);
