@@ -5,6 +5,7 @@ use VovanVE\HtmlTemplate\caching\CachedEntryInterface;
 use VovanVE\HtmlTemplate\caching\CacheInterface;
 use VovanVE\HtmlTemplate\compile\CompileException;
 use VovanVE\HtmlTemplate\compile\CompilerInterface;
+use VovanVE\HtmlTemplate\compile\SyntaxException;
 use VovanVE\HtmlTemplate\report\ReportInterface;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
 use VovanVE\HtmlTemplate\source\TemplateNotFoundException;
@@ -50,7 +51,7 @@ interface EngineInterface
      * @param string $name
      * @return CachedEntryInterface
      * @throws ConfigException
-     * @throws CompileException
+     * @throws SyntaxException
      * @throws TemplateNotFoundException
      * @throws TemplateReadException
      */

@@ -39,7 +39,8 @@ class CompilerHelper
             : " near `$after`";
         $line = static::calcLineNumber($code, $offset);
         return new SyntaxException(
-            $e->getMessage() . $near . " in `$name` at line $line",
+            $e->getMessage() . $near,
+            $name,
             $line,
             $before,
             $after,

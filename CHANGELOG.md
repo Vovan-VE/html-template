@@ -1,6 +1,14 @@
 HTML Template Changelog
 =======================
 
+0.3.1
+-----
+
+*   Add: method `\VovanVE\HtmlTemplate\compile\SyntaxException::getErrorFile()`
+    to obtain template name. Message does not contain anymore template name and line number.
+*   Add: method `\VovanVE\HtmlTemplate\runtime\RuntimeTemplateException::getTemplate()`
+    to obtain template name. Message does not contain anymore template name.
+
 0.3.0
 -----
 
