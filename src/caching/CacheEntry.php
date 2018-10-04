@@ -53,7 +53,7 @@ abstract class CacheEntry extends CodeFragment implements CachedEntryInterface
         try {
             return $dummy::run($runtime);
         } catch (\Throwable $e) {
-            throw new RuntimeTemplateException('An error occurred while executing template', 0, $e);
+            throw new RuntimeTemplateException('An error occurred while executing template', '', $e);
         }
     }
 

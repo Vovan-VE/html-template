@@ -6,6 +6,7 @@ use VovanVE\HtmlTemplate\caching\CacheInterface;
 use VovanVE\HtmlTemplate\caching\CacheWriteException;
 use VovanVE\HtmlTemplate\compile\CompileException;
 use VovanVE\HtmlTemplate\compile\CompilerInterface;
+use VovanVE\HtmlTemplate\compile\SyntaxException;
 use VovanVE\HtmlTemplate\report\ReportInterface;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface;
@@ -83,7 +84,7 @@ class Engine implements EngineInterface
      * @param string $name
      * @return CachedEntryInterface
      * @throws CacheWriteException
-     * @throws CompileException
+     * @throws SyntaxException
      * @throws ConfigException
      * @throws TemplateNotFoundException
      * @throws TemplateReadException
@@ -139,11 +140,7 @@ class Engine implements EngineInterface
         try {
             return $entry->run($runtime ?? new RuntimeHelper());
         } catch (RuntimeTemplateException $e) {
-            throw new RuntimeTemplateException(
-                $e->getMessage() . "; template `$name`",
-                $e->getCode(),
-                $e->getPrevious()
-            );
+            throw new RuntimeTemplateException($e->getMessage(), $name, $e->getPrevious());
         }
     }
 

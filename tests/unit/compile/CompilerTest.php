@@ -255,7 +255,7 @@ CODE
             $this->fail("Disabled HTML element ($disabled) did compiled from `$source`");
         } catch (SyntaxException $e) {
             $this->assertStringMatchesFormat(
-                "HTML Element `<$blocked>` is not allowed near `%s` in `` at line %d",
+                "HTML Element `<$blocked>` is not allowed near `%s`",
                 $e->getMessage(),
                 "thrown exception message"
             );
@@ -291,7 +291,7 @@ CODE
         } catch (SyntaxException $e) {
             $this->assertStringMatchesFormat(
                 "HTML attribute `$blockedAttribute` is not allowed in element `<$blockedElement>`"
-                . " near `%s` in `` at line %d",
+                . " near `%s`",
                 $e->getMessage(),
                 "thrown exception message"
             );

@@ -15,7 +15,7 @@ interface CompilerInterface
     /**
      * @param TemplateInterface $template
      * @return CompiledEntryInterface
-     * @throws CompileException
+     * @throws SyntaxException
      */
     public function compile(TemplateInterface $template): CompiledEntryInterface;
 
