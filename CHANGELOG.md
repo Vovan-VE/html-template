@@ -1,6 +1,12 @@
 HTML Template Changelog
 =======================
 
+0.3.2
+-----
+
+*   Add: exception `\VovanVE\HtmlTemplate\components\ComponentRuntimeException` to
+    wrap component runtime errors.
+
 0.3.1
 -----
 

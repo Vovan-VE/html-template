@@ -5,6 +5,7 @@ use VovanVE\HtmlTemplate\base\UnknownPropertyException;
 use VovanVE\HtmlTemplate\components\ComponentDefinitionException;
 use VovanVE\HtmlTemplate\components\ComponentException;
 use VovanVE\HtmlTemplate\components\ComponentInterface;
+use VovanVE\HtmlTemplate\components\ComponentRuntimeException;
 use VovanVE\HtmlTemplate\components\ComponentSpawnerInterface;
 use VovanVE\HtmlTemplate\components\ComponentTraceException;
 use VovanVE\HtmlTemplate\components\UnknownComponentException;
@@ -223,6 +224,8 @@ class RuntimeHelper implements RuntimeHelperInterface
             throw $e->nestInComponent($name);
         } catch (ComponentException $e) {
             throw new ComponentTraceException([$name], $e);
+        } catch (\Throwable $e) {
+            throw new ComponentTraceException([$name], new ComponentRuntimeException('Component runtime error', 0, $e));
         }
     }
 
