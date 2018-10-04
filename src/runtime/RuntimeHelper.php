@@ -1,9 +1,14 @@
 <?php
 namespace VovanVE\HtmlTemplate\runtime;
 
+use VovanVE\HtmlTemplate\base\UnknownPropertyException;
+use VovanVE\HtmlTemplate\components\ComponentDefinitionException;
+use VovanVE\HtmlTemplate\components\ComponentException;
 use VovanVE\HtmlTemplate\components\ComponentInterface;
 use VovanVE\HtmlTemplate\components\ComponentSpawnerInterface;
-use VovanVE\HtmlTemplate\ConfigException;
+use VovanVE\HtmlTemplate\components\ComponentTraceException;
+use VovanVE\HtmlTemplate\components\UnknownComponentException;
+use VovanVE\HtmlTemplate\components\UnknownComponentPropertyException;
 use VovanVE\HtmlTemplate\helpers\CompilerHelper;
 
 class RuntimeHelper implements RuntimeHelperInterface
@@ -163,40 +168,62 @@ class RuntimeHelper implements RuntimeHelperInterface
      * @param array $properties
      * @param \Closure|null $content
      * @return string
-     * @throws ConfigException
+     * @throws ComponentTraceException
      * @since 0.1.0
      */
     public function createComponent(string $name, array $properties = [], ?\Closure $content = null): string
     {
-        /** @var string $component_class_ */
-        $component_definition = $this->components[$name] ?? null;
-        if (null === $component_definition) {
-            throw new ConfigException("Unknown component `$name`");
-        }
-
-        if (is_string($component_definition)) {
-            if (!class_exists($component_definition)) {
-                throw new ConfigException("Component definition `$name` refers to unknown class");
-            }
-            if (!is_subclass_of($component_definition, ComponentInterface::class)) {
-                throw new ConfigException("Component `$name` does not implement `ComponentInterface`");
+        try {
+            /** @var string $component_class_ */
+            $component_definition = $this->components[$name] ?? null;
+            if (null === $component_definition) {
+                throw new UnknownComponentException();
             }
 
-            $component = new $component_definition($properties);
-        } elseif (is_object($component_definition)) {
-            if ($component_definition instanceof ComponentSpawnerInterface) {
-                $component = $component_definition->getComponent($properties);
-            } elseif ($component_definition instanceof ComponentInterface) {
-                $component = $component_definition;
+            if (is_string($component_definition)) {
+                if (!class_exists($component_definition)) {
+                    throw new ComponentDefinitionException(
+                        "Component definition `$name` refers to unknown class"
+                    );
+                }
+                if (!is_subclass_of($component_definition, ComponentInterface::class)) {
+                    throw new ComponentDefinitionException(
+                        "Component `$name` does not implement `ComponentInterface`"
+                    );
+                }
+
+                try {
+                    $component = new $component_definition($properties);
+                } catch (UnknownPropertyException $e) {
+                    throw new UnknownComponentPropertyException($e->getProperty());
+                }
+            } elseif (is_object($component_definition)) {
+                if ($component_definition instanceof ComponentSpawnerInterface) {
+                    try {
+                        $component = $component_definition->getComponent($properties);
+                    } catch (UnknownPropertyException $e) {
+                        throw new UnknownComponentPropertyException($e->getProperty());
+                    }
+                } elseif ($component_definition instanceof ComponentInterface) {
+                    $component = $component_definition;
+                } else {
+                    throw new ComponentDefinitionException(
+                        "Component `$name` does not implement any of expected interfaces"
+                    );
+                }
             } else {
-                throw new ConfigException("Component `$name` does not implement any of expected interfaces");
+                throw new ComponentDefinitionException(
+                    "Component definition `$name` has unsupported type"
+                );
             }
-        } else {
-            throw new ConfigException("Component definition `$name` has unsupported type");
-        }
 
-        /** @var ComponentInterface $component */
-        return $component->render($this, $content);
+            /** @var ComponentInterface $component */
+            return $component->render($this, $content);
+        } catch (ComponentTraceException $e) {
+            throw $e->nestInComponent($name);
+        } catch (ComponentException $e) {
+            throw new ComponentTraceException([$name], $e);
+        }
     }
 
     /**

@@ -1,6 +1,19 @@
 HTML Template Changelog
 =======================
 
+0.3.0
+-----
+
+*   **BC break**:
+    *   API:
+        *   `\VovanVE\HtmlTemplate\base\BaseObject` now will throw
+            `\VovanVE\HtmlTemplate\base\UnknownPropertyException`
+            instead of `\OutOfRangeException` when dealing with unknown properties.
+        *   Method `\VovanVE\HtmlTemplate\helpers\ObjectHelper::setObjectProperties()`
+            now has return type `void`.
+*   Enh: Exceptions to diagnose component usage problems.
+*   Add: Method `\VovanVE\HtmlTemplate\base\BaseObject::setProperties()`.
+
 0.2.2
 -----
 

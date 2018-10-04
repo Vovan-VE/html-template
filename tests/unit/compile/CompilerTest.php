@@ -54,11 +54,21 @@ class CompilerTest extends BaseTestCase
 
             $cached = $cache->setEntry($template->getUniqueKey(), $code->getContent(), $template->getMeta());
 
-            $result = $cached->run($runtime);
+            try {
+                $result = $cached->run($runtime);
 
-            $expect->checkResult($this, $filename, $result);
+                $expect->checkResult($this, $filename, $result);
+            } catch (\PhpUnit\Exception $e) {
+                throw $e;
+            } catch (\Exception $e) {
+                if (!$expect->caught($this, $e, $filename)) {
+                    throw $e;
+                }
+            }
+        } catch (\PhpUnit\Exception $e) {
+            throw $e;
         } catch (\Exception $e) {
-            if (!$expect->caught($this, $e)) {
+            if (!$expect->caught($this, $e, $filename)) {
                 throw $e;
             }
         }

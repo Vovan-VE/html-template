@@ -51,14 +51,15 @@ class ExpectThrow extends Expect
     /**
      * @param BaseTestCase $test
      * @param \Exception $e
+     * @param string $filename
      * @return bool
      */
-    public function caught(BaseTestCase $test, \Exception $e): bool
+    public function caught(BaseTestCase $test, \Exception $e, string $filename): bool
     {
         if ($this->isFormat()) {
-            $test::assertStringMatchesFormat($this->getMessage(), $e->getMessage());
+            $test::assertStringMatchesFormat($this->getMessage(), $e->getMessage(), "file `$filename`");
         } else {
-            $test::assertEquals($this->getMessage(), $e->getMessage());
+            $test::assertEquals($this->getMessage(), $e->getMessage(), "file `$filename`");
         }
         return true;
     }

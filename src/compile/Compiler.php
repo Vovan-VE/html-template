@@ -107,10 +107,11 @@ class Compiler implements CompilerInterface
         try {
             $parser->parse($source);
         } catch (\VovanVE\parser\SyntaxException $e) {
+            $new_e = CompilerHelper::buildSyntaxException($template, $e);
             $report->addMessage(new Message(
                 MessageInterface::L_ERROR,
-                $e->getMessage(),
-                CompilerHelper::calcLineNumber($source, $e->getOffset())
+                $new_e->getMessage(),
+                $new_e->getErrorLine()
             ));
         }
 

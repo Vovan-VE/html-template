@@ -2,6 +2,7 @@
 namespace VovanVE\HtmlTemplate\tests\helpers;
 
 use VovanVE\HtmlTemplate\tests\helpers\conversion\Expect;
+use VovanVE\HtmlTemplate\tests\helpers\conversion\ExpectRuntimeThrow;
 use VovanVE\HtmlTemplate\tests\helpers\conversion\ExpectSuccess;
 use VovanVE\HtmlTemplate\tests\helpers\conversion\ExpectThrow;
 
@@ -93,6 +94,11 @@ _REGEXP;
                 [$codeIsFormat, $code] = $blocks['CODE'];
                 [$resultIsFormat, $result] = $blocks['RESULT'];
                 return new ExpectSuccess($message, $input, $codeIsFormat, $code, $resultIsFormat, $result);
+
+            case 'CODE,THROW':
+                [$codeIsFormat, $code] = $blocks['CODE'];
+                [$throwIsFormat, $throw] = $blocks['THROW'];
+                return new ExpectRuntimeThrow($message, $input, $codeIsFormat, $code, $throwIsFormat, $throw);
 
             case 'THROW':
                 return new ExpectThrow($input, ...$blocks['THROW']);
