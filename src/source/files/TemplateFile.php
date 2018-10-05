@@ -56,6 +56,6 @@ class TemplateFile extends Template
             throw new TemplateReadException('Cannot stat file');
         }
 
-        return "mod-time: " . gmdate('Y-m-d H:i:s') . " GMT\n";
+        return "mod-time: " . gmdate('Y-m-d H:i:s', $mod_time) . " GMT\n";
     }
 }

@@ -1,6 +1,12 @@
 HTML Template Changelog
 =======================
 
+0.3.3
+-----
+
+*   Fix: compiled cached became unused due to incorrect template meta for
+    `\VovanVE\HtmlTemplate\source\files\TemplateFile`.
+
 0.3.2
 -----
 
