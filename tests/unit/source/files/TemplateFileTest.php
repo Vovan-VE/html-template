@@ -31,6 +31,11 @@ class TemplateFileTest extends BaseTestCase
             throw new \RuntimeException('Cannot write temp file');
         }
 
+        // change time to let it differ to current time
+        if (!touch(self::FILE_NAME, time() - (86400 + 3600 + 60 + 1))) {
+            throw new \RuntimeException('Cannot change temp file mod time');
+        }
+
         $this->modTime = filemtime(self::FILE_NAME);
     }
 
