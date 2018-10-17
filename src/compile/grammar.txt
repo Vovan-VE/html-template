@@ -95,8 +95,8 @@ Ternary(then)   : LogicOr TernaryThen
 Ternary(empty)  : LogicOr
 TernaryThen     : "?" .ws TernaryThenElse
 TernaryThen     : "?" TernaryThenElse
-TernaryThenElse : LogicOr ":" .ws LogicOr
-TernaryThenElse : LogicOr ":" LogicOr
+TernaryThenElse : Ternary ":" .ws Ternary
+TernaryThenElse : Ternary ":" Ternary
 
 LogicOr(next)   : LogicOr "||" .ws LogicAnd
 LogicOr(next)   : LogicOr "||" LogicAnd
