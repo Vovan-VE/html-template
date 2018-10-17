@@ -1,6 +1,11 @@
 HTML Template Changelog
 =======================
 
+0.3.4
+-----
+
+*   Fix: cannot nest ternary operators
+
 0.3.3
 -----
 
