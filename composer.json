@@ -21,7 +21,7 @@
   "minimum-stability": "stable",
   "require": {
     "php": "^7.1",
-    "vovan-ve/lr0-parser": "~1.7.0"
+    "vovan-ve/lr0-parser": "~2.0.1"
   },
   "require-dev": {
     "ext-json": "*",

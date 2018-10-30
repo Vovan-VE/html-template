@@ -29,7 +29,7 @@ use VovanVE\HtmlTemplate\source\TemplateInterface;
 use VovanVE\parser\actions\AbortNodeException;
 use VovanVE\parser\actions\ActionsMadeMap;
 use VovanVE\parser\grammar\Grammar;
-use VovanVE\parser\lexer\Lexer;
+use VovanVE\parser\grammar\loaders\ArrayLoader;
 use VovanVE\parser\Parser;
 
 class Compiler implements CompilerInterface
@@ -270,7 +270,7 @@ class Compiler implements CompilerInterface
     {
         $grammar = $this->createParserGrammar();
 
-        return new Parser(new Lexer, $grammar);
+        return new Parser($grammar);
     }
 
     /**
@@ -278,9 +278,7 @@ class Compiler implements CompilerInterface
      */
     protected function createParserGrammar(): Grammar
     {
-        $grammarSource = file_get_contents(__DIR__ . \DIRECTORY_SEPARATOR . 'grammar.txt');
-
-        return Grammar::create($grammarSource);
+        return ArrayLoader::createGrammar(require  __DIR__ . \DIRECTORY_SEPARATOR . 'grammar.php');
     }
 
     protected function getActionsMap(): ActionsMadeMap
