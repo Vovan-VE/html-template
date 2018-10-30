@@ -26,7 +26,7 @@ use VovanVE\HtmlTemplate\report\MessageInterface;
 use VovanVE\HtmlTemplate\report\Report;
 use VovanVE\HtmlTemplate\report\ReportInterface;
 use VovanVE\HtmlTemplate\source\TemplateInterface;
-use VovanVE\parser\actions\ActionAbortException;
+use VovanVE\parser\actions\AbortNodeException;
 use VovanVE\parser\actions\ActionsMadeMap;
 use VovanVE\parser\grammar\Grammar;
 use VovanVE\parser\lexer\Lexer;
@@ -269,9 +269,8 @@ class Compiler implements CompilerInterface
     protected function createParser(): Parser
     {
         $grammar = $this->createParserGrammar();
-        $lexer = $this->createParserLexer();
 
-        return new Parser($lexer, $grammar);
+        return new Parser(new Lexer, $grammar);
     }
 
     /**
@@ -282,14 +281,6 @@ class Compiler implements CompilerInterface
         $grammarSource = file_get_contents(__DIR__ . \DIRECTORY_SEPARATOR . 'grammar.txt');
 
         return Grammar::create($grammarSource);
-    }
-
-    /**
-     * @return Lexer
-     */
-    protected function createParserLexer(): Lexer
-    {
-        return new Lexer;
     }
 
     protected function getActionsMap(): ActionsMadeMap
@@ -329,7 +320,7 @@ class Compiler implements CompilerInterface
         };
         $makeCharFromCode = function ($code) {
             if ($code > 0x10FFFF) {
-                throw new ActionAbortException("Too big code - max is `10FFFF`");
+                throw new AbortNodeException("Too big code - max is `10FFFF`", 1);
             }
             return new PhpStringConst(CompilerHelper::utf8CharFromCode($code));
         };
@@ -403,8 +394,9 @@ class Compiler implements CompilerInterface
                     /** @var string $elementEndName */
                     [$content, $elementEndName] = $elementEnd;
                     if ($elementBegin !== $elementEndName) {
-                        throw new ActionAbortException(
-                            "Unexpected closing tag `</$elementEndName>` instead of expected `</$elementBegin>`"
+                        throw new AbortNodeException(
+                            "Unexpected closing tag `</$elementEndName>` instead of expected `</$elementBegin>`",
+                            2
                         );
                     }
                 } else {
@@ -417,10 +409,11 @@ class Compiler implements CompilerInterface
                 if (CompilerHelper::isElementName($elementBegin)) {
                     return new HtmlElement($elementBegin, $attributes, $content);
                 }
-                throw new ActionAbortException(
+                throw new AbortNodeException(
                     "Bad name <$elementBegin>"
                     . ", Component name must start with uppercase letter"
-                    . " and HTML element name must be lowercase"
+                    . " and HTML element name must be lowercase",
+                    1
                 );
             },
             'ElementCode(doctype)' => function (PhpList $list) {
@@ -430,8 +423,9 @@ class Compiler implements CompilerInterface
             'ElementEnd(block)' => self::A_BUBBLE,
             'ElementBeginContent(attr)' => function (string $element, PhpArray $attributes) {
                 if (!$this->areElementAttributesEnabled($element, $attributes->getKeysConst(), $blockedAttribute)) {
-                    throw new ActionAbortException(
-                        "HTML attribute `$blockedAttribute` is not allowed in element `<$element>`"
+                    throw new AbortNodeException(
+                        "HTML attribute `$blockedAttribute` is not allowed in element `<$element>`",
+                        1
                     );
                 }
                 return [$element, $attributes];
@@ -452,7 +446,7 @@ class Compiler implements CompilerInterface
                     if ($this->isElementEnabled($name)) {
                         return $name;
                     }
-                    throw new ActionAbortException("HTML Element `<$name>` is not allowed");
+                    throw new AbortNodeException("HTML Element `<$name>` is not allowed", 1);
                 }
                 : self::A_BUBBLE,
 
@@ -467,8 +461,9 @@ class Compiler implements CompilerInterface
             'HtmlAttributes(list)' => function (PhpArray $array, PhpArrayPair $pair) use ($makeArrayAppend) {
                 $attribute = $pair->getKey()->getConstValue();
                 if ($array->hasKey($attribute)) {
-                    throw new ActionAbortException(
-                        "HTML attribute `$attribute` is duplicated"
+                    throw new AbortNodeException(
+                        "HTML attribute `$attribute` is duplicated",
+                        2
                     );
                 }
                 return $array->append($pair);
@@ -539,7 +534,7 @@ class Compiler implements CompilerInterface
             'InlineStatementContinue' => self::A_BUBBLE,
 
             'InlineStatement(unknown)' => function (string $name) {
-                throw new ActionAbortException("Unknown instructions `$name`");
+                throw new AbortNodeException("Unknown instructions `$name`", 1);
             },
 
             'WsExpression' => self::A_BUBBLE,
@@ -627,7 +622,7 @@ class Compiler implements CompilerInterface
 
             'EscapeCodeSingleLetter' => function ($letter) {
                 if (!isset(self::STRING_ESCAPE_LETTER[$letter])) {
-                    throw new ActionAbortException("Unknown escape-letter code `\\$letter`");
+                    throw new AbortNodeException("Unknown escape-letter code `\\$letter`", 1);
                 }
                 return new PhpStringConst(self::STRING_ESCAPE_LETTER[$letter]);
             },
