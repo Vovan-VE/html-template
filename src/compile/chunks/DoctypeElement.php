@@ -31,19 +31,31 @@ class DoctypeElement implements PhpValueInterface
         return $this->values;
     }
 
+    /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        return [DataTypes::T_STRING, DataTypes::STR_HTML];
+    }
+
     public function getPhpCode(CompileScope $scope): string
     {
         if (!$this->values) {
             return "''";
         }
 
+        /**
+         * @return \Generator|PhpValueInterface[]
+         */
         $get_parts = function () {
-            yield new PhpStringConst('<!DOCTYPE');
+            yield new PhpStringConst('<!DOCTYPE', DataTypes::STR_HTML);
             foreach ($this->values as $value) {
-                yield new PhpStringConst(' ');
+                yield new PhpStringConst(' ', DataTypes::STR_HTML);
                 yield $value;
             }
-            yield new PhpStringConst('>');
+            yield new PhpStringConst('>', DataTypes::STR_HTML);
         };
 
         /** @var PhpValueInterface[] $temp */
@@ -52,8 +64,14 @@ class DoctypeElement implements PhpValueInterface
         $last = null;
         foreach ($get_parts() as $value) {
             if (null !== $last && $last->isConstant() && $value->isConstant()) {
+                if ($last->getDataType() !== $value->getDataType()) {
+                    throw new \LogicException('Mixed string subtypes concatenation');
+                }
                 array_pop($temp);
-                $last = new PhpStringConst($last->getConstValue() . $value->getConstValue());
+                $last = new PhpStringConst(
+                    $last->getConstValue() . $value->getConstValue(),
+                    DataTypes::STR_HTML
+                );
             } else {
                 $last = $value;
             }

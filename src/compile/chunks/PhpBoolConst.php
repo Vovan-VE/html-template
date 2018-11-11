@@ -10,6 +10,15 @@ class PhpBoolConst extends PhpConst
         parent::__construct($value);
     }
 
+    /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        return [DataTypes::T_BOOL];
+    }
+
     public function getValue(): bool
     {
         return parent::getValue();

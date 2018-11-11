@@ -64,14 +64,14 @@ something like so (formatted manually only here for demonstration):
     'href'  => ($runtime->param('link')),
     'title' => (!($_ta=($runtime->param('title')))
         ? $_ta
-        :(('Foo bar: '.($runtime->param('title'))))
+        :(('Foo bar: '.($runtime::toString(($runtime->param('title'))))))
     )
 ], [
     ($runtime::createElement('span', [
         'id'    => 'foobar',
         'class' => 'it parses html'
     ], [
-        ($runtime::htmlEncode(($runtime->param('description'))))
+        ($runtime::htmlEncode(($runtime::toString(($runtime->param('description'))))))
     ])),
     '<span></span>'
 ]))

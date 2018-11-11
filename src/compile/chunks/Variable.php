@@ -21,6 +21,15 @@ class Variable implements PhpValueInterface
         return $this->name;
     }
 
+    /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        return [];
+    }
+
     public function getPhpCode(CompileScope $scope): string
     {
         /** @uses RuntimeHelperInterface::param() */

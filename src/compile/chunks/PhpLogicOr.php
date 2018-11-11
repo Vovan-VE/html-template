@@ -37,6 +37,40 @@ class PhpLogicOr implements PhpValueInterface
         $this->isConst = $first->isConstant() && $second->isConstant();
     }
 
+    /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        $type = null;
+        foreach ($this->values as $value) {
+            $t = $value->getDataType();
+            if (!$t) {
+                // untyped
+                return [];
+            }
+
+            if (null === $type) {
+                $type = $t;
+            } else {
+                if ($type[0] !== $t[0]) {
+                    // different type
+                    return [];
+                }
+                // same type
+                if (($type[1] ?? null) !== ($t[1] ?? null)) {
+                    // different subtype
+                    return [$type[0]];
+                }
+                // same subtype
+                // continue
+            }
+        }
+
+        return $type ?? [];
+    }
+
     public function getPhpCode(CompileScope $scope): string
     {
         $values = $this->values;

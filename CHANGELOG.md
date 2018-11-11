@@ -4,7 +4,14 @@ HTML Template Changelog
 0.4.0 (dev)
 -----
 
+Compilation process introduced data types. It makes possible some optimizations
+for generated code.
+
+*   **BC break**:
+    *   Add: method `VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::toString()`.
+    *   Changes to internal classes for compilation process.
 *   Deleted: method `VovanVE\HtmlTemplate\compile\Compiler::createParserLexer()`
+*   Fix: boolean `true` inside expression injected into string literal returns `"1"`.
 
 0.3.4
 -----

@@ -2,8 +2,10 @@
 namespace VovanVE\HtmlTemplate\compile;
 
 use VovanVE\HtmlTemplate\compile\chunks\ComponentElement;
+use VovanVE\HtmlTemplate\compile\chunks\DataTypes;
 use VovanVE\HtmlTemplate\compile\chunks\DoctypeElement;
 use VovanVE\HtmlTemplate\compile\chunks\HtmlElement;
+use VovanVE\HtmlTemplate\compile\chunks\HtmlEncodeFilter;
 use VovanVE\HtmlTemplate\compile\chunks\HtmlQuotedString;
 use VovanVE\HtmlTemplate\compile\chunks\NodesList;
 use VovanVE\HtmlTemplate\compile\chunks\PhpArray;
@@ -18,7 +20,7 @@ use VovanVE\HtmlTemplate\compile\chunks\PhpNullConst;
 use VovanVE\HtmlTemplate\compile\chunks\PhpStringConst;
 use VovanVE\HtmlTemplate\compile\chunks\PhpTernary;
 use VovanVE\HtmlTemplate\compile\chunks\PhpValueInterface;
-use VovanVE\HtmlTemplate\compile\chunks\TagPrintText;
+use VovanVE\HtmlTemplate\compile\chunks\ToStringFilter;
 use VovanVE\HtmlTemplate\compile\chunks\Variable;
 use VovanVE\HtmlTemplate\helpers\CompilerHelper;
 use VovanVE\HtmlTemplate\report\Message;
@@ -313,8 +315,11 @@ class Compiler implements CompilerInterface
 
         // ===================
 
-        $makeStringConst = function (string $text) {
+        $makeStringConstText = function (string $text) {
             return new PhpStringConst($text);
+        };
+        $makeStringConstHtml = function (string $text) {
+            return new PhpStringConst($text, DataTypes::STR_HTML);
         };
         $makeCharFromCode = function ($code) {
             if ($code > 0x10FFFF) {
@@ -331,8 +336,11 @@ class Compiler implements CompilerInterface
         $makeStringWithDollar = function () {
             return new PhpStringConst('$');
         };
-        $makeStringConcat = function (array $values) {
-            return new PhpConcatenation(...$values);
+        $makeStringConcatText = function (array $values) {
+            return new PhpConcatenation(DataTypes::STR_TEXT, ...$values);
+        };
+        $exprToString = function (PhpValueInterface $value) {
+            return ToStringFilter::create($value);
         };
         $makeStringEmpty = function () {
             return new PhpStringConst('');
@@ -371,9 +379,9 @@ class Compiler implements CompilerInterface
 
         $map = new ActionsMadeMap([
             'RootContent' => function (NodesList $content) {
-                $result = new PhpConcatenation(...$content->getValues());
+                $result = new PhpConcatenation(DataTypes::STR_HTML, ...$content->getValues());
                 if ($result->isConstant()) {
-                    $result = new PhpStringConst($result->getConstValue());
+                    $result = new PhpStringConst($result->getConstValue(), DataTypes::STR_HTML);
                 }
                 return $result->getPhpCode(new CompileScope);
             },
@@ -451,7 +459,7 @@ class Compiler implements CompilerInterface
             'DoctypeContent(list)' => $makeListAppend,
             'DoctypeContent(first)' => $makeListOfOne,
             'DoctypeContentItemWs' => self::A_BUBBLE,
-            'DoctypeContentItem(name)' => $makeStringConst,
+            'DoctypeContentItem(name)' => $makeStringConstHtml,
             'DoctypeContentItem' => function (string $value) {
                 return new HtmlQuotedString(new PhpStringConst($value));
             },
@@ -477,8 +485,8 @@ class Compiler implements CompilerInterface
             },
             'HtmlAttributeEqValue' => self::A_BUBBLE,
             'HtmlAttributeValue(Expr)' => self::A_BUBBLE,
-            'HtmlAttributeValue(String)' => $makeStringConst,
-            'HtmlAttributeValue(Plain)' => $makeStringConst,
+            'HtmlAttributeValue(String)' => $makeStringConstText,
+            'HtmlAttributeValue(Plain)' => $makeStringConstText,
 
             'HtmlName(ns)' => function (string $a, string $b) {
                 return "$a:$b";
@@ -511,7 +519,7 @@ class Compiler implements CompilerInterface
             'HtmlPlainValue' => $contentAsIs,
             'HtmlQuotedContentSafe' => $contentAsIs,
 
-            'Text' => $makeStringConst,
+            'Text' => $makeStringConstHtml,
             'Text(empty)' => $makeNull,
             'InlineTextWithEolWs' => self::A_BUBBLE,
             'InlineText' => $contentAsIs,
@@ -523,7 +531,7 @@ class Compiler implements CompilerInterface
             'WsTagContinue' => self::A_BUBBLE,
             'TagContinue(Empty)' => $makeNull,
             'TagContinue(Expr)' => function (PhpValueInterface $value) {
-                return new TagPrintText($value);
+                return HtmlEncodeFilter::create(ToStringFilter::create($value));
             },
             'TagContinue(St)' => self::A_BUBBLE,
             'WsTagExpressionContinue' => self::A_BUBBLE,
@@ -584,24 +592,24 @@ class Compiler implements CompilerInterface
 
             'StringLiteral' => self::A_BUBBLE,
 
-            'StringLiteralQQ' => $makeStringConcat,
+            'StringLiteralQQ' => $makeStringConcatText,
             'StringLiteralQQ(empty)' => $makeStringEmpty,
             'StringLiteralQQContent(list)' => $listAppendItem,
             'StringLiteralQQContent(first)' => $initArrayOfOne,
-            'StringLiteralQQPart(text)' => $makeStringConcat,
-            'StringLiteralQQPart(expr)' => self::A_BUBBLE,
+            'StringLiteralQQPart(text)' => $makeStringConcatText,
+            'StringLiteralQQPart(expr)' => $exprToString,
             'StringLiteralQQPart(dollar)' => $makeStringWithDollar,
             'StringLiteralQQPartText(list)' => $listAppendItem,
             'StringLiteralQQPartText(first)' => $initArrayOfOne,
             'StringLiteralQQPartTextChunk' => self::A_BUBBLE,
             'StringLiteralQQPartTextChunk(q)' => $makeStringWithApostrophNow,
 
-            'StringLiteralQ' => $makeStringConcat,
+            'StringLiteralQ' => $makeStringConcatText,
             'StringLiteralQ(empty)' => $makeStringEmpty,
             'StringLiteralQContent(list)' => $listAppendItem,
             'StringLiteralQContent(first)' => $initArrayOfOne,
-            'StringLiteralQPart(text)' => $makeStringConcat,
-            'StringLiteralQPart(expr)' => self::A_BUBBLE,
+            'StringLiteralQPart(text)' => $makeStringConcatText,
+            'StringLiteralQPart(expr)' => $exprToString,
             'StringLiteralQPart(dollar)' => $makeStringWithDollar,
             'StringLiteralQPartText(list)' => $listAppendItem,
             'StringLiteralQPartText(first)' => $initArrayOfOne,
@@ -624,8 +632,8 @@ class Compiler implements CompilerInterface
                 }
                 return new PhpStringConst(self::STRING_ESCAPE_LETTER[$letter]);
             },
-            'StringLiteralTextSafe' => $makeStringConst,
-            'EscapeCodePunctuation' => $makeStringConst,
+            'StringLiteralTextSafe' => $makeStringConstText,
+            'EscapeCodePunctuation' => $makeStringConstText,
 
             'name' => $contentAsIs,
         ]);

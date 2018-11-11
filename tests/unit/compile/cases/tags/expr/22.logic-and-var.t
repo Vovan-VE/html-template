@@ -6,13 +6,13 @@
 <f>{ lorem && ipsum && dolor }</f>{'\n'}
 <g>{ lorem && (ipsum && dolor) }</g>
 ---- CODE ----
-(($runtime::createElement('a',[],[($runtime::htmlEncode(($runtime->param('ok'))))])).'
+(($runtime::createElement('a',[],[($runtime::htmlEncode(($runtime::toString(($runtime->param('ok'))))))])).'
 <b></b>
 <c></c>
 <d></d>
-'.($runtime::createElement('e',[],[($runtime::htmlEncode(($runtime->param('ok'))))])).'
-'.($runtime::createElement('f',[],[($runtime::htmlEncode((!($_tb=($runtime->param('lorem')))?$_tb:((!($_ta=($runtime->param('ipsum')))?$_ta:(($runtime->param('dolor'))))))))])).'
-'.($runtime::createElement('g',[],[($runtime::htmlEncode((!($_td=($runtime->param('lorem')))?$_td:((!($_tc=($runtime->param('ipsum')))?$_tc:(($runtime->param('dolor'))))))))])))
+'.($runtime::createElement('e',[],[($runtime::htmlEncode(($runtime::toString(($runtime->param('ok'))))))])).'
+'.($runtime::createElement('f',[],[($runtime::htmlEncode(($runtime::toString((!($_tb=($runtime->param('lorem')))?$_tb:((!($_ta=($runtime->param('ipsum')))?$_ta:(($runtime->param('dolor'))))))))))])).'
+'.($runtime::createElement('g',[],[($runtime::htmlEncode(($runtime::toString((!($_td=($runtime->param('lorem')))?$_td:((!($_tc=($runtime->param('ipsum')))?$_tc:(($runtime->param('dolor'))))))))))])))
 ---- RESULT ----
 <a>[value of &amp;ok]</a>
 <b></b>

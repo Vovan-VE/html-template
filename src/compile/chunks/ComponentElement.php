@@ -5,6 +5,15 @@ use VovanVE\HtmlTemplate\compile\CompileScope;
 
 class ComponentElement extends Element implements PhpValueInterface
 {
+    /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        return [DataTypes::T_STRING, DataTypes::STR_HTML];
+    }
+
     public function getPhpCode(CompileScope $scope): string
     {
         $arguments = $this->getArgumentsCode($scope);

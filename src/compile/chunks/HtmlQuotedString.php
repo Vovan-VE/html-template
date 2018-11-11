@@ -15,6 +15,15 @@ class HtmlQuotedString implements PhpValueInterface
         $this->value = $value;
     }
 
+    /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        return [DataTypes::T_STRING, DataTypes::STR_HTML];
+    }
+
     public function getPhpCode(CompileScope $scope): string
     {
         $quot = '\'"\'';

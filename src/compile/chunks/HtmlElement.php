@@ -17,6 +17,15 @@ class HtmlElement extends Element implements PhpValueInterface
     }
 
     /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        return [DataTypes::T_STRING, DataTypes::STR_HTML];
+    }
+
+    /**
      * @param CompileScope $scope
      * @return string
      */

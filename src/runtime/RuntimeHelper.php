@@ -100,7 +100,29 @@ class RuntimeHelper implements RuntimeHelperInterface
     }
 
     /**
-     * @param mixed $content
+     * @param mixed $value
+     * @return string
+     * @since 0.4.0
+     */
+    public static function toString($value): string
+    {
+        if (is_string($value)) {
+            return $value;
+        }
+        if (null === $value || is_bool($value)) {
+            return '';
+        }
+        if (is_int($value) || is_float($value)) {
+            return (string)$value;
+        }
+        if (is_array($value)) {
+            return '[Array]';
+        }
+        throw new \InvalidArgumentException('Unsupported type');
+    }
+
+    /**
+     * @param string $content
      * @return string
      */
     public static function htmlEncode($content): string
@@ -108,6 +130,7 @@ class RuntimeHelper implements RuntimeHelperInterface
         if (is_string($content)) {
             return CompilerHelper::htmlEncode($content);
         }
+        /** @deprecated */
         if (null === $content || is_bool($content)) {
             return '';
         }

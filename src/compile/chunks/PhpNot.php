@@ -24,6 +24,15 @@ class PhpNot implements PhpValueInterface
         $this->value = $value;
     }
 
+    /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        return [DataTypes::T_BOOL];
+    }
+
     public function getPhpCode(CompileScope $scope): string
     {
         $not = true;

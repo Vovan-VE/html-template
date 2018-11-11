@@ -43,6 +43,15 @@ class PhpList implements PhpValueInterface
     }
 
     /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        return [];
+    }
+
+    /**
      * @return PhpValueInterface[]
      */
     public function getValues(): array
@@ -54,12 +63,13 @@ class PhpList implements PhpValueInterface
     {
         $result = [];
         foreach ($this->values as $value) {
-            $result[] = (
-                $value->isConstant()
-                    ? new PhpStringConst($value->getConstValue())
-                    : $value
-            )
-                ->getPhpCode($scope);
+            if ($value->isConstant() && DataTypes::T_STRING === ($value->getDataType()[0] ?? null)) {
+                $value = new PhpStringConst(
+                    $value->getConstValue(),
+                    $value->getDataType()[1] ?? null
+                );
+            }
+            $result[] = $value->getPhpCode($scope);
         }
 
         return '[' . join(',', $result) . ']';

@@ -15,6 +15,15 @@ class PhpNullConst extends PhpConst
         return null;
     }
 
+    /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        return [DataTypes::T_NULL];
+    }
+
     public function getConstValue()
     {
         return null;

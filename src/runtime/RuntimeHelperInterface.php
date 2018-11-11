@@ -26,6 +26,13 @@ interface RuntimeHelperInterface
     public function addComponents(array $components): self;
 
     /**
+     * @param string $value
+     * @return string
+     * @since 0.4.0
+     */
+    public static function toString($value): string;
+
+    /**
      * @param string $content
      * @return string
      */

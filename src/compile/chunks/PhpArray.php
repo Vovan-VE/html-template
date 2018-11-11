@@ -60,6 +60,15 @@ class PhpArray implements PhpValueInterface
         return array_keys($this->pairs);
     }
 
+    /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        return [];
+    }
+
     public function getPhpCode(CompileScope $scope): string
     {
         $pairs = [];
