@@ -5,8 +5,8 @@
 ---- CODE ----
 ('<a>then</a>
 <b>else</b>
-'.($runtime::createElement('c',[],[($runtime::htmlEncode(($runtime::toString(($runtime->param('then'))))))])).'
-'.($runtime::createElement('d',[],[($runtime::htmlEncode(($runtime::toString(($runtime->param('else'))))))])))
+<c>'.($runtime::htmlEncode(($runtime::toString(($runtime->param('then')))))).'</c>
+<d>'.($runtime::htmlEncode(($runtime::toString(($runtime->param('else')))))).'</d>')
 ---- RESULT ----
 <a>then</a>
 <b>else</b>

@@ -8,9 +8,9 @@
 ('<a></a>
 <b></b>
 <c></c>
-'.($runtime::createElement('d',[],[($runtime::htmlEncode(($runtime::toString(($runtime->param('ok'))))))])).'
-'.($runtime::createElement('e',[],[($runtime::htmlEncode(($runtime::toString(($runtime->param('ok'))))))])).'
-'.($runtime::createElement('f',[],[($runtime::htmlEncode(($runtime::toString(((($runtime->param('lorem')))?:(((($runtime->param('ipsum')))?:(($runtime->param('dolor'))))))))))])))
+<d>'.($runtime::htmlEncode(($runtime::toString(($runtime->param('ok')))))).'</d>
+<e>'.($runtime::htmlEncode(($runtime::toString(($runtime->param('ok')))))).'</e>
+<f>'.($runtime::htmlEncode(($runtime::toString(((($runtime->param('lorem')))?:(((($runtime->param('ipsum')))?:(($runtime->param('dolor')))))))))).'</f>')
 ---- RESULT ----
 <a></a>
 <b></b>

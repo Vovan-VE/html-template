@@ -13,4 +13,3 @@ TODO
     *   `removeComponents()`
     *   `removeAllComponents()`
 *   HtmlElement as expression: `{ expr && <div/> }`
-    *   Optimize: `createElement(const, const[], var)` => `<const>...</const>`

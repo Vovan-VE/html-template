@@ -14,7 +14,7 @@
     </TestComponent>
 </div>
 ---- CODE ----
-($runtime::createElement('div',[],['lorem ipsum',($runtime->createComponent('TestComponent',[],function($runtime){return [($runtime::createElement('div',[],[($runtime->createComponent('TestComponent',[],function($runtime){return [($runtime->createComponent('Step',[],function($runtime){return ['foo',($runtime->createComponent('Step',[],function($runtime){return [($runtime->createComponent('TestComponent',['bark'=>'42']))];}))];}))];}))]))];}))]))
+('<div>lorem ipsum'.($runtime->createComponent('TestComponent',[],function($runtime){return [('<div>'.($runtime->createComponent('TestComponent',[],function($runtime){return [($runtime->createComponent('Step',[],function($runtime){return ['foo',($runtime->createComponent('Step',[],function($runtime){return [($runtime->createComponent('TestComponent',['bark'=>'42']))];}))];}))];})).'</div>')];})).'</div>')
 ---- THROW ----
 An error occurred while executing template
 -- prev --

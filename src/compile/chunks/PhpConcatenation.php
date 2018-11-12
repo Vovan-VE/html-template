@@ -16,12 +16,21 @@ class PhpConcatenation implements PhpValueInterface, FilterBubbleInterface
     {
         $this->subtype = $subtype;
 
+        $new_values = [];
+        foreach ($values as $value) {
+            if ($value instanceof self) {
+                array_push($new_values, ...$value->getValues());
+            } else {
+                $new_values[] = $value;
+            }
+        }
+
         /** @var PhpValueInterface[] $temp */
         $temp = [];
         $is_const = true;
         /** @var PhpValueInterface|null $last */
         $last = null;
-        foreach ($values as $value) {
+        foreach ($new_values as $value) {
             if ($is_const && !$value->isConstant()) {
                 $is_const = false;
             }
@@ -55,7 +64,8 @@ class PhpConcatenation implements PhpValueInterface, FilterBubbleInterface
     }
 
     /**
-     * @return array
+     * @param BaseFilter $filter
+     * @return PhpValueInterface|null
      * @since 0.4.0
      */
     public function bubbleFilter(BaseFilter $filter): ?PhpValueInterface

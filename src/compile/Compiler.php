@@ -413,7 +413,7 @@ class Compiler implements CompilerInterface
                     return new ComponentElement($elementBegin, $attributes, $content);
                 }
                 if (CompilerHelper::isElementName($elementBegin)) {
-                    return new HtmlElement($elementBegin, $attributes, $content);
+                    return HtmlElement::create($elementBegin, $attributes, $content);
                 }
                 throw new AbortNodeException(
                     "Bad name <$elementBegin>"

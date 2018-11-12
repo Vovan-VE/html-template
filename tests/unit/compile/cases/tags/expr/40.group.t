@@ -2,7 +2,7 @@
 <b>{ ( ( (( ((var))  )) ) ) }</b>
 ---- CODE ----
 ('<a>const</a>
-'.($runtime::createElement('b',[],[($runtime::htmlEncode(($runtime::toString(($runtime->param('var'))))))])))
+<b>'.($runtime::htmlEncode(($runtime::toString(($runtime->param('var')))))).'</b>')
 ---- RESULT ----
 <a>const</a>
 <b>[value of &amp;var]</b>

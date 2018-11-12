@@ -5,9 +5,9 @@
 <e>{ !!lorem }</e>{'\n'}
 <f>{ ! ! ! lorem }</f>
 ---- CODE ----
-(($runtime::createElement('a',[],[(((!(($runtime->param('lorem')))))?('then'):('else'))])).'
-'.($runtime::createElement('b',[],[((((bool)(($runtime->param('lorem')))))?('then'):('else'))])).'
-'.($runtime::createElement('c',[],[(((!(($runtime->param('lorem')))))?('then'):('else'))])).'
+('<a>'.(((!(($runtime->param('lorem')))))?('then'):('else')).'</a>
+<b>'.((((bool)(($runtime->param('lorem')))))?('then'):('else')).'</b>
+<c>'.(((!(($runtime->param('lorem')))))?('then'):('else')).'</c>
 <d></d>
 <e></e>
 <f></f>')

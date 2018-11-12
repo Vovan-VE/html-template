@@ -6,13 +6,13 @@
 <f>{ !lorem ? 'x < y' : 'x > y' }</f>{'\n'}
 <g>{ !lorem ? 'x < y' : dolor }</g>
 ---- CODE ----
-(($runtime::createElement('a',[],[($runtime::htmlEncode(($runtime::toString(((($runtime->param('lorem')))?(($runtime->param('ipsum'))):(($runtime->param('dolor'))))))))])).'
-'.($runtime::createElement('b',[],[((($runtime->param('lorem')))?(($runtime::htmlEncode(($runtime::toString(($runtime->param('ipsum'))))))):('x &gt; y'))])).'
-'.($runtime::createElement('c',[],[((($runtime->param('lorem')))?('x &lt; y'):('x &gt; y'))])).'
-'.($runtime::createElement('d',[],[((($runtime->param('lorem')))?('x &lt; y'):(($runtime::htmlEncode(($runtime::toString(($runtime->param('dolor'))))))))])).'
-'.($runtime::createElement('e',[],[(((!(($runtime->param('lorem')))))?(($runtime::htmlEncode(($runtime::toString(($runtime->param('ipsum'))))))):('x &gt; y'))])).'
-'.($runtime::createElement('f',[],[(((!(($runtime->param('lorem')))))?('x &lt; y'):('x &gt; y'))])).'
-'.($runtime::createElement('g',[],[(((!(($runtime->param('lorem')))))?('x &lt; y'):(($runtime::htmlEncode(($runtime::toString(($runtime->param('dolor'))))))))])))
+('<a>'.($runtime::htmlEncode(($runtime::toString(((($runtime->param('lorem')))?(($runtime->param('ipsum'))):(($runtime->param('dolor')))))))).'</a>
+<b>'.((($runtime->param('lorem')))?(($runtime::htmlEncode(($runtime::toString(($runtime->param('ipsum'))))))):('x &gt; y')).'</b>
+<c>'.((($runtime->param('lorem')))?('x &lt; y'):('x &gt; y')).'</c>
+<d>'.((($runtime->param('lorem')))?('x &lt; y'):(($runtime::htmlEncode(($runtime::toString(($runtime->param('dolor')))))))).'</d>
+<e>'.(((!(($runtime->param('lorem')))))?(($runtime::htmlEncode(($runtime::toString(($runtime->param('ipsum'))))))):('x &gt; y')).'</e>
+<f>'.(((!(($runtime->param('lorem')))))?('x &lt; y'):('x &gt; y')).'</f>
+<g>'.(((!(($runtime->param('lorem')))))?('x &lt; y'):(($runtime::htmlEncode(($runtime::toString(($runtime->param('dolor')))))))).'</g>')
 ---- RESULT ----
 <a>[value of &amp;ipsum]</a>
 <b>[value of &amp;ipsum]</b>
