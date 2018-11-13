@@ -67,12 +67,9 @@ something like so (formatted manually only here for demonstration):
         :(('Foo bar: '.($runtime::toString(($runtime->param('title'))))))
     )
 ], [
-    ($runtime::createElement('span', [
-        'id'    => 'foobar',
-        'class' => 'it parses html'
-    ], [
-        ($runtime::htmlEncode(($runtime::toString(($runtime->param('description'))))))
-    ])),
+    ('<span id="foobar" class="it parses html">'
+        .($runtime::htmlEncode(($runtime::toString(($runtime->param('description'))))))
+        .'</span>'),
     '<span></span>'
 ]))
 ```
