@@ -19,7 +19,7 @@ class HtmlElement extends Element implements PhpValueInterface
     public static function create(string $name, PhpArray $attributes, ?NodesList $content = null): PhpValueInterface
     {
         if ($content && !$content->isConstant() && $attributes->isConstant()) {
-            $const = RuntimeHelper::createElement($name, $attributes->getConstValue(), ['</>']);
+            $const = RuntimeHelper::createElement($name, $attributes->getConstValue(), '</>');
             [$start, $end] = explode('</>', $const);
             return new PhpConcatenation(
                 DataTypes::STR_HTML,

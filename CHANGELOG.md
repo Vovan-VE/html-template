@@ -8,6 +8,12 @@ Compilation process introduced data types. It makes possible some optimizations
 for generated code.
 
 *   **BC break**:
+    *   Change: 3rd argument `$content` in method
+        `VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::createElement()`
+        now has type `?string` instead of previous `?array`.
+    *   Change: return value of `Closure` in `$content` argument in method
+        `VovanVE\HtmlTemplate\components\ComponentInterface::render()`
+        in now `string` instead of previous `array`.
     *   Add: method `VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::toString()`.
     *   Changes to internal classes for compilation process.
 *   Deleted: method `VovanVE\HtmlTemplate\compile\Compiler::createParserLexer()`

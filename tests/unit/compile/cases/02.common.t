@@ -7,6 +7,6 @@
     </span>
 </a>
 ---- CODE ----
-($runtime::createElement('a',['href'=>($runtime->param('link')),'title'=>('Foo bar: '.($runtime::toString(($runtime->param('title')))))],[('<span id="foobar" class="it parses html">'.($runtime::htmlEncode(($runtime::toString(($runtime->param('description')))))).'</span>'),'<span></span>']))
+($runtime::createElement('a',['href'=>($runtime->param('link')),'title'=>('Foo bar: '.($runtime::toString(($runtime->param('title')))))],('<span id="foobar" class="it parses html">'.($runtime::htmlEncode(($runtime::toString(($runtime->param('description')))))).'</span><span></span>')))
 ---- RESULT ----
 <a href="[value of &amp;link]" title="Foo bar: [value of &amp;title]"><span id="foobar" class="it parses html">[value of &amp;description]</span><span></span></a>

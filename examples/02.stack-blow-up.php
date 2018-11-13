@@ -24,7 +24,7 @@ class FooComponent extends \VovanVE\HtmlTemplate\components\BaseComponent
         if (null === $content) {
             return "";
         }
-        return join('', $content($runtime));
+        return $content($runtime);
     }
 }
 

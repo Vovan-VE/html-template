@@ -157,11 +157,11 @@ class RuntimeHelper implements RuntimeHelperInterface
     /**
      * @param string $element
      * @param array $attributes
-     * @param array|null $content
+     * @param string|null $content
      * @return string
      * @since 0.1.0
      */
-    public static function createElement(string $element, array $attributes = [], ?array $content = null): string
+    public static function createElement(string $element, array $attributes = [], ?string $content = null): string
     {
         $result = "<$element";
         foreach ($attributes as $name => $value) {
@@ -178,9 +178,7 @@ class RuntimeHelper implements RuntimeHelperInterface
             $result .= "/>";
         } else {
             $result .= ">";
-            foreach ($content as $item) {
-                $result .= $item;
-            }
+            $result .= $content;
             $result .= "</$element>";
         }
 

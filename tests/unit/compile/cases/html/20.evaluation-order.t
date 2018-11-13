@@ -33,37 +33,37 @@
 {}r
 ---- CODE ----
 ('a
-'.($runtime->createComponent('Step',[],function($runtime){return ['
+'.($runtime->createComponent('Step',[],function($runtime){return ('
     b
-    ',($runtime->createComponent('Step',[],function($runtime){return ['
+    '.($runtime->createComponent('Step',[],function($runtime){return ('
         c
-        ',($runtime->createComponent('Step')),'
+        '.($runtime->createComponent('Step')).'
         d
-        ',($runtime->createComponent('Step')),'
+        '.($runtime->createComponent('Step')).'
         e
-    '];})),'
+    ');})).'
     f
-    ',($runtime->createComponent('Step')),'
+    '.($runtime->createComponent('Step')).'
     g
-    ',($runtime->createComponent('Step',[],function($runtime){return ['
+    '.($runtime->createComponent('Step',[],function($runtime){return ('
         h
-        ',($runtime->createComponent('Step')),'
+        '.($runtime->createComponent('Step')).'
         i
-        ',($runtime->createComponent('Step')),'
+        '.($runtime->createComponent('Step')).'
         j
-    '];})),'
+    ');})).'
     k
-    ',($runtime->createComponent('Step')),'
+    '.($runtime->createComponent('Step')).'
     l
-'];})).'
+');})).'
 m
 '.($runtime->createComponent('Step')).'
 o
-'.($runtime->createComponent('Step',[],function($runtime){return ['
+'.($runtime->createComponent('Step',[],function($runtime){return ('
     p
-    ',($runtime->createComponent('Step')),'
+    '.($runtime->createComponent('Step')).'
     q
-'];})).'
+');})).'
 r')
 ---- RESULT ----
 a

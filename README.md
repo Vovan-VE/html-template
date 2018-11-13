@@ -66,12 +66,11 @@ something like so (formatted manually only here for demonstration):
         ? $_ta
         :(('Foo bar: '.($runtime::toString(($runtime->param('title'))))))
     )
-], [
-    ('<span id="foobar" class="it parses html">'
-        .($runtime::htmlEncode(($runtime::toString(($runtime->param('description'))))))
-        .'</span>'),
-    '<span></span>'
-]))
+], (
+    '<span id="foobar" class="it parses html">'
+    .($runtime::htmlEncode(($runtime::toString(($runtime->param('description'))))))
+    .'</span><span></span>'
+))
 ```
 
 Compiler will evaluate as much constant expressions as possible

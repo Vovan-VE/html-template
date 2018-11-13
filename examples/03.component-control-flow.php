@@ -28,9 +28,9 @@ class LoopComponent extends BaseComponent
         $to = (int)$this->to;
         $step = $this->step ?: ($to >= $from ? 1 : -1);
         for ($i = $from; $step > 0 ? $i <= $to : $i >= $to; $i += $step) {
-            $result .= join('', $content($runtime->addParams([
+            $result .= $content($runtime->addParams([
                 $this->var => $i,
-            ])));
+            ]));
         }
 
         return $result;

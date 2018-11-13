@@ -22,6 +22,6 @@ class TestComponent extends BaseComponent
         if (null === $content) {
             return "<!-- $head: $props /-->";
         }
-        return "<!-- $head: $props -->" . join('', $content($runtime)) . "<!-- /$head -->";
+        return "<!-- $head: $props -->" . $content($runtime) . "<!-- /$head -->";
     }
 }

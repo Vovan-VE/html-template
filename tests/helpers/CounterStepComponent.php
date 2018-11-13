@@ -19,6 +19,6 @@ class CounterStepComponent extends BaseComponent
         if (null === $content) {
             return "<!-- $marker /-->";
         }
-        return "<!-- $marker -->" . join('', $content($runtime)) . "<!-- /$marker -->";
+        return "<!-- $marker -->" . $content($runtime) . "<!-- /$marker -->";
     }
 }

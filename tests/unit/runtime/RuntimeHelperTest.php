@@ -157,7 +157,7 @@ class RuntimeHelperTest extends BaseTestCase
     /**
      * @param string $element
      * @param array $attributes
-     * @param array|null $content
+     * @param string|null $content
      * @param string $expect
      * @dataProvider createElementDataProvider
      */
@@ -170,30 +170,30 @@ class RuntimeHelperTest extends BaseTestCase
     {
         return [
             ['div', [], null, '<div/>'],
-            ['div', [], [], '<div></div>'],
-            ['div', [], ['a&lt;b'], '<div>a&lt;b</div>'],
-            ['div', [], ['a&lt;b', '<br/>'], '<div>a&lt;b<br/></div>'],
+            ['div', [], '', '<div></div>'],
+            ['div', [], 'a&lt;b', '<div>a&lt;b</div>'],
+            ['div', [], 'a&lt;b<br/>', '<div>a&lt;b<br/></div>'],
             ['DIV', [], null, '<DIV/>'],
             ['div', ['id' => 'foo'], null, '<div id="foo"/>'],
-            ['div', ['id' => 'foo'], [], '<div id="foo"></div>'],
+            ['div', ['id' => 'foo'], '', '<div id="foo"></div>'],
             ['div', ['foo' => 42], null, '<div foo="42"/>'],
-            ['div', ['foo' => 42], [], '<div foo="42"></div>'],
+            ['div', ['foo' => 42], '', '<div foo="42"></div>'],
             ['div', ['bar' => true], null, '<div bar/>'],
-            ['div', ['bar' => true], [], '<div bar></div>'],
+            ['div', ['bar' => true], '', '<div bar></div>'],
             ['div', ['lol' => false], null, '<div/>'],
-            ['div', ['lol' => false], [], '<div></div>'],
+            ['div', ['lol' => false], '', '<div></div>'],
             ['div', ['qux' => null], null, '<div/>'],
-            ['div', ['qux' => null], [], '<div></div>'],
+            ['div', ['qux' => null], '', '<div></div>'],
             ['div', ['id' => 'foo', 'foo' => 42], null, '<div id="foo" foo="42"/>'],
-            ['div', ['id' => 'foo', 'foo' => 42], [], '<div id="foo" foo="42"></div>'],
+            ['div', ['id' => 'foo', 'foo' => 42], '', '<div id="foo" foo="42"></div>'],
             ['div', ['foo' => 42, 'id' => 'foo'], null, '<div foo="42" id="foo"/>'],
-            ['div', ['foo' => 42, 'id' => 'foo'], [], '<div foo="42" id="foo"></div>'],
+            ['div', ['foo' => 42, 'id' => 'foo'], '', '<div foo="42" id="foo"></div>'],
             ['div', ['id' => 'foo', 'foo' => 42, 'bar' => true, 'lol' => false, 'qux' => null], null,
                 '<div id="foo" foo="42" bar/>'],
-            ['div', ['id' => 'foo', 'foo' => 42, 'bar' => true, 'lol' => false, 'qux' => null], [],
+            ['div', ['id' => 'foo', 'foo' => 42, 'bar' => true, 'lol' => false, 'qux' => null], '',
                 '<div id="foo" foo="42" bar></div>'],
             ['foo:bar', [], null, '<foo:bar/>'],
-            ['foo:bar', [], [], '<foo:bar></foo:bar>'],
+            ['foo:bar', [], '', '<foo:bar></foo:bar>'],
         ];
     }
 
@@ -204,7 +204,7 @@ class RuntimeHelperTest extends BaseTestCase
      * @param string $expected
      * @dataProvider createComponentDataProvider
      */
-    public function testCreateComponent(string $name, array $props, ?array $content, string $expected)
+    public function testCreateComponent(string $name, array $props, ?string $content, string $expected)
     {
         $runtime = (new RuntimeHelper)
             ->addComponents([
@@ -217,7 +217,7 @@ class RuntimeHelperTest extends BaseTestCase
                         if (null === $content) {
                             return '<test:foo/>';
                         }
-                        return '<test:foo>' . join('', $content($runtime)) . '</test:foo>';
+                        return '<test:foo>' . $content($runtime) . '</test:foo>';
                     }
                 },
                 'Factory' => new class(97) implements ComponentSpawnerInterface {
@@ -251,9 +251,9 @@ class RuntimeHelperTest extends BaseTestCase
         return [
             ['Test', [], null,
                 '<!-- Test Component: foo=null bar=null /-->'],
-            ['Test', [], [],
+            ['Test', [], '',
                 '<!-- Test Component: foo=null bar=null --><!-- /Test Component -->'],
-            ['Test', [], ['text', '<br/>', '&lt;&gt;'],
+            ['Test', [], 'text<br/>&lt;&gt;',
                 '<!-- Test Component: foo=null bar=null -->text<br/>&lt;&gt;<!-- /Test Component -->'],
             ['Test', ['foo' => 42], null,
                 '<!-- Test Component: foo=42 bar=null /-->'],
@@ -264,16 +264,16 @@ class RuntimeHelperTest extends BaseTestCase
 
             ['Boo', [], null,
                 '<test:foo/>'],
-            ['Boo', [], [],
+            ['Boo', [], '',
                 '<test:foo></test:foo>'],
-            ['Boo', [], ['text', '<br/>', '&lt;&gt;'],
+            ['Boo', [], 'text<br/>&lt;&gt;',
                 '<test:foo>text<br/>&lt;&gt;</test:foo>'],
 
             ['Factory', [], null,
                 '<!-- Test Component: foo=97 bar=null /-->'],
-            ['Factory', [], [],
+            ['Factory', [], '',
                 '<!-- Test Component: foo=97 bar=null --><!-- /Test Component -->'],
-            ['Factory', [], ['text', '<br/>', '&lt;&gt;'],
+            ['Factory', [], 'text<br/>&lt;&gt;',
                 '<!-- Test Component: foo=97 bar=null -->text<br/>&lt;&gt;<!-- /Test Component -->'],
             ['Factory', ['foo' => 42], null,
                 '<!-- Test Component: foo=42 bar=null /-->'],

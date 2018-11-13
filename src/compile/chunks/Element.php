@@ -9,14 +9,19 @@ class Element
     private $name;
     /** @var PhpArray */
     private $attributes;
-    /** @var NodesList|null */
+    /** @var PhpValueInterface|null */
     private $content;
 
     public function __construct(string $name, PhpArray $attributes, ?NodesList $content = null)
     {
         $this->name = $name;
         $this->attributes = $attributes;
-        $this->content = $content;
+        $this->content = $content
+            ? ($content->getValues()
+                ? new PhpConcatenation(DataTypes::STR_HTML, ...$content->getValues())
+                : new PhpStringConst('', DataTypes::STR_HTML)
+            )
+            : null;
     }
 
     public function getName(): string
@@ -29,7 +34,7 @@ class Element
         return $this->attributes;
     }
 
-    public function getContent(): ?NodesList
+    public function getContent(): ?PhpValueInterface
     {
         return $this->content;
     }
