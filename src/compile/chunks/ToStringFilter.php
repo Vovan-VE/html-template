@@ -17,6 +17,9 @@ class ToStringFilter extends BaseFilter
         if (DataTypes::T_BOOL === $type || DataTypes::T_NULL === $type) {
             return new PhpStringConst('', DataTypes::STR_TEXT);
         }
+        if (DataTypes::T_STRING === $type) {
+            return $value;
+        }
 
         return parent::create($value);
     }
