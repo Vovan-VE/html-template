@@ -20,6 +20,27 @@ abstract class BaseFilter implements PhpValueInterface
         return $result;
     }
 
+    public static function willSinkInto(PhpValueInterface $value): bool
+    {
+        // $value = X
+        // f($value) = f(X)
+        // vs
+        // $value = g(X)
+        // f($value) = g(f(X))
+        $filtered = static::create($value);
+        return !($filtered instanceof static && $filtered->value === $value);
+    }
+
+    public static function willSinkIntoAny(PhpValueInterface ...$values): bool
+    {
+        foreach ($values as $value) {
+            if (static::willSinkInto($value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function __construct(PhpValueInterface $value)
     {
         $this->value = $value;

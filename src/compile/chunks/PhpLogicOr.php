@@ -3,7 +3,7 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 
 use VovanVE\HtmlTemplate\compile\CompileScope;
 
-class PhpLogicOr implements PhpValueInterface
+class PhpLogicOr implements PhpValueInterface, FilterBubbleInterface
 {
     /** @var PhpValueInterface[] */
     private $values;
@@ -35,6 +35,58 @@ class PhpLogicOr implements PhpValueInterface
         $this->values[] = $second;
 
         $this->isConst = $first->isConstant() && $second->isConstant();
+    }
+
+    /**
+     * @param BaseFilter $filter
+     * @return PhpValueInterface|null
+     * @since 0.4.0
+     */
+    public function bubbleFilter(BaseFilter $filter): ?PhpValueInterface
+    {
+        $values = $this->values;
+        while (count($values) > 1 && $values[0]->isConstant()) {
+            // const || ...
+            if (!$values[0]->getConstValue()) {
+                // false || ... => ...
+                array_shift($values);
+                continue;
+            }
+            // true || ... => true
+            return $filter::create($values[0]);
+        }
+
+        if (!$filter::willSinkIntoAny(...$values)) {
+            return null;
+        }
+
+        // f(A || B || C || D)
+        // =>
+        // ($1 = A) ? f($1) : (
+        //     ($2 = B) ? f($2) : (
+        //         ($3 = C) ? f($3) : (
+        //             D
+        //         )
+        //     )
+        // )
+
+        /** @var PhpValueInterface $last */
+        $last = array_pop($values);
+        $result = $filter::create($last);
+        while ($values) {
+            $last = array_pop($values);
+            $var = new PhpTempVar;
+            $result = new PhpTernary(
+                // ($1 = A)
+                PhpTempVarAssign::create($var, $last),
+                // f($1)
+                $filter::create(PhpTempVarRead::create($var)),
+                // ...
+                $result
+            );
+        }
+
+        return $result;
     }
 
     /**

@@ -3,34 +3,29 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 
 use VovanVE\HtmlTemplate\compile\CompileScope;
 
-class PhpNot implements PhpValueInterface
+/**
+ * @since 0.4.0
+ */
+class ToBooleanCast implements PhpValueInterface
 {
     /** @var PhpValueInterface */
     private $value;
 
     public static function create(PhpValueInterface $value): PhpValueInterface
     {
-        // if $value is not($inner)
-        // then return bool($inner)
-        // since not($value) === bool($inner)
         if ($value instanceof self) {
-            return ToBooleanCast::create($value->value);
+            return $value;
         }
-
-        $v = $value;
-        // if $value is bool($inner)
-        // use $inner
-        if ($v instanceof ToBooleanCast) {
-            $v = $v->getValue();
+        if ($value instanceof HtmlElement) {
+            return new PhpBoolConst(true);
         }
-
-        if ($v instanceof HtmlElement) {
-            return new PhpBoolConst(false);
+        if ($value->isConstant()) {
+            return new PhpBoolConst((bool)$value->getConstValue());
         }
-        if ($v->isConstant()) {
-            return new PhpBoolConst(!$v->getConstValue());
+        if ($value->getDataType() === [DataTypes::T_BOOL]) {
+            return $value;
         }
-        return new self($v);
+        return new self($value);
     }
 
     public function __construct(PhpValueInterface $value)
@@ -38,10 +33,11 @@ class PhpNot implements PhpValueInterface
         $this->value = $value;
     }
 
-    /**
-     * @return array
-     * @since 0.4.0
-     */
+    public function getValue(): PhpValueInterface
+    {
+        return $this->value;
+    }
+
     public function getDataType(): array
     {
         return [DataTypes::T_BOOL];
@@ -49,7 +45,7 @@ class PhpNot implements PhpValueInterface
 
     public function getPhpCode(CompileScope $scope): string
     {
-        return "(!({$this->value->getPhpCode($scope)}))";
+        return "((bool)({$this->value->getPhpCode($scope)}))";
     }
 
     public function isConstant(): bool
@@ -59,6 +55,6 @@ class PhpNot implements PhpValueInterface
 
     public function getConstValue(): bool
     {
-        return !$this->value->getConstValue();
+        return $this->value->getConstValue();
     }
 }

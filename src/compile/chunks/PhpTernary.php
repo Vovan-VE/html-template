@@ -7,26 +7,46 @@ class PhpTernary implements PhpValueInterface, FilterBubbleInterface
 {
     /** @var PhpValueInterface */
     private $cond;
-    /** @var PhpValueInterface */
+    /** @var PhpValueInterface|null */
     private $then;
     /** @var PhpValueInterface */
     private $else;
 
-    public static function create(PhpValueInterface $cond, PhpValueInterface $then, PhpValueInterface $else): PhpValueInterface
+    public static function create(PhpValueInterface $cond, ?PhpValueInterface $then, PhpValueInterface $else): PhpValueInterface
     {
-        if ($cond->isConstant()) {
+        $bool_cond = ToBooleanCast::create($cond);
+
+        if ($bool_cond->isConstant()) {
             // const ? ...
-            if ($cond->getConstValue()) {
+            if ($bool_cond->getConstValue()) {
                 // true ? ...
-                return $then;
+                return $then ?: $bool_cond;
             }
             // false ? ... : ...
             return $else;
         }
-        return new self($cond, $then, $else);
+
+        // x ? A : A
+        // =>
+        // A
+        if (
+            null !== $then
+            && $then->isConstant()
+            && $else->isConstant()
+            && $then->getConstValue() === $else->getConstValue()
+            && $then->getDataType() === $else->getDataType()
+        ) {
+            return $then;
+        }
+
+        if ($bool_cond instanceof ToBooleanCast) {
+            $bool_cond = $bool_cond->getValue();
+        }
+
+        return new static($bool_cond, $then, $else);
     }
 
-    public function __construct(PhpValueInterface $cond, PhpValueInterface $then, PhpValueInterface $else)
+    public function __construct(PhpValueInterface $cond, ?PhpValueInterface $then, PhpValueInterface $else)
     {
         $this->cond = $cond;
         $this->then = $then;
@@ -34,19 +54,24 @@ class PhpTernary implements PhpValueInterface, FilterBubbleInterface
     }
 
     /**
-     * @return array
+     * @param BaseFilter $filter
+     * @return PhpValueInterface|null
      * @since 0.4.0
      */
     public function bubbleFilter(BaseFilter $filter): ?PhpValueInterface
     {
-        $then = $this->then;
+        $then = $this->then ?: $this->cond;
         $else = $this->else;
 
-        if (!$then->isConstant() && !$else->isConstant()) {
-            return null;
+        // f(A ? B : C)
+        // =>
+        // A ? f(B) : f(C)
+
+        if ($filter::willSinkInto($then) || $filter::willSinkInto($else)) {
+            return new static($this->cond, $filter::create($then), $filter::create($else));
         }
 
-        return new static($this->cond, $filter::create($then), $filter::create($else));
+        return null;
     }
 
     /**
@@ -55,7 +80,7 @@ class PhpTernary implements PhpValueInterface, FilterBubbleInterface
      */
     public function getDataType(): array
     {
-        $a = $this->then->getDataType();
+        $a = ($this->then ?: $this->cond)->getDataType();
         $b = $this->else->getDataType();
 
         if (!$a || !$b || $a[0] !== $b[0]) {
@@ -75,13 +100,20 @@ class PhpTernary implements PhpValueInterface, FilterBubbleInterface
             // const ? ...
             if ($this->cond->getConstValue()) {
                 // true ? ...
-                return $this->then->getPhpCode($scope);
+                return ($this->then ?: $this->cond)->getPhpCode($scope);
             }
             // false ? ... : ...
             return $this->else->getPhpCode($scope);
         }
+
         // ... ? ... : ...
-        return "(({$this->cond->getPhpCode($scope)})?({$this->then->getPhpCode($scope)}):({$this->else->getPhpCode($scope)}))";
+        $cond_code = $this->cond->getPhpCode($scope);
+        $else_code = $this->else->getPhpCode($scope);
+
+        if ($this->then) {
+            return "(({$cond_code})?({$this->then->getPhpCode($scope)}):({$else_code}))";
+        }
+        return "(({$cond_code})?:({$else_code}))";
     }
 
     public function isConstant(): bool
@@ -90,7 +122,7 @@ class PhpTernary implements PhpValueInterface, FilterBubbleInterface
         // false ? ... : const
         return $this->cond->isConstant()
             && ($this->cond->getConstValue()
-                ? $this->then->isConstant()
+                ? !$this->then || $this->then->isConstant()
                 : $this->else->isConstant()
             );
     }
@@ -98,7 +130,7 @@ class PhpTernary implements PhpValueInterface, FilterBubbleInterface
     public function getConstValue()
     {
         return $this->cond->getConstValue()
-            ? $this->then->getConstValue()
+            ? ($this->then ?: $this->cond)->getConstValue()
             : $this->else->getConstValue();
     }
 }

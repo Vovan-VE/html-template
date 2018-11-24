@@ -21,6 +21,7 @@ use VovanVE\HtmlTemplate\compile\chunks\PhpStringConst;
 use VovanVE\HtmlTemplate\compile\chunks\PhpTernary;
 use VovanVE\HtmlTemplate\compile\chunks\PhpValueInterface;
 use VovanVE\HtmlTemplate\compile\chunks\ToStringFilter;
+use VovanVE\HtmlTemplate\compile\chunks\ToStringTextFilter;
 use VovanVE\HtmlTemplate\compile\chunks\Variable;
 use VovanVE\HtmlTemplate\helpers\CompilerHelper;
 use VovanVE\HtmlTemplate\report\Message;
@@ -339,8 +340,8 @@ class Compiler implements CompilerInterface
         $makeStringConcatText = function (array $values) {
             return new PhpConcatenation(DataTypes::STR_TEXT, ...$values);
         };
-        $exprToString = function (PhpValueInterface $value) {
-            return ToStringFilter::create($value);
+        $exprToStringText = function (PhpValueInterface $value) {
+            return ToStringTextFilter::create($value);
         };
         $makeStringEmpty = function () {
             return new PhpStringConst('');
@@ -597,7 +598,7 @@ class Compiler implements CompilerInterface
             'StringLiteralQQContent(list)' => $listAppendItem,
             'StringLiteralQQContent(first)' => $initArrayOfOne,
             'StringLiteralQQPart(text)' => $makeStringConcatText,
-            'StringLiteralQQPart(expr)' => $exprToString,
+            'StringLiteralQQPart(expr)' => $exprToStringText,
             'StringLiteralQQPart(dollar)' => $makeStringWithDollar,
             'StringLiteralQQPartText(list)' => $listAppendItem,
             'StringLiteralQQPartText(first)' => $initArrayOfOne,
@@ -609,7 +610,7 @@ class Compiler implements CompilerInterface
             'StringLiteralQContent(list)' => $listAppendItem,
             'StringLiteralQContent(first)' => $initArrayOfOne,
             'StringLiteralQPart(text)' => $makeStringConcatText,
-            'StringLiteralQPart(expr)' => $exprToString,
+            'StringLiteralQPart(expr)' => $exprToStringText,
             'StringLiteralQPart(dollar)' => $makeStringWithDollar,
             'StringLiteralQPartText(list)' => $listAppendItem,
             'StringLiteralQPartText(first)' => $initArrayOfOne,

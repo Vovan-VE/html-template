@@ -108,6 +108,7 @@ LogicAnd(first) : ValueWs
 
 ValueWs         : Value .ws
 ValueWs         : Value
+Value           : Element
 Value           : Variable
 Value           : StringLiteral
 Value           : "(" WsExpression ")"

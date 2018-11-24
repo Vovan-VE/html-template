@@ -12,4 +12,5 @@ TODO
     *   `removeAllParams()`
     *   `removeComponents()`
     *   `removeAllComponents()`
-*   HtmlElement as expression: `{ expr && <div/> }`
+*   value -> getFinalValue()
+    *   temp var assignment with unused var will return origin inner value

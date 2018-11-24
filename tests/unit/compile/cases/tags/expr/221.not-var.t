@@ -6,7 +6,7 @@
 <f>{ ! ! ! lorem }</f>
 ---- CODE ----
 ('<a>'.(((!(($runtime->param('lorem')))))?('then'):('else')).'</a>
-<b>'.((((bool)(($runtime->param('lorem')))))?('then'):('else')).'</b>
+<b>'.((($runtime->param('lorem')))?('then'):('else')).'</b>
 <c>'.(((!(($runtime->param('lorem')))))?('then'):('else')).'</c>
 <d></d>
 <e></e>

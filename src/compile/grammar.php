@@ -573,6 +573,10 @@ return [
         ],
         [
             'name' => 'Value',
+            'definition' => ['Element'],
+        ],
+        [
+            'name' => 'Value',
             'definition' => ['Variable'],
         ],
         [
