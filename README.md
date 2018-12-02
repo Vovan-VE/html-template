@@ -70,7 +70,7 @@ something like so (formatted manually only here for demonstration):
     '<span id="foobar" class="it parses html">'
     .($runtime::htmlEncode(($runtime::toString(($runtime->param('description'))))))
     .'</span><span></span>'
-))
+)))
 ```
 
 Compiler will evaluate as much constant expressions as possible

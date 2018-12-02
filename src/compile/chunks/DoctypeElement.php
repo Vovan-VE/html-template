@@ -3,15 +3,16 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 
 use VovanVE\HtmlTemplate\compile\CompileScope;
 
-class DoctypeElement implements PhpValueInterface
+class DoctypeElement extends PhpValue
 {
-    /** @var PhpValueInterface[] */
+    /** @var PhpValue[] */
     private $values;
     /** @var bool */
     private $isConst;
 
-    public function __construct(PhpValueInterface ...$values)
+    public function __construct(PhpValue ...$values)
     {
+        parent::__construct();
         $this->values = $values;
 
         $this->isConst = true;
@@ -24,7 +25,7 @@ class DoctypeElement implements PhpValueInterface
     }
 
     /**
-     * @return PhpValueInterface[]
+     * @return PhpValue[]
      */
     public function getValues(): array
     {
@@ -47,7 +48,7 @@ class DoctypeElement implements PhpValueInterface
         }
 
         /**
-         * @return \Generator|PhpValueInterface[]
+         * @return \Generator|PhpValue[]
          */
         $get_parts = function () {
             yield new PhpStringConst('<!DOCTYPE', DataTypes::STR_HTML);
@@ -58,9 +59,9 @@ class DoctypeElement implements PhpValueInterface
             yield new PhpStringConst('>', DataTypes::STR_HTML);
         };
 
-        /** @var PhpValueInterface[] $temp */
+        /** @var PhpValue[] $temp */
         $temp = [];
-        /** @var PhpValueInterface|null $last */
+        /** @var PhpValue|null $last */
         $last = null;
         foreach ($get_parts() as $value) {
             if (null !== $last && $last->isConstant() && $value->isConstant()) {

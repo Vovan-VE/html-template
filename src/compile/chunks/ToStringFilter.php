@@ -11,7 +11,7 @@ use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
  */
 class ToStringFilter extends BaseFilter
 {
-    public static function create(PhpValueInterface $value): PhpValueInterface
+    public static function create(PhpValue $value): PhpValue
     {
         $type = $value->getDataType()[0] ?? null;
         if (DataTypes::T_BOOL === $type || DataTypes::T_NULL === $type) {

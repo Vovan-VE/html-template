@@ -24,11 +24,6 @@ class PhpBoolConst extends PhpConst
         return parent::getValue();
     }
 
-    public function getConstValue(): bool
-    {
-        return parent::getValue();
-    }
-
     public function getPhpCode(CompileScope $scope): string
     {
         return parent::getValue() ? 'true' : 'false';

@@ -3,13 +3,14 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 
 use VovanVE\HtmlTemplate\compile\CompileScope;
 
-class Variable implements PhpValueInterface
+class Variable extends PhpValue
 {
     /** * @var string */
     private $name;
 
     public function __construct(string $name)
     {
+        parent::__construct();
         $this->name = $name;
     }
 
@@ -21,28 +22,9 @@ class Variable implements PhpValueInterface
         return $this->name;
     }
 
-    /**
-     * @return array
-     * @since 0.4.0
-     */
-    public function getDataType(): array
-    {
-        return [];
-    }
-
     public function getPhpCode(CompileScope $scope): string
     {
         /** @uses RuntimeHelperInterface::param() */
         return '($runtime->param(' . var_export($this->name, true) . '))';
-    }
-
-    public function isConstant(): bool
-    {
-        return false;
-    }
-
-    public function getConstValue()
-    {
-        throw new \RuntimeException('Not a constant');
     }
 }

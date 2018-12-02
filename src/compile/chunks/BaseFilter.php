@@ -6,12 +6,12 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
  * @package VovanVE\HtmlTemplate
  * @since 0.4.0
  */
-abstract class BaseFilter implements PhpValueInterface
+abstract class BaseFilter extends PhpValue
 {
-    /** @var PhpValueInterface */
+    /** @var PhpValue */
     protected $value;
 
-    public static function create(PhpValueInterface $value): PhpValueInterface
+    public static function create(PhpValue $value): PhpValue
     {
         $result = new static($value);
         if ($value instanceof FilterBubbleInterface) {
@@ -20,7 +20,7 @@ abstract class BaseFilter implements PhpValueInterface
         return $result;
     }
 
-    public static function willSinkInto(PhpValueInterface $value): bool
+    public static function willSinkInto(PhpValue $value): bool
     {
         // $value = X
         // f($value) = f(X)
@@ -31,7 +31,7 @@ abstract class BaseFilter implements PhpValueInterface
         return !($filtered instanceof static && $filtered->value === $value);
     }
 
-    public static function willSinkIntoAny(PhpValueInterface ...$values): bool
+    public static function willSinkIntoAny(PhpValue ...$values): bool
     {
         foreach ($values as $value) {
             if (static::willSinkInto($value)) {
@@ -41,8 +41,9 @@ abstract class BaseFilter implements PhpValueInterface
         return false;
     }
 
-    public function __construct(PhpValueInterface $value)
+    public function __construct(PhpValue $value)
     {
+        parent::__construct();
         $this->value = $value;
     }
 

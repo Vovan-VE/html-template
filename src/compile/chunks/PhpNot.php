@@ -3,12 +3,9 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 
 use VovanVE\HtmlTemplate\compile\CompileScope;
 
-class PhpNot implements PhpValueInterface
+class PhpNot extends BaseFilter
 {
-    /** @var PhpValueInterface */
-    private $value;
-
-    public static function create(PhpValueInterface $value): PhpValueInterface
+    public static function create(PhpValue $value): PhpValue
     {
         // if $value is not($inner)
         // then return bool($inner)
@@ -30,12 +27,7 @@ class PhpNot implements PhpValueInterface
         if ($v->isConstant()) {
             return new PhpBoolConst(!$v->getConstValue());
         }
-        return new self($v);
-    }
-
-    public function __construct(PhpValueInterface $value)
-    {
-        $this->value = $value;
+        return parent::create($v);
     }
 
     /**
@@ -50,11 +42,6 @@ class PhpNot implements PhpValueInterface
     public function getPhpCode(CompileScope $scope): string
     {
         return "(!({$this->value->getPhpCode($scope)}))";
-    }
-
-    public function isConstant(): bool
-    {
-        return $this->value->isConstant();
     }
 
     public function getConstValue(): bool

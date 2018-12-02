@@ -8,19 +8,19 @@ use VovanVE\HtmlTemplate\compile\CompileScope;
  */
 class PhpTempVar
 {
-    /** @var PhpValueInterface|null */
+    /** @var PhpValue|null */
     private $value;
     /** @var string */
     private $var;
     /** @var int */
     private $readsCount = 0;
 
-    public function setValue(PhpValueInterface $value): void
+    public function setValue(PhpValue $value): void
     {
         $this->value = $value;
     }
 
-    public function getValue(): ?PhpValueInterface
+    public function getValue(): ?PhpValue
     {
         return $this->value;
     }

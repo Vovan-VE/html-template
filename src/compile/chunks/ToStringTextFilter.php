@@ -6,7 +6,7 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
  */
 class ToStringTextFilter extends ToStringFilter
 {
-    public static function create(PhpValueInterface $value): PhpValueInterface
+    public static function create(PhpValue $value): PhpValue
     {
         $result = parent::create($value);
         if ($result !== $value) {

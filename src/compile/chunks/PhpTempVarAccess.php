@@ -4,13 +4,14 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 /**
  * @since 0.4.0
  */
-class PhpTempVarAccess
+abstract class PhpTempVarAccess extends PhpValue
 {
     /** @var PhpTempVar */
     private $var;
 
     public function __construct(PhpTempVar $var)
     {
+        parent::__construct();
         $this->var = $var;
     }
 

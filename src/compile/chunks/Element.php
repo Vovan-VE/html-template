@@ -3,17 +3,19 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 
 use VovanVE\HtmlTemplate\compile\CompileScope;
 
-class Element
+abstract class Element extends PhpValue
 {
     /** @var string */
     private $name;
     /** @var PhpArray */
     private $attributes;
-    /** @var PhpValueInterface|null */
+    /** @var PhpValue|null */
     private $content;
 
     public function __construct(string $name, PhpArray $attributes, ?NodesList $content = null)
     {
+        parent::__construct();
+
         $this->name = $name;
         $this->attributes = $attributes;
         $this->content = $content
@@ -34,9 +36,18 @@ class Element
         return $this->attributes;
     }
 
-    public function getContent(): ?PhpValueInterface
+    public function getContent(): ?PhpValue
     {
         return $this->content;
+    }
+
+    /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
+    {
+        return [DataTypes::T_STRING, DataTypes::STR_HTML];
     }
 
     /**

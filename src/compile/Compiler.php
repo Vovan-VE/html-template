@@ -19,7 +19,7 @@ use VovanVE\HtmlTemplate\compile\chunks\PhpNot;
 use VovanVE\HtmlTemplate\compile\chunks\PhpNullConst;
 use VovanVE\HtmlTemplate\compile\chunks\PhpStringConst;
 use VovanVE\HtmlTemplate\compile\chunks\PhpTernary;
-use VovanVE\HtmlTemplate\compile\chunks\PhpValueInterface;
+use VovanVE\HtmlTemplate\compile\chunks\PhpValue;
 use VovanVE\HtmlTemplate\compile\chunks\ToStringFilter;
 use VovanVE\HtmlTemplate\compile\chunks\ToStringTextFilter;
 use VovanVE\HtmlTemplate\compile\chunks\Variable;
@@ -340,7 +340,7 @@ class Compiler implements CompilerInterface
         $makeStringConcatText = function (array $values) {
             return new PhpConcatenation(DataTypes::STR_TEXT, ...$values);
         };
-        $exprToStringText = function (PhpValueInterface $value) {
+        $exprToStringText = function (PhpValue $value) {
             return ToStringTextFilter::create($value);
         };
         $makeStringEmpty = function () {
@@ -357,20 +357,20 @@ class Compiler implements CompilerInterface
             return $array->append($pair);
         };
 
-        $makeListOfOne = function (PhpValueInterface $value) {
+        $makeListOfOne = function (PhpValue $value) {
             return new PhpList($value);
         };
-        $makeListAppend = function (PhpList $list, PhpValueInterface $value) {
+        $makeListAppend = function (PhpList $list, PhpValue $value) {
             return $list->append($value);
         };
 
-        $makeNodesListOfOneNotNull = function (?PhpValueInterface $value) {
+        $makeNodesListOfOneNotNull = function (?PhpValue $value) {
             if (null === $value) {
                 return new NodesList();
             }
             return new NodesList($value);
         };
-        $makeNodesListAppendNotNull = function (NodesList $list, ?PhpValueInterface $value) {
+        $makeNodesListAppendNotNull = function (NodesList $list, ?PhpValue $value) {
             return $value ? $list->append($value) : $list;
         };
 
@@ -462,7 +462,7 @@ class Compiler implements CompilerInterface
             'DoctypeContentItemWs' => self::A_BUBBLE,
             'DoctypeContentItem(name)' => $makeStringConstHtml,
             'DoctypeContentItem' => function (string $value) {
-                return new HtmlQuotedString(new PhpStringConst($value));
+                return new HtmlQuotedString($value);
             },
 
             'HtmlAttributes(list)' => function (PhpArray $array, PhpArrayPair $pair) use ($makeArrayAppend) {
@@ -478,7 +478,7 @@ class Compiler implements CompilerInterface
             'HtmlAttributes(first)' => $makeArrayOfOne,
             'HtmlAttributes(init)' => $makeArrayEmpty,
             'HtmlAttributeWS' => self::A_BUBBLE,
-            'HtmlAttribute(Value)' => function (string $name, PhpValueInterface $value) {
+            'HtmlAttribute(Value)' => function (string $name, PhpValue $value) {
                 return new PhpArrayPair(new PhpStringConst($name), $value);
             },
             'HtmlAttribute(Bool)' => function (string $name) {
@@ -531,7 +531,7 @@ class Compiler implements CompilerInterface
             'TagContinueAny' => self::A_BUBBLE,
             'WsTagContinue' => self::A_BUBBLE,
             'TagContinue(Empty)' => $makeNull,
-            'TagContinue(Expr)' => function (PhpValueInterface $value) {
+            'TagContinue(Expr)' => function (PhpValue $value) {
                 return HtmlEncodeFilter::create(ToStringFilter::create($value));
             },
             'TagContinue(St)' => self::A_BUBBLE,
@@ -547,24 +547,24 @@ class Compiler implements CompilerInterface
             'WsExpression' => self::A_BUBBLE,
             'ExpressionWs' => self::A_BUBBLE,
 
-            'Ternary(then)' => function (PhpValueInterface $cond, array $thenElse) {
-                /** @var PhpValueInterface $then */
-                /** @var PhpValueInterface $else */
+            'Ternary(then)' => function (PhpValue $cond, array $thenElse) {
+                /** @var PhpValue $then */
+                /** @var PhpValue $else */
                 [$then, $else] = $thenElse;
                 return PhpTernary::create($cond, $then, $else);
             },
             'Ternary(empty)' => self::A_BUBBLE,
             'TernaryThen' => self::A_BUBBLE,
-            'TernaryThenElse' => function (PhpValueInterface $then, PhpValueInterface $else) {
+            'TernaryThenElse' => function (PhpValue $then, PhpValue $else) {
                 return [$then, $else];
             },
 
-            'LogicOr(next)' => function (PhpValueInterface $a, PhpValueInterface $b) {
+            'LogicOr(next)' => function (PhpValue $a, PhpValue $b) {
                 return PhpLogicOr::create($a, $b);
             },
             'LogicOr(first)' => self::A_BUBBLE,
 
-            'LogicAnd(next)' => function (PhpValueInterface $a, PhpValueInterface $b) {
+            'LogicAnd(next)' => function (PhpValue $a, PhpValue $b) {
                 return PhpLogicAnd::create($a, $b);
             },
             'LogicAnd(first)' => self::A_BUBBLE,
@@ -572,7 +572,7 @@ class Compiler implements CompilerInterface
             'ValueWs' => self::A_BUBBLE,
             'Value' => self::A_BUBBLE,
 
-            'Value(not)' => function (PhpValueInterface $a) {
+            'Value(not)' => function (PhpValue $a) {
                 return PhpNot::create($a);
             },
 

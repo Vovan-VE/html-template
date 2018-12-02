@@ -6,12 +6,9 @@ use VovanVE\HtmlTemplate\compile\CompileScope;
 /**
  * @since 0.4.0
  */
-class ToBooleanCast implements PhpValueInterface
+class ToBooleanCast extends BaseFilter
 {
-    /** @var PhpValueInterface */
-    private $value;
-
-    public static function create(PhpValueInterface $value): PhpValueInterface
+    public static function create(PhpValue $value): PhpValue
     {
         if ($value instanceof self) {
             return $value;
@@ -25,15 +22,10 @@ class ToBooleanCast implements PhpValueInterface
         if ($value->getDataType() === [DataTypes::T_BOOL]) {
             return $value;
         }
-        return new self($value);
+        return parent::create($value);
     }
 
-    public function __construct(PhpValueInterface $value)
-    {
-        $this->value = $value;
-    }
-
-    public function getValue(): PhpValueInterface
+    public function getValue(): PhpValue
     {
         return $this->value;
     }
@@ -46,11 +38,6 @@ class ToBooleanCast implements PhpValueInterface
     public function getPhpCode(CompileScope $scope): string
     {
         return "((bool)({$this->value->getPhpCode($scope)}))";
-    }
-
-    public function isConstant(): bool
-    {
-        return $this->value->isConstant();
     }
 
     public function getConstValue(): bool

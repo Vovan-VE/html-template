@@ -6,9 +6,9 @@ use VovanVE\HtmlTemplate\compile\CompileScope;
 /**
  * @since 0.4.0
  */
-class PhpTempVarRead extends PhpTempVarAccess implements PhpValueInterface
+class PhpTempVarRead extends PhpTempVarAccess
 {
-    public static function create(PhpTempVar $var): PhpValueInterface
+    public static function create(PhpTempVar $var): PhpValue
     {
         $value = $var->getValue();
         if ($value->isConstant()) {
@@ -45,15 +45,5 @@ class PhpTempVarRead extends PhpTempVarAccess implements PhpValueInterface
         $var = $this->getVar();
 
         return "({$var->getName()})";
-    }
-
-    public function isConstant(): bool
-    {
-        return false;
-    }
-
-    public function getConstValue()
-    {
-        throw new \LogicException('Not a constant');
     }
 }

@@ -5,14 +5,14 @@ class NodesList extends PhpList
 {
     private const NODE_TYPE = [DataTypes::T_STRING, DataTypes::STR_HTML];
 
-    public function __construct(PhpValueInterface ...$values)
+    public function __construct(PhpValue ...$values)
     {
         parent::__construct(...$values);
 
         $this->compact();
     }
 
-    public function append(PhpValueInterface ...$values): PhpList
+    public function append(PhpValue ...$values): PhpList
     {
         /** @var static $copy */
         $copy = parent::append(...$values);
@@ -23,7 +23,7 @@ class NodesList extends PhpList
     protected function compact(): void
     {
         $new = [];
-        /** @var PhpValueInterface $last */
+        /** @var PhpValue $last */
         $last = null;
         foreach ($this->values as $value) {
             if (self::NODE_TYPE !== $value->getDataType()) {

@@ -3,16 +3,16 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 
 use VovanVE\HtmlTemplate\compile\CompileScope;
 
-class PhpTernary implements PhpValueInterface, FilterBubbleInterface
+class PhpTernary extends PhpValue implements FilterBubbleInterface
 {
-    /** @var PhpValueInterface */
+    /** @var PhpValue */
     private $cond;
-    /** @var PhpValueInterface|null */
+    /** @var PhpValue|null */
     private $then;
-    /** @var PhpValueInterface */
+    /** @var PhpValue */
     private $else;
 
-    public static function create(PhpValueInterface $cond, ?PhpValueInterface $then, PhpValueInterface $else): PhpValueInterface
+    public static function create(PhpValue $cond, ?PhpValue $then, PhpValue $else): PhpValue
     {
         $bool_cond = ToBooleanCast::create($cond);
 
@@ -46,8 +46,9 @@ class PhpTernary implements PhpValueInterface, FilterBubbleInterface
         return new static($bool_cond, $then, $else);
     }
 
-    public function __construct(PhpValueInterface $cond, ?PhpValueInterface $then, PhpValueInterface $else)
+    public function __construct(PhpValue $cond, ?PhpValue $then, PhpValue $else)
     {
+        parent::__construct();
         $this->cond = $cond;
         $this->then = $then;
         $this->else = $else;
@@ -55,10 +56,10 @@ class PhpTernary implements PhpValueInterface, FilterBubbleInterface
 
     /**
      * @param BaseFilter $filter
-     * @return PhpValueInterface|null
+     * @return PhpValue|null
      * @since 0.4.0
      */
-    public function bubbleFilter(BaseFilter $filter): ?PhpValueInterface
+    public function bubbleFilter(BaseFilter $filter): ?PhpValue
     {
         $then = $this->then ?: $this->cond;
         $else = $this->else;

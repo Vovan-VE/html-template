@@ -8,5 +8,5 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
  */
 interface FilterBubbleInterface
 {
-    public function bubbleFilter(BaseFilter $filter): ?PhpValueInterface;
+    public function bubbleFilter(BaseFilter $filter): ?PhpValue;
 }

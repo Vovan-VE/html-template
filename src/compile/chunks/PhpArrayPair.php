@@ -3,12 +3,12 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 
 class PhpArrayPair
 {
-    /** @var PhpValueInterface */
+    /** @var PhpValue */
     private $key;
-    /** @var PhpValueInterface */
+    /** @var PhpValue */
     private $value;
 
-    public function __construct(PhpValueInterface $key, PhpValueInterface $value)
+    public function __construct(PhpValue $key, PhpValue $value)
     {
         if (!$key->isConstant()) {
             throw new \RuntimeException('Currently only constant keys are expected');
@@ -17,12 +17,12 @@ class PhpArrayPair
         $this->value = $value;
     }
 
-    public function getKey(): PhpValueInterface
+    public function getKey(): PhpValue
     {
         return $this->key;
     }
 
-    public function getValue(): PhpValueInterface
+    public function getValue(): PhpValue
     {
         return $this->value;
     }

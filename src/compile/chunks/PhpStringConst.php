@@ -27,9 +27,4 @@ class PhpStringConst extends PhpConst
     {
         return var_export($this->getValue(), true);
     }
-
-    public function getConstValue(): string
-    {
-        return parent::getValue();
-    }
 }

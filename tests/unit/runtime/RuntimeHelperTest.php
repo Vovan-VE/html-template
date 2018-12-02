@@ -200,7 +200,7 @@ class RuntimeHelperTest extends BaseTestCase
     /**
      * @param string $name
      * @param array $props
-     * @param array|null $content
+     * @param string|null $content
      * @param string $expected
      * @dataProvider createComponentDataProvider
      */

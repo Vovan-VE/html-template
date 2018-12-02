@@ -15,7 +15,7 @@ for generated code.
         `VovanVE\HtmlTemplate\components\ComponentInterface::render()`
         in now `string` instead of previous `array`.
     *   Add: method `VovanVE\HtmlTemplate\runtime\RuntimeHelperInterface::toString()`.
-    *   Changes to internal classes for compilation process.
+    *   Changes and refactoring in internal classes near compilation process.
 *   Deleted: method `VovanVE\HtmlTemplate\compile\Compiler::createParserLexer()`
 *   Add: HTML elements and Components can now be used in any expression. Here
     are some examples:

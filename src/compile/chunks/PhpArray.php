@@ -3,7 +3,7 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 
 use VovanVE\HtmlTemplate\compile\CompileScope;
 
-class PhpArray implements PhpValueInterface
+class PhpArray extends PhpValue
 {
     /** @var PhpArrayPair[] */
     private $pairs = [];
@@ -12,6 +12,7 @@ class PhpArray implements PhpValueInterface
 
     public function __construct(PhpArrayPair ...$pairs)
     {
+        parent::__construct();
         $this->isConst = true;
         foreach ($pairs as $pair) {
             $key = $pair->getKey()->getConstValue();
@@ -58,15 +59,6 @@ class PhpArray implements PhpValueInterface
     public function getKeysConst(): array
     {
         return array_keys($this->pairs);
-    }
-
-    /**
-     * @return array
-     * @since 0.4.0
-     */
-    public function getDataType(): array
-    {
-        return [];
     }
 
     public function getPhpCode(CompileScope $scope): string

@@ -11,7 +11,7 @@ use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
  */
 class HtmlEncodeFilter extends BaseFilter
 {
-    public static function create(PhpValueInterface $value): PhpValueInterface
+    public static function create(PhpValue $value): PhpValue
     {
         $full_type = $value->getDataType();
 
@@ -22,7 +22,7 @@ class HtmlEncodeFilter extends BaseFilter
         return parent::create($value);
     }
 
-    public function __construct(PhpValueInterface $value)
+    public function __construct(PhpValue $value)
     {
         if (DataTypes::T_STRING !== ($value->getDataType()[0] ?? null)) {
             throw new \LogicException('Expected string data type');

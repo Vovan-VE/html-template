@@ -1,25 +1,33 @@
 <?php
 namespace VovanVE\HtmlTemplate\compile\chunks;
 
-abstract class PhpValue implements PhpValueInterface
+use VovanVE\HtmlTemplate\compile\CompileScope;
+
+abstract class PhpValue
 {
-    private $value;
-
-    public function __construct($value)
+    public function __construct()
     {
-        $this->value = $value;
     }
 
-    public function getValue()
+    /**
+     * @return array
+     * @since 0.4.0
+     */
+    public function getDataType(): array
     {
-        return $this->value;
+        return [];
     }
+
+    abstract public function getPhpCode(CompileScope $scope): string;
 
     public function isConstant(): bool
     {
         return false;
     }
 
+    /**
+     * @return mixed
+     */
     public function getConstValue()
     {
         throw new \LogicException('Not a constant');

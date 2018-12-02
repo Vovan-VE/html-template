@@ -3,32 +3,14 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 
 use VovanVE\HtmlTemplate\compile\CompileScope;
 
-class PhpList implements PhpValueInterface
+class PhpList extends BaseListOperation
 {
-    /** @var PhpValueInterface[] */
-    protected $values;
-    /** @var bool */
-    private $isConst;
-
-    public function __construct(PhpValueInterface ...$values)
-    {
-        $this->values = $values;
-
-        $this->isConst = true;
-        foreach ($values as $value) {
-            if (!$value->isConstant()) {
-                $this->isConst = false;
-                break;
-            }
-        }
-    }
-
     public function isEmpty(): bool
     {
         return (bool)$this->values;
     }
 
-    public function append(PhpValueInterface ...$values): self
+    public function append(PhpValue ...$values): self
     {
         $copy = clone $this;
 
@@ -51,14 +33,6 @@ class PhpList implements PhpValueInterface
         return [];
     }
 
-    /**
-     * @return PhpValueInterface[]
-     */
-    public function getValues(): array
-    {
-        return $this->values;
-    }
-
     public function getPhpCode(CompileScope $scope): string
     {
         $result = [];
@@ -73,11 +47,6 @@ class PhpList implements PhpValueInterface
         }
 
         return '[' . join(',', $result) . ']';
-    }
-
-    public function isConstant(): bool
-    {
-        return $this->isConst;
     }
 
     public function getConstValue(): array

@@ -4,7 +4,7 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 use VovanVE\HtmlTemplate\compile\CompileScope;
 use VovanVE\HtmlTemplate\runtime\RuntimeHelper;
 
-class HtmlElement extends Element implements PhpValueInterface
+class HtmlElement extends Element
 {
     /** @var bool */
     private $isConst;
@@ -13,10 +13,10 @@ class HtmlElement extends Element implements PhpValueInterface
      * @param string $name
      * @param PhpArray $attributes
      * @param NodesList|null $content
-     * @return PhpValueInterface
+     * @return PhpValue
      * @since 0.4.0
      */
-    public static function create(string $name, PhpArray $attributes, ?NodesList $content = null): PhpValueInterface
+    public static function create(string $name, PhpArray $attributes, ?NodesList $content = null): PhpValue
     {
         if ($attributes->isConstant()) {
             if (null === $content || $content->isConstant()) {
@@ -49,15 +49,6 @@ class HtmlElement extends Element implements PhpValueInterface
         parent::__construct($name, $attributes, $content);
 
         $this->isConst = $attributes->isConstant() && (!$content || $content->isConstant());
-    }
-
-    /**
-     * @return array
-     * @since 0.4.0
-     */
-    public function getDataType(): array
-    {
-        return [DataTypes::T_STRING, DataTypes::STR_HTML];
     }
 
     /**

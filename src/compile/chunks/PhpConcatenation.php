@@ -3,16 +3,12 @@ namespace VovanVE\HtmlTemplate\compile\chunks;
 
 use VovanVE\HtmlTemplate\compile\CompileScope;
 
-class PhpConcatenation implements PhpValueInterface, FilterBubbleInterface
+class PhpConcatenation extends BaseListOperation implements FilterBubbleInterface
 {
     /** @var string */
-    private $subtype = DataTypes::STR_TEXT;
-    /** @var PhpValueInterface[] */
-    private $values;
-    /** @var bool */
-    private $isConst;
+    protected $subtype = DataTypes::STR_TEXT;
 
-    public function __construct(?string $subtype, PhpValueInterface ...$values)
+    public function __construct(?string $subtype, PhpValue ...$values)
     {
         $this->subtype = $subtype;
 
@@ -25,16 +21,11 @@ class PhpConcatenation implements PhpValueInterface, FilterBubbleInterface
             }
         }
 
-        /** @var PhpValueInterface[] $temp */
+        /** @var PhpValue[] $temp */
         $temp = [];
-        $is_const = true;
-        /** @var PhpValueInterface|null $last */
+        /** @var PhpValue|null $last */
         $last = null;
         foreach ($new_values as $value) {
-            if ($is_const && !$value->isConstant()) {
-                $is_const = false;
-            }
-
             if (null !== $last && $last->isConstant() && $value->isConstant()) {
                 array_pop($temp);
                 $last = new PhpStringConst(
@@ -51,24 +42,15 @@ class PhpConcatenation implements PhpValueInterface, FilterBubbleInterface
             $temp[] = $last;
         }
 
-        $this->values = $temp;
-        $this->isConst = $is_const;
-    }
-
-    /**
-     * @return PhpValueInterface[]
-     */
-    public function getValues(): array
-    {
-        return $this->values;
+        parent::__construct(...$temp);
     }
 
     /**
      * @param BaseFilter $filter
-     * @return PhpValueInterface|null
+     * @return PhpValue|null
      * @since 0.4.0
      */
-    public function bubbleFilter(BaseFilter $filter): ?PhpValueInterface
+    public function bubbleFilter(BaseFilter $filter): ?PhpValue
     {
         if (DataTypes::T_STRING !== ($filter->getDataType()[0] ?? null)) {
             return null;
@@ -116,11 +98,6 @@ class PhpConcatenation implements PhpValueInterface, FilterBubbleInterface
             return $result[0];
         }
         return '(' . join('.', $result) . ')';
-    }
-
-    public function isConstant(): bool
-    {
-        return $this->isConst;
     }
 
     public function getConstValue(): string
