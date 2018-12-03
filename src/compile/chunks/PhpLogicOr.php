@@ -34,6 +34,20 @@ class PhpLogicOr extends BaseLogicOperation implements FilterBubbleInterface
     }
 
     /**
+     * @return PhpValue|static
+     * @since 0.4.0
+     */
+    public function finalize(): PhpValue
+    {
+        $values = $this->values;
+        $result = new static(array_shift($values), array_shift($values));
+        while ($values) {
+            $result = new static($result, array_shift($values));
+        }
+        return $result;
+    }
+
+    /**
      * @param BaseFilter $filter
      * @return PhpValue|null
      * @since 0.4.0

@@ -12,5 +12,3 @@ TODO
     *   `removeAllParams()`
     *   `removeComponents()`
     *   `removeAllComponents()`
-*   value -> getFinalValue()
-    *   temp var assignment with unused var will return origin inner value

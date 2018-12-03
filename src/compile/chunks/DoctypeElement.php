@@ -25,6 +25,20 @@ class DoctypeElement extends PhpValue
     }
 
     /**
+     * @return PhpValue|static
+     * @since 0.4.0
+     */
+    public function finalize(): PhpValue
+    {
+        $values = [];
+        foreach ($this->values as $value) {
+            $values[] = $value->finalize();
+        }
+
+        return new static(...$values);
+    }
+
+    /**
      * @return PhpValue[]
      */
     public function getValues(): array

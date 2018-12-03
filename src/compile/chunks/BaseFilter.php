@@ -47,6 +47,14 @@ abstract class BaseFilter extends PhpValue
         $this->value = $value;
     }
 
+    /**
+     * @return PhpValue|static
+     */
+    public function finalize(): PhpValue
+    {
+        return static::create($this->value->finalize());
+    }
+
     public function isConstant(): bool
     {
         return $this->value->isConstant();

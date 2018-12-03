@@ -10,6 +10,15 @@ abstract class PhpValue
     }
 
     /**
+     * @return PhpValue|static
+     * @since 0.4.0
+     */
+    public function finalize(): PhpValue
+    {
+        return $this;
+    }
+
+    /**
      * @return array
      * @since 0.4.0
      */

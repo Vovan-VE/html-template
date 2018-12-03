@@ -17,6 +17,15 @@ class PhpArrayPair
         $this->value = $value;
     }
 
+    /**
+     * @return static
+     * @since 0.4.0
+     */
+    public function finalize(): self
+    {
+        return new static($this->key->finalize(), $this->value->finalize());
+    }
+
     public function getKey(): PhpValue
     {
         return $this->key;

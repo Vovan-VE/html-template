@@ -26,6 +26,21 @@ abstract class Element extends PhpValue
             : null;
     }
 
+    /**
+     * @return PhpValue|static
+     * @since 0.4.0
+     */
+    public function finalize(): PhpValue
+    {
+        return new static(
+            $this->name,
+            $this->attributes->finalize(),
+            $this->content
+                ? new NodesList($this->content->finalize())
+                : null
+        );
+    }
+
     public function getName(): string
     {
         return $this->name;

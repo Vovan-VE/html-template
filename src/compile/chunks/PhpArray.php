@@ -27,6 +27,20 @@ class PhpArray extends PhpValue
         }
     }
 
+    /**
+     * @return PhpValue|static
+     * @since 0.4.0
+     */
+    public function finalize(): PhpValue
+    {
+        $pairs = [];
+        foreach ($this->pairs as $pair) {
+            $pairs[] = $pair->finalize();
+        }
+
+        return new static(...$pairs);
+    }
+
     public function append(PhpArrayPair ...$pairs): self
     {
         $copy = clone $this;

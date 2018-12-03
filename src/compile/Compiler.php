@@ -384,7 +384,7 @@ class Compiler implements CompilerInterface
                 if ($result->isConstant()) {
                     $result = new PhpStringConst($result->getConstValue(), DataTypes::STR_HTML);
                 }
-                return $result->getPhpCode(new CompileScope);
+                return $result->finalize()->getPhpCode(new CompileScope);
             },
             'Content(next)' => $makeNodesListAppendNotNull,
             'Content(first)' => $makeNodesListOfOneNotNull,

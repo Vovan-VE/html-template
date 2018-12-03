@@ -28,6 +28,22 @@ class PhpTempVarAssign extends PhpTempVarAccess
         $var->setValue($value);
     }
 
+    /**
+     * @return PhpValue|static
+     */
+    public function finalize(): PhpValue
+    {
+        $var = $this->getVar();
+        $value = $var->getValue();
+
+        if (!$var->hasReadAccess()) {
+            return $value->finalize();
+        }
+
+        $new_var = $var->finalize();
+        return new static($new_var, $new_var->getValue());
+    }
+
     public function getDataType(): array
     {
         return $this->getVar()->getValue()->getDataType();

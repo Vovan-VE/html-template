@@ -27,6 +27,19 @@ abstract class BaseListOperation extends PhpValue
     }
 
     /**
+     * @return PhpValue|static
+     */
+    public function finalize(): PhpValue
+    {
+        $values = [];
+        foreach ($this->values as $value) {
+            $values[] = $value->finalize();
+        }
+
+        return new static(...$values);
+    }
+
+    /**
      * @return PhpValue[]
      */
     public function getValues(): array

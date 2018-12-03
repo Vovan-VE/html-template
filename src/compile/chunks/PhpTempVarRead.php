@@ -35,6 +35,14 @@ class PhpTempVarRead extends PhpTempVarAccess
         parent::__destruct();
     }
 
+    /**
+     * @return PhpValue|static
+     */
+    public function finalize(): PhpValue
+    {
+        return new static($this->getVar()->finalize());
+    }
+
     public function getDataType(): array
     {
         return $this->getVar()->getValue()->getDataType();

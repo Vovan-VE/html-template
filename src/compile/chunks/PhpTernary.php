@@ -55,6 +55,19 @@ class PhpTernary extends PhpValue implements FilterBubbleInterface
     }
 
     /**
+     * @return PhpValue|static
+     * @since 0.4.0
+     */
+    public function finalize(): PhpValue
+    {
+        return static::create(
+            $this->cond->finalize(),
+            $this->then ? $this->then->finalize() : null,
+            $this->else->finalize()
+        );
+    }
+
+    /**
      * @param BaseFilter $filter
      * @return PhpValue|null
      * @since 0.4.0

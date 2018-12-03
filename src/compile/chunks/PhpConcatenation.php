@@ -46,6 +46,20 @@ class PhpConcatenation extends BaseListOperation implements FilterBubbleInterfac
     }
 
     /**
+     * @return PhpValue|static
+     * @since 0.4.0
+     */
+    public function finalize(): PhpValue
+    {
+        $values = [];
+        foreach ($this->values as $value) {
+            $values[] = $value->finalize();
+        }
+
+        return new static($this->subtype, ...$values);
+    }
+
+    /**
      * @param BaseFilter $filter
      * @return PhpValue|null
      * @since 0.4.0
@@ -75,10 +89,6 @@ class PhpConcatenation extends BaseListOperation implements FilterBubbleInterfac
 
     public function getPhpCode(CompileScope $scope): string
     {
-        if (!$this->values) {
-            return "''";
-        }
-
         $result = [];
         foreach ($this->values as $value) {
             if ($value->isConstant() && '' === (string)$value->getConstValue()) {
@@ -92,6 +102,10 @@ class PhpConcatenation extends BaseListOperation implements FilterBubbleInterfac
                 $code = "$code ";
             }
             $result[] = $code;
+        }
+
+        if (!$result) {
+            return "''";
         }
 
         if (1 === count($result)) {

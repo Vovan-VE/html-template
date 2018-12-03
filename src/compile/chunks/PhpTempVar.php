@@ -14,6 +14,19 @@ class PhpTempVar
     private $var;
     /** @var int */
     private $readsCount = 0;
+    /** @var self|null */
+    private $finalized;
+
+    public function finalize(): self
+    {
+        if (null !== $this->finalized) {
+            return $this->finalized;
+        }
+
+        $new = new self;
+        $new->setValue($this->getValue()->finalize());
+        return $this->finalized = $new;
+    }
 
     public function setValue(PhpValue $value): void
     {
